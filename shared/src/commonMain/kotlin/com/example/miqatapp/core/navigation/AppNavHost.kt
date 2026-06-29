@@ -6,7 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.miqatapp.feature.home.presentation.HomeAltScreen
 import com.example.miqatapp.feature.home.presentation.HomeScreen
+import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
+import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.sandbox.presentation.SandboxScreen
 
 /**
@@ -25,6 +28,9 @@ fun AppNavHost() {
         NavHost(navController = navController, startDestination = AppRoute.Home) {
             composable<AppRoute.Home> { HomeScreen() }
             composable<AppRoute.Sandbox> { SandboxScreen() }
+            composable<AppRoute.HomeAlt> { HomeAltScreen() }
+            composable<AppRoute.PrayerAnimation> { PrayerAnimationScreen() }
+            composable<AppRoute.MosqueScene> { MosqueSceneScreen() }
         }
     }
 }

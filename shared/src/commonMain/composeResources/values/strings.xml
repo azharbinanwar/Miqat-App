@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">Today</string>
+    <string name="this_week">This week</string>
+    <string name="day_streak">day streak</string>
+    <string name="verse_of_the_day">Verse of the Day</string>
+    <string name="surah_al_mulk">Surah Al-Mulk</string>
+    <string name="recite_before_sleep_after_isha">Recite before sleep · 30 min after Isha</string>
+    <string name="clear">Clear</string>
+    <string name="mark_prayer">Mark %1$s</string>
+    <string name="tap_header_to_preview_each_prayer">Tap header to preview each prayer</string>
+
+    <string-array name="week_days">
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+        <item>S</item>
+    </string-array>
+</resources>

@@ -57,6 +57,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.lucide.icons)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -66,6 +67,12 @@ kotlin {
 
 room {
     schemaDirectory("$projectDir/schemas")
+}
+
+// Pin the generated Res class package so imports are stable.
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.example.miqatapp.resources"
 }
 
 dependencies {

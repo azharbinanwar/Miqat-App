@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +36,17 @@ import com.example.miqatapp.core.widgets.AppTile
 import com.example.miqatapp.core.widgets.AppTileGroup
 import com.example.miqatapp.core.widgets.AppTileItem
 import com.example.miqatapp.core.widgets.StateView
+import com.example.miqatapp.core.enums.AdhanRoundingStyle
+import com.example.miqatapp.core.enums.CalculationMethod
+import com.example.miqatapp.core.enums.HighLatRule
+import com.example.miqatapp.core.enums.Madhab
+import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.PrayerTimeStatus
+import com.example.miqatapp.core.enums.PrayerTrackerStatus
+import com.example.miqatapp.core.enums.color
+import com.example.miqatapp.core.enums.onColor
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 
 /** Scratch page to eyeball every button and color in light + dark. */
 @Composable
@@ -59,6 +71,16 @@ private fun Panel(title: String, mode: ThemeMode) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SectionTitle(title)
+            SectionTitle("Prayers")
+            PrayerShowcase()
+            SectionTitle("Tracker Status")
+            TrackerStatusShowcase()
+            SectionTitle("Time Status")
+            TimeStatusShowcase()
+            SectionTitle("Calc Methods")
+            CalcMethodShowcase()
+            SectionTitle("Config Enums")
+            ConfigEnumsShowcase()
             SectionTitle("Tiles")
             TileShowcase()
             SectionTitle("Buttons")
@@ -90,6 +112,70 @@ private fun ButtonShowcase() {
         AppButton("Disabled", {}, enabled = false)
         AppButton("Loading", {}, isProcessing = true)
         AppButton("Icons", {}, leftIcon = { Text("★") }, rightIcon = { Text("→") })
+    }
+}
+
+@Composable
+private fun PrayerShowcase() {
+    AppTileGroup(
+        items = Prayer.entries.map { prayer ->
+            AppTileItem(
+                title = prayer.name,
+                leading = {
+                    Box(
+                        Modifier.size(40.dp).background(prayer.color, CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(prayer.icon, contentDescription = prayer.name, tint = prayer.onColor, modifier = Modifier.size(20.dp))
+                    }
+                },
+                onClick = {},
+            )
+        },
+    )
+}
+
+@Composable
+private fun AccentChip(label: String, color: Color, onColor: Color, icon: ImageVector) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Box(Modifier.size(40.dp).background(color, CircleShape), contentAlignment = Alignment.Center) {
+            Icon(icon, contentDescription = label, tint = onColor, modifier = Modifier.size(20.dp))
+        }
+        Text(label, fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
+    }
+}
+
+@Composable
+private fun TrackerStatusShowcase() {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        PrayerTrackerStatus.entries.forEach { AccentChip(it.label, it.color, it.onColor, it.icon) }
+    }
+}
+
+@Composable
+private fun TimeStatusShowcase() {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        PrayerTimeStatus.entries.forEach { AccentChip(it.label, it.color, it.onColor, it.icon) }
+    }
+}
+
+@Composable
+private fun CalcMethodShowcase() {
+    AppTileGroup(
+        items = CalculationMethod.entries.map { m ->
+            val isha = m.ishaAngle?.let { "Isha ${it}°" } ?: "Isha ${m.ishaIntervalMinutes} min"
+            AppTileItem(title = m.label, subtitle = "${m.region} · Fajr ${m.fajrAngle}° · $isha")
+        },
+    )
+}
+
+@Composable
+private fun ConfigEnumsShowcase() {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        val c = MaterialTheme.colorScheme.onBackground
+        Text("Madhab: " + Madhab.entries.joinToString { it.label }, fontSize = 13.sp, color = c)
+        Text("High-lat: " + HighLatRule.entries.joinToString { it.label }, fontSize = 13.sp, color = c)
+        Text("Rounding: " + AdhanRoundingStyle.entries.joinToString { it.label }, fontSize = 13.sp, color = c)
     }
 }
 

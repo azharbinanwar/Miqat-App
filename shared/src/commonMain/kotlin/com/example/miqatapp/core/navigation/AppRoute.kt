@@ -15,4 +15,13 @@ sealed interface AppRoute {
 
     @Serializable
     data object Sandbox : AppRoute
+
+    @Serializable
+    data object HomeAlt : AppRoute
+
+    @Serializable
+    data object PrayerAnimation : AppRoute
+
+    @Serializable
+    data object MosqueScene : AppRoute
 }

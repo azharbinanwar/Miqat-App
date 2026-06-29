@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">اليوم</string>
+    <string name="this_week">هذا الأسبوع</string>
+    <string name="day_streak">أيام متتالية</string>
+    <string name="verse_of_the_day">آية اليوم</string>
+    <string name="surah_al_mulk">سورة الملك</string>
+    <string name="recite_before_sleep_after_isha">اقرأها قبل النوم · بعد العشاء بـ 30 دقيقة</string>
+    <string name="clear">مسح</string>
+    <string name="mark_prayer">تسجيل %1$s</string>
+    <string name="tap_header_to_preview_each_prayer">اضغط على الرأس لمعاينة كل صلاة</string>
+
+    <string-array name="week_days">
+        <item>ن</item>
+        <item>ث</item>
+        <item>ر</item>
+        <item>خ</item>
+        <item>ج</item>
+        <item>س</item>
+        <item>ح</item>
+    </string-array>
+</resources>

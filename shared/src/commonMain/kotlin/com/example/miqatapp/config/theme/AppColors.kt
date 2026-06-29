@@ -97,15 +97,31 @@ data class AppColors(
     val onNeutralMuted: Color,
     val neutralMutedContainer: Color,
     val onNeutralMutedContainer: Color,
+    // ── App accent: prayers ──
+    val fajrColor: Color, val onFajrColor: Color,
+    val sunriseColor: Color, val onSunriseColor: Color,
+    val dhuhrColor: Color, val onDhuhrColor: Color,
+    val asrColor: Color, val onAsrColor: Color,
+    val maghribColor: Color, val onMaghribColor: Color,
+    val ishaColor: Color, val onIshaColor: Color,
+    // ── App accent: tracker status ──
+    val prayedColor: Color, val onPrayedColor: Color,
+    val jamaatColor: Color, val onJamaatColor: Color,
+    val kazaColor: Color, val onKazaColor: Color,
+    val missedColor: Color, val onMissedColor: Color,
+    // ── App accent: time status ──
+    val currentColor: Color, val onCurrentColor: Color,
+    val soonColor: Color, val onSoonColor: Color,
+    val upcomingColor: Color, val onUpcomingColor: Color,
     val isDark: Boolean,
 )
 
 /** Light palette — "Serene Devotion" M3 + extras. Secondary softened to fit the green. */
 fun lightAppColors() = AppColors(
-    primary = Color(0xFF003527),
+    primary = Color(0xFF1E7D55),
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFF064E3B),
-    onPrimaryContainer = Color(0xFF80BEA6),
+    primaryContainer = Color(0xFFB6EBD2),
+    onPrimaryContainer = Color(0xFF003825),
     inversePrimary = Color(0xFF95D3BA),
     secondary = Color(0xFF4C6358),
     onSecondary = Color(0xFFFFFFFF),
@@ -180,6 +196,22 @@ fun lightAppColors() = AppColors(
     onNeutralMuted = Color(0xFF000000),
     neutralMutedContainer = Color(0xFFF5F5F5),
     onNeutralMutedContainer = Color(0xFF757575),
+    // prayers (deeper for light bg)
+    fajrColor = Color(0xFF4F46E5), onFajrColor = Color(0xFFFFFFFF),
+    sunriseColor = Color(0xFFEA580C), onSunriseColor = Color(0xFFFFFFFF),
+    dhuhrColor = Color(0xFF0EA5E9), onDhuhrColor = Color(0xFFFFFFFF),
+    asrColor = Color(0xFFD97706), onAsrColor = Color(0xFFFFFFFF),
+    maghribColor = Color(0xFFE11D48), onMaghribColor = Color(0xFFFFFFFF),
+    ishaColor = Color(0xFF6366F1), onIshaColor = Color(0xFFFFFFFF),
+    // tracker status
+    prayedColor = Color(0xFF16A34A), onPrayedColor = Color(0xFFFFFFFF),
+    jamaatColor = Color(0xFF2563EB), onJamaatColor = Color(0xFFFFFFFF),
+    kazaColor = Color(0xFFD97706), onKazaColor = Color(0xFFFFFFFF),
+    missedColor = Color(0xFFDC2626), onMissedColor = Color(0xFFFFFFFF),
+    // time status
+    currentColor = Color(0xFF16A34A), onCurrentColor = Color(0xFFFFFFFF),
+    soonColor = Color(0xFFD97706), onSoonColor = Color(0xFFFFFFFF),
+    upcomingColor = Color(0xFF6B7280), onUpcomingColor = Color(0xFFFFFFFF),
     isDark = false,
 )
 
@@ -263,6 +295,22 @@ fun darkAppColors() = AppColors(
     onNeutralMuted = Color(0xFF1F1F1F),
     neutralMutedContainer = Color(0xFF757575),
     onNeutralMutedContainer = Color(0xFFF5F5F5),
+    // prayers (brighter for dark bg)
+    fajrColor = Color(0xFF818CF8), onFajrColor = Color(0xFF000000),
+    sunriseColor = Color(0xFFFB923C), onSunriseColor = Color(0xFF000000),
+    dhuhrColor = Color(0xFF38BDF8), onDhuhrColor = Color(0xFF000000),
+    asrColor = Color(0xFFFBBF24), onAsrColor = Color(0xFF000000),
+    maghribColor = Color(0xFFFB7185), onMaghribColor = Color(0xFF000000),
+    ishaColor = Color(0xFFA5B4FC), onIshaColor = Color(0xFF000000),
+    // tracker status
+    prayedColor = Color(0xFF4ADE80), onPrayedColor = Color(0xFF000000),
+    jamaatColor = Color(0xFF60A5FA), onJamaatColor = Color(0xFF000000),
+    kazaColor = Color(0xFFFBBF24), onKazaColor = Color(0xFF000000),
+    missedColor = Color(0xFFF87171), onMissedColor = Color(0xFF000000),
+    // time status
+    currentColor = Color(0xFF4ADE80), onCurrentColor = Color(0xFF000000),
+    soonColor = Color(0xFFFBBF24), onSoonColor = Color(0xFF000000),
+    upcomingColor = Color(0xFF9CA3AF), onUpcomingColor = Color(0xFF000000),
     isDark = true,
 )
 
