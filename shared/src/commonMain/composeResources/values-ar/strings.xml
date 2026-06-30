@@ -10,6 +10,76 @@
     <string name="mark_prayer">تسجيل %1$s</string>
     <string name="tap_header_to_preview_each_prayer">اضغط على الرأس لمعاينة كل صلاة</string>
 
+    <string name="app_name">ميقات</string>
+    <string name="your_daily_prayer_companion">رفيقك اليومي للصلاة</string>
+    <string name="home">الرئيسية</string>
+    <string name="prayer_times">مواقيت الصلاة</string>
+    <string name="qibla_compass">بوصلة القبلة</string>
+    <string name="prayer_tracker">متابعة الصلاة</string>
+    <string name="hijri_calendar">التقويم الهجري</string>
+    <string name="duas_and_adhkar">الأدعية والأذكار</string>
+    <string name="tasbih_counter">المسبحة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="about_miqat">حول التطبيق</string>
+    <string name="developer_sandbox">بيئة التطوير</string>
+
+    <string name="qibla">القبلة</string>
+    <string name="qibla_direction_degrees">القبلة %1$s°</string>
+    <string name="distance_to_makkah_km">%1$s كم إلى مكة</string>
+    <string name="turn_left_to_face_qibla">استدر يساراً لمواجهة القبلة</string>
+    <string name="turn_right_to_face_qibla">استدر يميناً لمواجهة القبلة</string>
+    <string name="you_are_facing_qibla">أنت تواجه القبلة</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">دقة منخفضة — حرّك هاتفك على شكل رقم ٨</string>
+    <string name="compass_unavailable">البوصلة غير متوفرة</string>
+    <string name="device_has_no_compass_sensor">جهازك لا يحتوي على مستشعر بوصلة، لذا لا يمكن عرض اتجاه القبلة</string>
+    <string name="location_needed_for_qibla">الموقع مطلوب لتحديد القبلة</string>
+    <string name="recalibrate_compass">إعادة المعايرة</string>
+
+    <string name="best">الأفضل</string>
+    <string name="on_time">في الوقت</string>
+    <string name="not_tracked">غير محدد</string>
+    <string name="coming_soon">قريباً</string>
+
+    <string name="tasbih">المسبحة</string>
+    <string name="rounds">الجولات</string>
+    <string name="total">الإجمالي</string>
+    <string name="reset">إعادة</string>
+    <string name="tap_to_count">انقر للعد</string>
+
+    <string name="welcome_to_miqat">مرحباً بك في ميقات</string>
+    <string name="your_companion_for_every_prayer">رفيقك في كل صلاة — مواقيت دقيقة، القبلة، والمتابعة، بدون إنترنت.</string>
+    <string name="get_started">ابدأ</string>
+    <string name="skip">تخطّي</string>
+    <string name="next">التالي</string>
+    <string name="never_miss_a_prayer">لا تفوّت أي صلاة</string>
+    <string name="accurate_times_with_live_countdown">مواقيت دقيقة لموقعك، مع عدّ تنازلي مباشر للصلاة القادمة.</string>
+    <string name="find_the_qibla_and_track">اعرف القبلة وتابع صلاتك</string>
+    <string name="point_to_the_kaaba_and_log_every_prayer">وجّه نحو الكعبة وسجّل كل صلاة — سلاسل وإحصائيات، بدون إنترنت.</string>
+
+    <string name="onboarding_live_countdown">عدّ تنازلي مباشر للصلاة القادمة</string>
+    <string name="onboarding_qibla_offline">بوصلة القبلة — بدون إنترنت</string>
+    <string name="onboarding_track_streaks">تابع كل صلاة وسلاسلك</string>
+    <string name="your_madhab">مذهبك</string>
+    <string name="affects_asr_calculation">يؤثر في حساب وقت صلاة العصر.</string>
+    <string name="madhab_hanafi">حنفي</string>
+    <string name="madhab_shafi">شافعي</string>
+    <string name="shadow_length_2x">طول الظل ضعف الجسم</string>
+    <string name="shadow_length_1x">طول الظل مثل الجسم</string>
+    <string name="asr_time">وقت العصر</string>
+    <string name="smart_reminders">تذكيرات ذكية</string>
+    <string name="gentle_nudge_before_every_prayer">تنبيه لطيف قبل كل صلاة.</string>
+    <string name="onboarding_before_at_time_alerts">تنبيهات قبل الوقت وعند الوقت</string>
+    <string name="onboarding_jumuah_mulk_kahf">الجمعة · سورة الملك · الكهف</string>
+    <string name="onboarding_jamaat_reminders">تذكير الجماعة</string>
+    <string name="set_your_location">حدّد موقعك</string>
+    <string name="so_times_and_qibla_are_exact">لتكون المواقيت والقبلة دقيقة.</string>
+    <string name="onboarding_gps_or_city_search">‏GPS أو البحث عن مدينة</string>
+    <string name="onboarding_city_presets">مكة · المدينة · كراتشي</string>
+    <string name="works_fully_offline">يعمل بدون إنترنت</string>
+    <string name="continue_label">متابعة</string>
+    <string name="allow_notifications">السماح بالإشعارات</string>
+    <string name="start_praying">ابدأ الصلاة</string>
+
     <string-array name="week_days">
         <item>ن</item>
         <item>ث</item>

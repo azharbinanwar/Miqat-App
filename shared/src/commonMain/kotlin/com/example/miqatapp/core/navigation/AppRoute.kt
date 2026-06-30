@@ -11,10 +11,31 @@ import kotlinx.serialization.Serializable
  */
 sealed interface AppRoute {
     @Serializable
+    data object Onboarding : AppRoute
+
+    @Serializable
     data object Home : AppRoute
 
     @Serializable
     data object Sandbox : AppRoute
+
+    @Serializable
+    data object PrayerTimes : AppRoute
+
+    @Serializable
+    data object Qibla : AppRoute
+
+    @Serializable
+    data object Tracker : AppRoute
+
+    @Serializable
+    data object Settings : AppRoute
+
+    @Serializable
+    data object Tasbih : AppRoute
+
+    @Serializable
+    data object TasbihCounter : AppRoute
 
     @Serializable
     data object HomeAlt : AppRoute

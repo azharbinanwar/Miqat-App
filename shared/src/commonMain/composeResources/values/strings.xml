@@ -10,6 +10,76 @@
     <string name="mark_prayer">Mark %1$s</string>
     <string name="tap_header_to_preview_each_prayer">Tap header to preview each prayer</string>
 
+    <string name="app_name">Miqat</string>
+    <string name="your_daily_prayer_companion">Your daily prayer companion</string>
+    <string name="home">Home</string>
+    <string name="prayer_times">Prayer Times</string>
+    <string name="qibla_compass">Qibla Compass</string>
+    <string name="prayer_tracker">Prayer Tracker</string>
+    <string name="hijri_calendar">Hijri Calendar</string>
+    <string name="duas_and_adhkar">Duas &amp; Adhkar</string>
+    <string name="tasbih_counter">Tasbih Counter</string>
+    <string name="settings">Settings</string>
+    <string name="about_miqat">About</string>
+    <string name="developer_sandbox">Sandbox</string>
+
+    <string name="qibla">Qibla</string>
+    <string name="qibla_direction_degrees">Qibla %1$s°</string>
+    <string name="distance_to_makkah_km">%1$s km to Makkah</string>
+    <string name="turn_left_to_face_qibla">Turn left to face the Qibla</string>
+    <string name="turn_right_to_face_qibla">Turn right to face the Qibla</string>
+    <string name="you_are_facing_qibla">You are facing the Qibla</string>
+    <string name="compass_accuracy_low_wave_phone_in_figure_eight">Low accuracy — wave your phone in a figure 8</string>
+    <string name="compass_unavailable">Compass unavailable</string>
+    <string name="device_has_no_compass_sensor">Your device has no compass sensor, so the Qibla direction can\'t be shown</string>
+    <string name="location_needed_for_qibla">Location is needed to find the Qibla</string>
+    <string name="recalibrate_compass">Recalibrate</string>
+
+    <string name="best">Best</string>
+    <string name="on_time">On time</string>
+    <string name="not_tracked">Not set</string>
+    <string name="coming_soon">Coming soon</string>
+
+    <string name="tasbih">Tasbih</string>
+    <string name="rounds">Rounds</string>
+    <string name="total">Total</string>
+    <string name="reset">Reset</string>
+    <string name="tap_to_count">Tap to count</string>
+
+    <string name="welcome_to_miqat">Welcome to Miqat</string>
+    <string name="your_companion_for_every_prayer">Your companion for every prayer — accurate times, Qibla and tracking, all offline.</string>
+    <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="never_miss_a_prayer">Never miss a prayer</string>
+    <string name="accurate_times_with_live_countdown">Accurate times for your location, with a live countdown to the next prayer.</string>
+    <string name="find_the_qibla_and_track">Find the Qibla and track</string>
+    <string name="point_to_the_kaaba_and_log_every_prayer">Point to the Kaaba and log every prayer — streaks, stats, all offline.</string>
+
+    <string name="onboarding_live_countdown">Live countdown to the next prayer</string>
+    <string name="onboarding_qibla_offline">Qibla compass — fully offline</string>
+    <string name="onboarding_track_streaks">Track every prayer and your streaks</string>
+    <string name="your_madhab">Your Madhab</string>
+    <string name="affects_asr_calculation">Affects the Asr prayer time calculation.</string>
+    <string name="madhab_hanafi">Hanafi</string>
+    <string name="madhab_shafi">Shafi\'i</string>
+    <string name="shadow_length_2x">Shadow length 2× object</string>
+    <string name="shadow_length_1x">Shadow length 1× object</string>
+    <string name="asr_time">Asr time</string>
+    <string name="smart_reminders">Smart reminders</string>
+    <string name="gentle_nudge_before_every_prayer">A gentle nudge before every prayer.</string>
+    <string name="onboarding_before_at_time_alerts">Before-time and at-time alerts</string>
+    <string name="onboarding_jumuah_mulk_kahf">Jumu\'ah · Surah Mulk · Kahf</string>
+    <string name="onboarding_jamaat_reminders">Jamaat reminders</string>
+    <string name="set_your_location">Set your location</string>
+    <string name="so_times_and_qibla_are_exact">So times and Qibla are exact.</string>
+    <string name="onboarding_gps_or_city_search">GPS or city search</string>
+    <string name="onboarding_city_presets">Makkah · Madinah · Karachi presets</string>
+    <string name="works_fully_offline">Works fully offline</string>
+    <string name="continue_label">Continue</string>
+    <string name="allow_notifications">Allow Notifications</string>
+    <string name="start_praying">Start Praying</string>
+
     <string-array name="week_days">
         <item>M</item>
         <item>T</item>

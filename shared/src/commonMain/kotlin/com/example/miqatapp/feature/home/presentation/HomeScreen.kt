@@ -7,24 +7,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -64,7 +60,9 @@ import com.example.miqatapp.resources.week_days
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import com.example.miqatapp.core.enums.color
+import com.example.miqatapp.core.widgets.AppBottomSheet
 import com.example.miqatapp.core.widgets.AppCard
+import com.example.miqatapp.core.widgets.LocalDrawerState
 import com.example.miqatapp.core.widgets.AppTile
 import com.example.miqatapp.core.widgets.AppTileGroup
 import com.example.miqatapp.core.widgets.AppTileItem
@@ -106,6 +104,9 @@ fun HomeScreen() {
     val density = LocalDensity.current
     val rangePx = with(density) { (ExpandedHeader - CollapsedHeader).toPx() }
     val fraction = (scroll.value / rangePx).coerceIn(0f, 1f)
+    val drawerState = LocalDrawerState.current
+    val scope = rememberCoroutineScope()
+
     Box(Modifier.fillMaxSize().background(AppTheme.colors.scaffoldBackgroundColor)) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
@@ -152,6 +153,7 @@ fun HomeScreen() {
             countdown = "in 2h 14m",
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,
+            onMenuClick = { scope.launch { drawerState.open() } },
             onTap = { index = (index + 1) % prayers.size },
         )
 
@@ -180,7 +182,6 @@ private fun TrackControl(tracked: PrayerTrackerStatus?) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TrackingSheet(
     prayer: Prayer,
@@ -188,36 +189,31 @@ private fun TrackingSheet(
     onSelect: (PrayerTrackerStatus?) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = AppTheme.colors.scaffoldBackgroundColor) {
-        Column(
-            Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars).padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        ) {
-            Text(
-                stringResource(Res.string.mark_prayer, prayer.name), color = AppTheme.colors.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
-            )
-            AppTileGroup(
-                items = PrayerTrackerStatus.entries.map { st ->
-                    val sc = st.color
-                    AppTileItem(
-                        title = st.label,
-                        selected = st == current,
-                        leadingIcon = st.icon,
-                        leadingColor = sc,
-                        trailing = if (st == current) { { Icon(Lucide.Check, null, tint = sc, modifier = Modifier.size(20.dp)) } } else null,
-                        onClick = { onSelect(st) },
-                    )
-                },
-            )
-            if (current != null) {
-                AppTile(
-                    title = stringResource(Res.string.clear),
-                    leadingIcon = Lucide.X,
-                    leadingColor = AppTheme.colors.onSurfaceVariant,
-                    onClick = { onSelect(null) },
+    AppBottomSheet(onDismiss = onDismiss) {
+        Text(
+            stringResource(Res.string.mark_prayer, prayer.name), color = AppTheme.colors.onSurface, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 4.dp, bottom = 10.dp),
+        )
+        AppTileGroup(
+            items = PrayerTrackerStatus.entries.map { st ->
+                val sc = st.color
+                AppTileItem(
+                    title = st.label,
+                    selected = st == current,
+                    leadingIcon = st.icon,
+                    leadingColor = sc,
+                    trailing = if (st == current) { { Icon(Lucide.Check, null, tint = sc, modifier = Modifier.size(20.dp)) } } else null,
+                    onClick = { onSelect(st) },
                 )
-            }
+            },
+        )
+        if (current != null) {
+            AppTile(
+                title = stringResource(Res.string.clear),
+                leadingIcon = Lucide.X,
+                leadingColor = AppTheme.colors.onSurfaceVariant,
+                onClick = { onSelect(null) },
+            )
         }
     }
 }

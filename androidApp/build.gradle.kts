@@ -39,6 +39,8 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            // ponytail: reuse the debug keystore so release can install for perf testing.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
