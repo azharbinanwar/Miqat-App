@@ -20,7 +20,7 @@ import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
-import com.example.miqatapp.feature.tasbih.presentation.BeadTasbihScreen
+import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHubScreen
 import com.example.miqatapp.feature.tracker.presentation.TrackerScreen
 import com.example.miqatapp.feature.sandbox.presentation.SandboxScreen
@@ -53,7 +53,7 @@ fun AppNavHost() {
                 composable<AppRoute.Tracker> { TrackerScreen() }
                 composable<AppRoute.Settings> { SettingsScreen() }
                 composable<AppRoute.Tasbih> { TasbihHubScreen() }
-                composable<AppRoute.TasbihCounter> { BeadTasbihScreen() }
+                composable<AppRoute.TasbihCounter> { TasbihScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.HomeAlt> { HomeAltScreen() }
                 composable<AppRoute.PrayerAnimation> { PrayerAnimationScreen() }
                 composable<AppRoute.MosqueScene> { MosqueSceneScreen() }

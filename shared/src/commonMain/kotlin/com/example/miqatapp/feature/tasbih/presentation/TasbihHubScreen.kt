@@ -431,7 +431,7 @@ private fun SetRowTrailing(count: Int, onEditCount: () -> Unit, onRemove: () -> 
 
 /** Bottom sheet to pick repetitions: presets + ±1/±10/±100 quick-adjust. */
 @Composable
-private fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Unit) {
+internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Unit) {
     val c = AppTheme.colors
     AppBottomSheet(onDismiss = onDismiss) {
         Text("Repetitions", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
