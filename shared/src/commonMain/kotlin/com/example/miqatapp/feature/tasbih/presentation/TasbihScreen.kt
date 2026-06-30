@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -24,17 +25,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +42,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -87,14 +85,48 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.currentDate
 import com.example.miqatapp.core.widgets.AppBottomSheet
 import com.example.miqatapp.core.widgets.AppButton
+import com.example.miqatapp.core.widgets.AppTileGroup
+import com.example.miqatapp.core.widgets.AppTileItem
 import com.example.miqatapp.core.widgets.AppCard
 import com.example.miqatapp.core.widgets.LocalOverlay
 import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.reset
 import com.example.miqatapp.resources.tasbih
+import com.example.miqatapp.resources.tasbih_adhkar_complete
+import com.example.miqatapp.resources.tasbih_back
+import com.example.miqatapp.resources.tasbih_color
+import com.example.miqatapp.resources.tasbih_counting_style
+import com.example.miqatapp.resources.tasbih_customize
+import com.example.miqatapp.resources.tasbih_dhikr_complete
+import com.example.miqatapp.resources.tasbih_done
+import com.example.miqatapp.resources.tasbih_edit_count
+import com.example.miqatapp.resources.tasbih_finish
+import com.example.miqatapp.resources.tasbih_finish_glossy
+import com.example.miqatapp.resources.tasbih_finish_marble
+import com.example.miqatapp.resources.tasbih_history
+import com.example.miqatapp.resources.tasbih_in_time_mashaallah
+import com.example.miqatapp.resources.tasbih_mode_beads
+import com.example.miqatapp.resources.tasbih_mode_focus
+import com.example.miqatapp.resources.tasbih_mode_tap
+import com.example.miqatapp.resources.tasbih_pause
+import com.example.miqatapp.resources.tasbih_paused
+import com.example.miqatapp.resources.tasbih_repeat
+import com.example.miqatapp.resources.tasbih_repeat_set
+import com.example.miqatapp.resources.tasbih_resume
+import com.example.miqatapp.resources.tasbih_round_total
+import com.example.miqatapp.resources.tasbih_shape
+import com.example.miqatapp.resources.tasbih_shape_oval
+import com.example.miqatapp.resources.tasbih_shape_round
+import com.example.miqatapp.resources.tasbih_size
+import com.example.miqatapp.resources.tasbih_sound
+import com.example.miqatapp.resources.tasbih_vibration
+import com.example.miqatapp.resources.total
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.ceil
@@ -141,7 +173,7 @@ private data class TasbihSession(val title: String, val target: Int, val date: L
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TasbihScreen(onBack: () -> Unit = {}) {
+fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
     val haptics = LocalHapticFeedback.current
 
     val primary = AppTheme.colors.primary
@@ -169,14 +201,16 @@ fun TasbihScreen(onBack: () -> Unit = {}) {
     var mode by remember { mutableStateOf(TasbihMode.Beads) }
     var vibrate by remember { mutableStateOf(true) }
     var sound by remember { mutableStateOf(false) } // ponytail: toggle only — no audio player wired yet
-    var showHistory by remember { mutableStateOf(false) }
     var showEditCount by remember { mutableStateOf(false) }
     var showCustomize by remember { mutableStateOf(false) }
+    var startMark by remember { mutableStateOf<TimeMark?>(null) } // set on the first bead, for the Done-screen time
+    var elapsedSec by remember { mutableIntStateOf(0) }
     val history = remember { mutableListOf<TasbihSession>().toMutableStateList() }
     val curZikr = queue[index].first
     val curTarget = queue[index].second
 
     fun tick() { // one bead counted
+        if (total == 0) startMark = TimeSource.Monotonic.markNow()
         total++
         val target = queue[index].second
         if (target > 0 && count + 1 >= target) {              // target reached (0 = unlimited → never auto-completes)
@@ -184,12 +218,18 @@ fun TasbihScreen(onBack: () -> Unit = {}) {
             history.add(0, TasbihSession(queue[index].first.title, target, currentDate()))
             if (vibrate) haptics.performHapticFeedback(HapticFeedbackType.LongPress) // heavier on a completed dhikr
             if (index < queue.lastIndex) { index++; count = 0 } // auto-advance to the next dhikr in the set
-            else { count = target; done = true }                // whole set finished → success
+            else { // whole set finished → success
+                count = target
+                elapsedSec = startMark?.elapsedNow()?.inWholeSeconds?.toInt() ?: 0
+                done = true
+            }
         } else {
             count++
             if (vibrate) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
     }
+
+    fun restart() { done = false; index = 0; count = 0; round = 0; total = 0; startMark = null }
 
     // Don't let the drawer's edge-swipe-to-open fight the counting gestures while on this screen.
     val overlay = LocalOverlay.current
@@ -204,10 +244,10 @@ fun TasbihScreen(onBack: () -> Unit = {}) {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Lucide.ArrowLeft, "Back") }
+                    IconButton(onClick = onBack) { Icon(Lucide.ArrowLeft, stringResource(Res.string.tasbih_back)) }
                 },
                 actions = {
-                    IconButton(onClick = { showCustomize = true }) { Icon(Lucide.Palette, "Counting style") }
+                    IconButton(onClick = { showCustomize = true }) { Icon(Lucide.Palette, stringResource(Res.string.tasbih_counting_style)) }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = AppTheme.colors.scaffoldBackgroundColor,
@@ -241,19 +281,22 @@ fun TasbihScreen(onBack: () -> Unit = {}) {
                 total = total,
                 onEdit = { showEditCount = true },
                 onPause = { paused = !paused },
-                onHistory = { showHistory = true },
-                onReset = { count = 0; round = 0; index = 0; done = false },
+                onHistory = { onHistory(curZikr.id) },
+                onReset = { restart() },
                 modifier = Modifier.align(Alignment.TopCenter).padding(12.dp),
             )
 
             if (done) {
-                SuccessOverlay(total = total) { done = false; index = 0; count = 0; round = 0 }
+                TasbihSuccessSheet(
+                    items = queue.map { it.first.title to it.second },
+                    total = total,
+                    elapsedSec = elapsedSec,
+                    onRepeat = { restart() },
+                    onDone = onBack,
+                    onDismiss = { restart() },
+                )
             }
         }
-    }
-
-    if (showHistory) {
-        HistorySheet(history, onClear = { history.clear() }, onDismiss = { showHistory = false })
     }
 
     if (showEditCount) { // edit the active dhikr's target — reuses the hub's picker
@@ -464,7 +507,7 @@ private fun DhikrHeader(
                 Text("$count", fontSize = 46.sp, fontWeight = FontWeight.Bold, color = if (paused) c.onSurfaceVariant else c.primary)
                 Spacer(Modifier.width(4.dp))
                 Text(
-                    if (paused) "paused" else if (target <= 0) "∞" else "/ $target",
+                    if (paused) stringResource(Res.string.tasbih_paused) else if (target <= 0) "∞" else "/ $target",
                     fontSize = 14.sp, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = 7.dp),
                 )
             }
@@ -476,12 +519,12 @@ private fun DhikrHeader(
         Spacer(Modifier.height(12.dp))
         // row 2 — stats (left) · actions (right)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text("Round $round  ·  Total $total", fontSize = 12.sp, color = c.onSurfaceVariant)
+            Text(stringResource(Res.string.tasbih_round_total, round, total), fontSize = 12.sp, color = c.onSurfaceVariant)
             Row {
-                CardAction(Lucide.Pencil, "Edit count", onEdit)
-                CardAction(if (paused) Lucide.Play else Lucide.Pause, if (paused) "Resume" else "Pause", onPause)
-                CardAction(Lucide.History, "History", onHistory)
-                CardAction(Lucide.RotateCcw, "Reset", onReset)
+                CardAction(Lucide.Pencil, stringResource(Res.string.tasbih_edit_count), onEdit)
+                CardAction(if (paused) Lucide.Play else Lucide.Pause, if (paused) stringResource(Res.string.tasbih_resume) else stringResource(Res.string.tasbih_pause), onPause)
+                CardAction(Lucide.History, stringResource(Res.string.tasbih_history), onHistory)
+                CardAction(Lucide.RotateCcw, stringResource(Res.string.reset), onReset)
             }
         }
     }
@@ -518,27 +561,27 @@ private fun CustomizeSheet(
     AppBottomSheet(onDismiss = onDismiss) {
         // animateContentSize so the height grows/shrinks smoothly when the Beads styling appears/disappears
         Column(Modifier.fillMaxWidth().animateContentSize()) {
-            Text("Customize", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
+            Text(stringResource(Res.string.tasbih_customize), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
             Spacer(Modifier.height(16.dp))
-            Text("Counting style", fontSize = 13.sp, color = c.onSurfaceVariant)
+            Text(stringResource(Res.string.tasbih_counting_style), fontSize = 13.sp, color = c.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TasbihMode.entries.forEach { m ->
-                    ModeChip(m.label, m == mode, Modifier.weight(1f)) { onMode(m) }
+                    ModeChip(modeLabel(m), m == mode, Modifier.weight(1f)) { onMode(m) }
                 }
             }
             Spacer(Modifier.height(18.dp))
-            ToggleRow("Vibration", vibrate, onVibrate)
-            ToggleRow("Sound", sound, onSound)
+            ToggleRow(stringResource(Res.string.tasbih_vibration), vibrate, onVibrate)
+            ToggleRow(stringResource(Res.string.tasbih_sound), sound, onSound)
             if (mode == TasbihMode.Beads) {
                 Spacer(Modifier.height(14.dp))
-                ChipRow("Size", listOf("S", "M", "L"), sizeIdx, onSize)
+                ChipRow(stringResource(Res.string.tasbih_size), listOf("S", "M", "L"), sizeIdx, onSize)
                 Spacer(Modifier.height(12.dp))
-                ChipRow("Shape", BeadShape.entries.map { it.name }, shape.ordinal) { onShape(BeadShape.entries[it]) }
+                ChipRow(stringResource(Res.string.tasbih_shape), BeadShape.entries.map { shapeLabel(it) }, shape.ordinal) { onShape(BeadShape.entries[it]) }
                 Spacer(Modifier.height(12.dp))
-                ChipRow("Finish", BeadFinish.entries.map { it.name }, finish.ordinal) { onFinish(BeadFinish.entries[it]) }
+                ChipRow(stringResource(Res.string.tasbih_finish), BeadFinish.entries.map { finishLabel(it) }, finish.ordinal) { onFinish(BeadFinish.entries[it]) }
                 Spacer(Modifier.height(14.dp))
-                Text("Color", fontSize = 13.sp, color = c.onSurfaceVariant)
+                Text(stringResource(Res.string.tasbih_color), fontSize = 13.sp, color = c.onSurfaceVariant)
                 Spacer(Modifier.height(10.dp))
                 MaterialGrid(materials = materials, selected = selectedMaterial, onSelect = onMaterial)
             }
@@ -546,6 +589,32 @@ private fun CustomizeSheet(
         }
     }
 }
+
+// Localized labels for the style enums — rendered here only; the enum names stay as stable ids.
+@Composable
+private fun modeLabel(mode: TasbihMode): String = stringResource(
+    when (mode) {
+        TasbihMode.Beads -> Res.string.tasbih_mode_beads
+        TasbihMode.Tap -> Res.string.tasbih_mode_tap
+        TasbihMode.Focus -> Res.string.tasbih_mode_focus
+    },
+)
+
+@Composable
+private fun shapeLabel(shape: BeadShape): String = stringResource(
+    when (shape) {
+        BeadShape.Round -> Res.string.tasbih_shape_round
+        BeadShape.Oval -> Res.string.tasbih_shape_oval
+    },
+)
+
+@Composable
+private fun finishLabel(finish: BeadFinish): String = stringResource(
+    when (finish) {
+        BeadFinish.Glossy -> Res.string.tasbih_finish_glossy
+        BeadFinish.Marble -> Res.string.tasbih_finish_marble
+    },
+)
 
 /** Label + a row of equal-width text chips. */
 @Composable
@@ -574,51 +643,55 @@ private fun ToggleRow(label: String, checked: Boolean, onChange: (Boolean) -> Un
     }
 }
 
-/** Full-screen success state shown when the whole set is finished. */
+/**
+ * Success sheet shown when the run finishes. Adapts: a single dhikr shows just its count; a set shows
+ * the per-dhikr breakdown via [AppTileGroup] with a Total tile. Scrolls if long; Done/Repeat are pinned
+ * in the sheet footer so they stay reachable.
+ */
 @Composable
-private fun SuccessOverlay(total: Int, onDone: () -> Unit) {
+private fun TasbihSuccessSheet(
+    items: List<Pair<String, Int>>,
+    total: Int,
+    elapsedSec: Int,
+    onRepeat: () -> Unit,
+    onDone: () -> Unit,
+    onDismiss: () -> Unit,
+) {
     val c = AppTheme.colors
-    Box(Modifier.fillMaxSize().background(c.scaffoldBackgroundColor.copy(alpha = 0.94f)), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
-            Text("✓", fontSize = 72.sp, fontWeight = FontWeight.Bold, color = c.primary)
+    val single = items.size == 1
+    val tiles = buildList {
+        items.forEach { (title, n) -> add(AppTileItem(title = title, trailing = { Text("× $n", fontWeight = FontWeight.Bold, color = c.primary) })) }
+        if (!single) add(AppTileItem(title = stringResource(Res.string.total), trailing = { Text("$total", fontWeight = FontWeight.Bold, color = c.primary) }))
+    }
+    AppBottomSheet(
+        onDismiss = onDismiss,
+        footer = {
+            AppButton(stringResource(Res.string.tasbih_done), onClick = onDone, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
-            Text("Set complete", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = c.onSurface)
+            TextButton(onClick = onRepeat, modifier = Modifier.fillMaxWidth()) { Text(if (single) stringResource(Res.string.tasbih_repeat) else stringResource(Res.string.tasbih_repeat_set)) }
+        },
+    ) {
+        var shown by remember { mutableStateOf(false) }
+        LaunchedEffect(Unit) { shown = true }
+        val checkScale by animateFloatAsState(if (shown) 1f else 0.5f, animationSpec = spring(dampingRatio = 0.45f), label = "check")
+        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("✓", fontSize = 56.sp, fontWeight = FontWeight.Bold, color = c.primary, modifier = Modifier.scale(checkScale))
+            Spacer(Modifier.height(8.dp))
+            Text(if (single) stringResource(Res.string.tasbih_dhikr_complete) else stringResource(Res.string.tasbih_adhkar_complete), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = c.onSurface)
             Spacer(Modifier.height(4.dp))
-            Text("$total dhikr · MashaAllah", fontSize = 14.sp, color = c.onSurfaceVariant)
-            Spacer(Modifier.height(24.dp))
-            AppButton("Done", onClick = onDone)
+            Text(stringResource(Res.string.tasbih_in_time_mashaallah, formatDuration(elapsedSec)), fontSize = 13.sp, color = c.onSurfaceVariant)
+            Spacer(Modifier.height(16.dp))
         }
+        AppTileGroup(items = tiles, modifier = Modifier.fillMaxWidth())
     }
 }
 
-@Composable
-private fun HistorySheet(history: List<TasbihSession>, onClear: () -> Unit, onDismiss: () -> Unit) {
-    val c = AppTheme.colors
-    AppBottomSheet(onDismiss = onDismiss) {
-        Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text("History", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
-            Spacer(Modifier.weight(1f))
-            if (history.isNotEmpty()) TextButton(onClick = onClear) { Text("Clear") }
-        }
-        if (history.isEmpty()) {
-            Text("No completed rounds yet.", color = c.onSurfaceVariant, modifier = Modifier.padding(vertical = 24.dp))
-        } else {
-            Column(Modifier.heightIn(max = 380.dp).verticalScroll(rememberScrollState())) {
-                history.forEachIndexed { i, s ->
-                    if (i > 0) HorizontalDivider(color = c.onSurfaceVariant.copy(alpha = 0.15f))
-                    Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text(s.title, fontWeight = FontWeight.SemiBold, color = c.onSurface)
-                            Text("${s.date.day}/${s.date.month.ordinal + 1}/${s.date.year}", fontSize = 12.sp, color = c.onSurfaceVariant)
-                        }
-                        Text("× ${s.target}", fontWeight = FontWeight.Bold, color = c.primary)
-                    }
-                }
-            }
-        }
-        Spacer(Modifier.height(8.dp))
-    }
+private fun formatDuration(sec: Int): String {
+    val m = sec / 60
+    val s = sec % 60
+    return if (m > 0) "${m}m ${s}s" else "${s}s"
 }
+
 
 /**
  * A single 3D bead. [angleRad] is the radial direction (centre → bead) so Oval/Diamond elongate along

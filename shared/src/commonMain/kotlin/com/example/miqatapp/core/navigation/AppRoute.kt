@@ -38,6 +38,9 @@ sealed interface AppRoute {
     data object TasbihCounter : AppRoute
 
     @Serializable
+    data class TasbihHistory(val dhikrId: String? = null) : AppRoute
+
+    @Serializable
     data object HomeAlt : AppRoute
 
     @Serializable

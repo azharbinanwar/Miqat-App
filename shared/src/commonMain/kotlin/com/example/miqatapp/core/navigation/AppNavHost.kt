@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.miqatapp.core.widgets.AppDrawer
 import com.example.miqatapp.core.widgets.LocalDrawerState
 import com.example.miqatapp.core.widgets.LocalOverlay
@@ -21,6 +22,7 @@ import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
+import com.example.miqatapp.feature.tasbih.presentation.TasbihHistoryScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHubScreen
 import com.example.miqatapp.feature.tracker.presentation.TrackerScreen
 import com.example.miqatapp.feature.sandbox.presentation.SandboxScreen
@@ -52,8 +54,16 @@ fun AppNavHost() {
                 composable<AppRoute.Qibla> { QiblaScreen() }
                 composable<AppRoute.Tracker> { TrackerScreen() }
                 composable<AppRoute.Settings> { SettingsScreen() }
-                composable<AppRoute.Tasbih> { TasbihHubScreen() }
-                composable<AppRoute.TasbihCounter> { TasbihScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
+                composable<AppRoute.TasbihCounter> {
+                    TasbihScreen(
+                        onBack = { navController.popBackStack() },
+                        onHistory = { id -> navController.navigate(AppRoute.TasbihHistory(id)) },
+                    )
+                }
+                composable<AppRoute.TasbihHistory> { entry ->
+                    TasbihHistoryScreen(dhikrId = entry.toRoute<AppRoute.TasbihHistory>().dhikrId, onBack = { navController.popBackStack() })
+                }
                 composable<AppRoute.HomeAlt> { HomeAltScreen() }
                 composable<AppRoute.PrayerAnimation> { PrayerAnimationScreen() }
                 composable<AppRoute.MosqueScene> { MosqueSceneScreen() }

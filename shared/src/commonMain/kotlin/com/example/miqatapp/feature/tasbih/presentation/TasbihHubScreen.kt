@@ -47,6 +47,7 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Layers
+import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Minus
@@ -69,6 +70,35 @@ import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.heart_filled
 import com.example.miqatapp.resources.heart_outline
 import com.example.miqatapp.resources.tasbih
+import com.example.miqatapp.resources.tasbih_add_more_azkar
+import com.example.miqatapp.resources.tasbih_add_to_favorites
+import com.example.miqatapp.resources.tasbih_add_your_own
+import com.example.miqatapp.resources.tasbih_cancel
+import com.example.miqatapp.resources.tasbih_cancel_selection
+import com.example.miqatapp.resources.tasbih_cat_durood
+import com.example.miqatapp.resources.tasbih_cat_names
+import com.example.miqatapp.resources.tasbih_cat_quranic
+import com.example.miqatapp.resources.tasbih_cat_tasbihat
+import com.example.miqatapp.resources.tasbih_checked
+import com.example.miqatapp.resources.tasbih_create_start
+import com.example.miqatapp.resources.tasbih_custom
+import com.example.miqatapp.resources.tasbih_favorited
+import com.example.miqatapp.resources.tasbih_favorites
+import com.example.miqatapp.resources.tasbih_history
+import com.example.miqatapp.resources.tasbih_menu
+import com.example.miqatapp.resources.tasbih_my_sets
+import com.example.miqatapp.resources.tasbih_n_azkar
+import com.example.miqatapp.resources.tasbih_n_selected
+import com.example.miqatapp.resources.tasbih_new_set
+import com.example.miqatapp.resources.tasbih_remove
+import com.example.miqatapp.resources.tasbih_repetitions
+import com.example.miqatapp.resources.tasbih_resume
+import com.example.miqatapp.resources.tasbih_see_all
+import com.example.miqatapp.resources.tasbih_set_custom_count
+import com.example.miqatapp.resources.tasbih_set_name
+import com.example.miqatapp.resources.tasbih_show_less
+import com.example.miqatapp.resources.tasbih_subtitle_optional
+import com.example.miqatapp.resources.tasbih_view_set
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -131,7 +161,7 @@ object TasbihStore {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TasbihHubScreen() {
+fun TasbihHubScreen(onHistory: () -> Unit = {}) {
     val c = AppTheme.colors
     val drawerState = LocalDrawerState.current
     val nav = LocalNavController.current
@@ -160,13 +190,17 @@ fun TasbihHubScreen() {
         containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(if (selectionMode) "${order.size} selected" else stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
+                title = { Text(if (selectionMode) stringResource(Res.string.tasbih_n_selected, order.size) else stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    if (selectionMode) IconButton(onClick = { clearSelection() }) { Icon(Lucide.X, "Cancel selection") }
-                    else IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") }
+                    if (selectionMode) IconButton(onClick = { clearSelection() }) { Icon(Lucide.X, stringResource(Res.string.tasbih_cancel_selection)) }
+                    else IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.tasbih_menu)) }
+                },
+                actions = {
+                    if (!selectionMode) IconButton(onClick = onHistory) { Icon(Lucide.History, stringResource(Res.string.tasbih_history)) }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor, titleContentColor = c.onSurface, navigationIconContentColor = c.onSurface,
+                    containerColor = c.scaffoldBackgroundColor, titleContentColor = c.onSurface,
+                    navigationIconContentColor = c.onSurface, actionIconContentColor = c.onSurface,
                 ),
             )
         },
@@ -193,13 +227,17 @@ fun TasbihHubScreen() {
                                     AppTileItem(
                                         title = z.arabic, subtitle = z.title,
                                         selected = z.id in order,
-                                        onClick = { if (selectionMode) toggle(z) else start(listOf(z to z.defaultCount)) },
+                                        onClick = { if (selectionMode) toggle(z) else start(listOf(z to (counts[z.id] ?: z.defaultCount))) },
                                         onLongClick = { toggle(z) },
                                         trailing = {
-                                            if (selectionMode) {
-                                                CountAndCheck(z.id in order, counts[z.id] ?: z.defaultCount, onEditCount = { countSheetFor = z }, onToggle = { toggle(z) })
-                                            } else {
-                                                HeartIcon(filled = true, tint = c.primary, size = 20.dp, modifier = Modifier.clickable { TasbihStore.favIds.remove(z.id) })
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                CountTag(counts[z.id] ?: z.defaultCount) { countSheetFor = z }
+                                                Spacer(Modifier.width(4.dp))
+                                                if (selectionMode) {
+                                                    SelectCheck(z.id in order) { toggle(z) }
+                                                } else {
+                                                    HeartIcon(filled = true, tint = c.primary, size = 20.dp, modifier = Modifier.clickable { TasbihStore.favIds.remove(z.id) })
+                                                }
                                             }
                                         },
                                     ),
@@ -208,7 +246,7 @@ fun TasbihHubScreen() {
                             favSets.forEach { s ->
                                 add(
                                     AppTileItem(
-                                        title = s.name, subtitle = "${s.items.size} azkar", leadingIcon = Lucide.Layers,
+                                        title = s.name, subtitle = stringResource(Res.string.tasbih_n_azkar, s.items.size), leadingIcon = Lucide.Layers,
                                         onClick = { if (!selectionMode) start(s.items) }, // a set can't be nested into a set
                                         trailing = { HeartIcon(filled = true, tint = c.primary, size = 20.dp, modifier = Modifier.clickable { val i = TasbihStore.sets.indexOf(s); if (i >= 0) TasbihStore.sets[i] = s.copy(favorite = false) }) },
                                     ),
@@ -218,25 +256,25 @@ fun TasbihHubScreen() {
                         val shown = if (favExpanded) all else all.take(3)
                         val favItems = if (all.size > 3) {
                             shown + AppTileItem(
-                                title = if (favExpanded) "Show less" else "See all (${all.size})",
+                                title = if (favExpanded) stringResource(Res.string.tasbih_show_less) else stringResource(Res.string.tasbih_see_all, all.size),
                                 leadingIcon = if (favExpanded) Lucide.ChevronUp else Lucide.ChevronDown,
                                 onClick = { favExpanded = !favExpanded },
                             )
                         } else {
                             shown
                         }
-                        AppTileGroup(title = "Favorites", items = favItems)
+                        AppTileGroup(title = stringResource(Res.string.tasbih_favorites), items = favItems)
                     }
                 }
 
                 if (TasbihStore.sets.isNotEmpty()) {
                     item {
                         AppTileGroup(
-                            title = "My Sets",
+                            title = stringResource(Res.string.tasbih_my_sets),
                             items = TasbihStore.sets.map { s ->
                                 AppTileItem(
                                     title = s.name,
-                                    subtitle = if (s.subtitle.isNotBlank()) s.subtitle else "${s.items.size} azkar",
+                                    subtitle = if (s.subtitle.isNotBlank()) s.subtitle else stringResource(Res.string.tasbih_n_azkar, s.items.size),
                                     leadingIcon = Lucide.Layers,
                                     badge = if (s.favorite) ({ HeartIcon(filled = true, tint = c.primary, size = 14.dp) }) else null,
                                     onClick = { start(s.items) },
@@ -250,7 +288,7 @@ fun TasbihHubScreen() {
                     val rows = CATALOG.filter { it.category == cat }
                     item {
                         AppTileGroup(
-                            title = cat.label,
+                            title = categoryLabel(cat),
                             items = rows.map { z ->
                                 AppTileItem(
                                     title = z.arabic,
@@ -259,15 +297,19 @@ fun TasbihHubScreen() {
                                     onClick = { if (selectionMode) toggle(z) else start(listOf(z to (counts[z.id] ?: z.defaultCount))) },
                                     onLongClick = { toggle(z) }, // long-press enters selection mode
                                     trailing = {
-                                        if (selectionMode) {
-                                            CountAndCheck(z.id in order, counts[z.id] ?: z.defaultCount, onEditCount = { countSheetFor = z }, onToggle = { toggle(z) })
-                                        } else {
-                                            val fav = z.id in TasbihStore.favIds
-                                            HeartIcon(filled = fav, tint = if (fav) c.primary else c.onSurfaceVariant, size = 22.dp, modifier = Modifier.clickable { if (fav) TasbihStore.favIds.remove(z.id) else TasbihStore.favIds.add(z.id) })
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            CountTag(counts[z.id] ?: z.defaultCount) { countSheetFor = z }
+                                            Spacer(Modifier.width(4.dp))
+                                            if (selectionMode) {
+                                                SelectCheck(z.id in order) { toggle(z) }
+                                            } else {
+                                                val fav = z.id in TasbihStore.favIds
+                                                HeartIcon(filled = fav, tint = if (fav) c.primary else c.onSurfaceVariant, size = 22.dp, modifier = Modifier.clickable { if (fav) TasbihStore.favIds.remove(z.id) else TasbihStore.favIds.add(z.id) })
+                                            }
                                         }
                                     },
                                 )
-                            } + AppTileItem(title = "Add your own", leadingIcon = Lucide.Plus, onClick = { /* ponytail: add-your-own sheet later */ }),
+                            } + AppTileItem(title = stringResource(Res.string.tasbih_add_your_own), leadingIcon = Lucide.Plus, onClick = { /* ponytail: add-your-own sheet later */ }),
                         )
                     }
                 }
@@ -275,7 +317,7 @@ fun TasbihHubScreen() {
 
             if (order.isNotEmpty()) {
                 AppButton(
-                    text = "View set (${order.size})",
+                    text = stringResource(Res.string.tasbih_view_set, order.size),
                     onClick = { sheetVisible = true },
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
                 )
@@ -306,7 +348,7 @@ fun TasbihHubScreen() {
     countSheetFor?.let { z ->
         CountSheet(
             current = counts[z.id] ?: z.defaultCount,
-            onPick = { counts[z.id] = it; if (z.id !in order) order.add(z.id) },
+            onPick = { counts[z.id] = it }, // just set the count — selecting is the check's job
             onDismiss = { countSheetFor = null },
         )
     }
@@ -320,34 +362,37 @@ private fun ActiveSessionCard(name: String, count: Int, target: Int, onResume: (
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text("Resume", fontSize = 12.sp, color = c.onPrimary.copy(alpha = 0.8f))
+            Text(stringResource(Res.string.tasbih_resume), fontSize = 12.sp, color = c.onPrimary.copy(alpha = 0.8f))
             Spacer(Modifier.height(2.dp))
             Text(name, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = c.onPrimary)
             Text("$count / $target", fontSize = 13.sp, color = c.onPrimary.copy(alpha = 0.9f))
         }
         Box(Modifier.size(40.dp).clip(CircleShape).background(c.onPrimary.copy(alpha = 0.18f)), contentAlignment = Alignment.Center) {
-            Icon(Lucide.Play, "Resume", tint = c.onPrimary, modifier = Modifier.size(20.dp))
+            Icon(Lucide.Play, stringResource(Res.string.tasbih_resume), tint = c.onPrimary, modifier = Modifier.size(20.dp))
         }
     }
 }
 
-/** Trailing for a catalog tile: count chip (tap = edit) + check circle (tap = add to group). */
+/** Repetition count shown on every catalog tile — tap to edit before starting. */
 @Composable
-private fun CountAndCheck(selected: Boolean, shownCount: Int, onEditCount: () -> Unit, onToggle: () -> Unit) {
+private fun CountTag(shownCount: Int, onEditCount: () -> Unit) {
     val c = AppTheme.colors
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            if (shownCount == 0) "∞" else "×$shownCount",
-            fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (selected) c.primary else c.onSurfaceVariant,
-            modifier = Modifier.clip(RoundedCornerShape(10.dp)).clickable(onClick = onEditCount).padding(horizontal = 10.dp, vertical = 6.dp),
-        )
-        Spacer(Modifier.width(6.dp))
-        Box(
-            Modifier.size(26.dp).clip(CircleShape).background(if (selected) c.primary else Color.Transparent)
-                .border(1.5.dp, if (selected) c.primary else c.onSurfaceVariant.copy(alpha = 0.4f), CircleShape).clickable(onClick = onToggle),
-            contentAlignment = Alignment.Center,
-        ) { if (selected) Icon(Lucide.Check, "Checked", tint = c.onPrimary, modifier = Modifier.size(16.dp)) }
-    }
+    Text(
+        if (shownCount == 0) "∞" else "×$shownCount",
+        fontSize = 13.sp, fontWeight = FontWeight.Bold, color = c.onSurfaceVariant,
+        modifier = Modifier.clip(RoundedCornerShape(10.dp)).clickable(onClick = onEditCount).padding(horizontal = 10.dp, vertical = 6.dp),
+    )
+}
+
+/** Selection-mode trailing: a check circle (tap = add/remove). */
+@Composable
+private fun SelectCheck(selected: Boolean, onToggle: () -> Unit) {
+    val c = AppTheme.colors
+    Box(
+        Modifier.size(26.dp).clip(CircleShape).background(if (selected) c.primary else Color.Transparent)
+            .border(1.5.dp, if (selected) c.primary else c.onSurfaceVariant.copy(alpha = 0.4f), CircleShape).clickable(onClick = onToggle),
+        contentAlignment = Alignment.Center,
+    ) { if (selected) Icon(Lucide.Check, stringResource(Res.string.tasbih_checked), tint = c.onPrimary, modifier = Modifier.size(16.dp)) }
 }
 
 /** View/edit the selected set before creating: name, subtitle, ❤ favorite, items (reorder/count/remove), Add more, then Cancel/Create. */
@@ -370,19 +415,19 @@ private fun ViewSetSheet(
         onDismiss = onAddMore,
         footer = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                AppButton("Cancel", onClick = onCancel, variant = AppButtonVariant.Outline, modifier = Modifier.weight(1f))
-                AppButton("Create & start", onClick = onCreate, modifier = Modifier.weight(1f))
+                AppButton(stringResource(Res.string.tasbih_cancel), onClick = onCancel, variant = AppButtonVariant.Outline, modifier = Modifier.weight(1f))
+                AppButton(stringResource(Res.string.tasbih_create_start), onClick = onCreate, modifier = Modifier.weight(1f))
             }
         },
     ) {
-        Text("New set", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
+        Text(stringResource(Res.string.tasbih_new_set), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
         Spacer(Modifier.height(12.dp))
-        AppTextField(name, onName, placeholder = "Set name")
+        AppTextField(name, onName, placeholder = stringResource(Res.string.tasbih_set_name))
         Spacer(Modifier.height(8.dp))
-        AppTextField(subtitle, onSubtitle, placeholder = "Subtitle (optional)")
+        AppTextField(subtitle, onSubtitle, placeholder = stringResource(Res.string.tasbih_subtitle_optional))
         Spacer(Modifier.height(10.dp))
         AppTile(
-            title = if (favorite) "Favorited" else "Add to favorites",
+            title = if (favorite) stringResource(Res.string.tasbih_favorited) else stringResource(Res.string.tasbih_add_to_favorites),
             onClick = onToggleFav,
             trailing = { HeartIcon(filled = favorite, tint = if (favorite) c.primary else c.onSurfaceVariant) },
         )
@@ -399,7 +444,7 @@ private fun ViewSetSheet(
             onReorder = { from, to -> order.add(to, order.removeAt(from)) }, // long-press a row, drag to reorder
         )
         Spacer(Modifier.height(4.dp))
-        AppTile(title = "Add more azkar", leadingIcon = Lucide.Plus, onClick = onAddMore)
+        AppTile(title = stringResource(Res.string.tasbih_add_more_azkar), leadingIcon = Lucide.Plus, onClick = onAddMore)
     }
 }
 
@@ -424,7 +469,7 @@ private fun SetRowTrailing(count: Int, onEditCount: () -> Unit, onRemove: () -> 
             modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onEditCount).padding(horizontal = 8.dp, vertical = 4.dp),
         )
         IconButton(onClick = onRemove, modifier = Modifier.size(30.dp)) {
-            Icon(Lucide.Minus, "Remove", tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp))
+            Icon(Lucide.Minus, stringResource(Res.string.tasbih_remove), tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp))
         }
     }
 }
@@ -434,7 +479,7 @@ private fun SetRowTrailing(count: Int, onEditCount: () -> Unit, onRemove: () -> 
 internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Unit) {
     val c = AppTheme.colors
     AppBottomSheet(onDismiss = onDismiss) {
-        Text("Repetitions", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
+        Text(stringResource(Res.string.tasbih_repetitions), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
         Spacer(Modifier.height(14.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             COUNT_PRESETS.forEach { p ->
@@ -445,7 +490,7 @@ internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Un
             }
         }
         Spacer(Modifier.height(18.dp))
-        Text("Custom", fontSize = 13.sp, color = c.onSurfaceVariant)
+        Text(stringResource(Res.string.tasbih_custom), fontSize = 13.sp, color = c.onSurfaceVariant)
         Spacer(Modifier.height(8.dp))
         var custom by remember { mutableStateOf(if (current > 0) current else 33) }
         Text("$custom", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = c.onSurface, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
@@ -459,10 +504,21 @@ internal fun CountSheet(current: Int, onPick: (Int) -> Unit, onDismiss: () -> Un
         Box(
             Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(c.primary).clickable { onPick(custom); onDismiss() }.padding(vertical = 14.dp),
             contentAlignment = Alignment.Center,
-        ) { Text("Set custom count", fontWeight = FontWeight.Bold, color = c.onPrimary) }
+        ) { Text(stringResource(Res.string.tasbih_set_custom_count), fontWeight = FontWeight.Bold, color = c.onPrimary) }
         Spacer(Modifier.height(4.dp))
     }
 }
+
+// Localized category title — rendered here only; ZikrCategory's `label` stays as a stable id.
+@Composable
+private fun categoryLabel(category: ZikrCategory): String = stringResource(
+    when (category) {
+        ZikrCategory.Tasbihat -> Res.string.tasbih_cat_tasbihat
+        ZikrCategory.Durood -> Res.string.tasbih_cat_durood
+        ZikrCategory.Names -> Res.string.tasbih_cat_names
+        ZikrCategory.Quranic -> Res.string.tasbih_cat_quranic
+    },
+)
 
 @Composable
 private fun AdjChip(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
