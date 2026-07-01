@@ -42,6 +42,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.painterResource
@@ -141,9 +142,10 @@ fun AppDrawer(
         modifier = modifier,
         drawerState = drawerState,
         gesturesEnabled = drawerState.targetValue == DrawerValue.Open || overlay.drawerGesturesEnabled,
+        scrimColor = Color.Black.copy(alpha = 0.32f), // real dim so the panel floats (matches AppBottomSheet)
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = AppTheme.colors.scaffoldBackgroundColor,
+                drawerContainerColor = AppTheme.colors.surfaceContainerHigh, // distinct elevated panel, not raw white-on-white
                 drawerShape = RoundedCornerShape(28.dp),
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars) // stay clear of notch / nav bar

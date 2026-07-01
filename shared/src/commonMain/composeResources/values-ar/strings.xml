@@ -145,6 +145,78 @@
     <string name="allow_notifications">السماح بالإشعارات</string>
     <string name="start_praying">ابدأ الصلاة</string>
 
+    <!-- Prayer names (reminders / focus) -->
+    <string name="prayer_fajr">الفجر</string>
+    <string name="prayer_dhuhr">الظهر</string>
+    <string name="prayer_asr">العصر</string>
+    <string name="prayer_maghrib">المغرب</string>
+    <string name="prayer_isha">العشاء</string>
+    <string name="prayer_jumuah">الجمعة</string>
+
+    <!-- Prayer Focus -->
+    <string name="back">رجوع</string>
+    <string name="minutes_short">د</string>
+    <string name="silence_phone_around_each_prayer_set_separately">يكتم هاتفك حول كل صلاة ثم يعيده تلقائياً. اضبط كل صلاة على حدة.</string>
+    <string name="start_after">يبدأ بعد</string>
+    <string name="silence_for">يكتم لمدة</string>
+
+    <!-- Settings -->
+    <string name="menu">القائمة</string>
+    <string name="general">عام</string>
+    <string name="prayer_and_alerts">الصلاة والتنبيهات</string>
+    <string name="about">حول التطبيق</string>
+    <string name="appearance">المظهر</string>
+    <string name="time_format">صيغة الوقت</string>
+    <string name="language">اللغة</string>
+    <string name="location">الموقع</string>
+    <string name="prayer_calculation">حساب مواقيت الصلاة</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="prayer_focus">تركيز الصلاة</string>
+    <string name="auto_silence_around_prayer">كتم تلقائي حول الصلاة</string>
+    <string name="all_alerts_on">جميع التنبيهات مفعّلة</string>
+    <string name="light">فاتح</string>
+    <string name="dark">داكن</string>
+    <string name="system">النظام</string>
+    <string name="time_12_hour">12 ساعة</string>
+    <string name="time_24_hour">24 ساعة</string>
+
+    <!-- Notifications -->
+    <string name="all_alerts">جميع التنبيهات</string>
+    <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
+    <string name="each_prayer">كل صلاة</string>
+    <string name="adhan_sound">صوت الأذان</string>
+    <string name="vibration">الاهتزاز</string>
+    <string name="remind_before">التذكير قبل</string>
+    <string name="at_prayer_time">عند وقت الصلاة</string>
+    <string name="jamaat_reminder">تذكير الجماعة</string>
+    <string name="jamaat_after_start">الجماعة بعد البدء</string>
+    <string name="friday_jumuah">الجمعة · صلاة الجمعة</string>
+    <string name="remind_if_missed">التذكير عند الفوات</string>
+    <string name="sunnah_reminders">تذكيرات السنن</string>
+    <string name="after_isha">بعد العشاء</string>
+    <string name="surah_al_kahf">سورة الكهف</string>
+    <string name="friday">الجمعة</string>
+    <string name="tahajjud">التهجد</string>
+    <string name="last_third_of_the_night">الثلث الأخير من الليل</string>
+    <string name="duha">الضحى</string>
+    <string name="mid_morning">منتصف الصباح</string>
+    <string name="dhikr">ذكر</string>
+    <string name="morning_adhkar">أذكار الصباح</string>
+    <string name="after_fajr">بعد الفجر</string>
+    <string name="evening_adhkar">أذكار المساء</string>
+    <string name="after_asr">بعد العصر</string>
+    <string name="daily_tasbih_nudge">تذكير التسبيح اليومي</string>
+    <string name="a_gentle_reminder_to_count">تذكير لطيف للعد</string>
+    <string name="behaviour">السلوك</string>
+    <string name="respect_do_not_disturb">احترام وضع عدم الإزعاج</string>
+    <string name="allow_snooze">السماح بالغفوة</string>
+    <string name="i_prayed_quick_action">إجراء سريع \"لقد صلّيت\"</string>
+    <string name="log_a_prayer_from_the_notification">سجّل صلاة من الإشعار</string>
+    <string name="full_adhan">أذان كامل</string>
+    <string name="takbir">تكبير</string>
+    <string name="beep">صفير</string>
+    <string name="silent">صامت</string>
+
     <string-array name="week_days">
         <item>ن</item>
         <item>ث</item>

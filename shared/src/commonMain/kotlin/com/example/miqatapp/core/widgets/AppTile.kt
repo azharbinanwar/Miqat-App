@@ -22,8 +22,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.GripVertical
 import com.composables.icons.lucide.Lucide
+import com.example.miqatapp.core.locale.tr
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -299,7 +302,8 @@ private fun TileRow(
             trailing != null -> { Spacer(Modifier.width(8.dp)); trailing() }
             onClick != null -> {
                 Spacer(Modifier.width(8.dp))
-                Text("›", style = MaterialTheme.typography.titleLarge, color = if (selected) c.primary else c.onSurfaceVariant)
+                // a vector icon (not a text glyph) so RTL doesn't double-mirror it; tr picks the forward direction
+                Icon(tr(Lucide.ChevronRight, Lucide.ChevronLeft), null, tint = if (selected) c.primary else c.onSurfaceVariant, modifier = Modifier.size(20.dp))
             }
         }
     }

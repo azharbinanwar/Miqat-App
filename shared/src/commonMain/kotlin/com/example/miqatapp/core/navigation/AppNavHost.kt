@@ -20,6 +20,8 @@ import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
+import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
+import com.example.miqatapp.feature.settings.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHistoryScreen
@@ -53,7 +55,14 @@ fun AppNavHost() {
                 composable<AppRoute.PrayerTimes> { PrayerTimesScreen() }
                 composable<AppRoute.Qibla> { QiblaScreen() }
                 composable<AppRoute.Tracker> { TrackerScreen() }
-                composable<AppRoute.Settings> { SettingsScreen() }
+                composable<AppRoute.Settings> {
+                    SettingsScreen(
+                        onNotifications = { navController.navigate(AppRoute.Notifications) },
+                        onPrayerFocus = { navController.navigate(AppRoute.PrayerFocus) },
+                    )
+                }
+                composable<AppRoute.Notifications> { NotificationsScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.PrayerFocus> { PrayerFocusScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
                     TasbihScreen(

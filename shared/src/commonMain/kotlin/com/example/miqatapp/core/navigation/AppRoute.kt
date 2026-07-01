@@ -32,6 +32,12 @@ sealed interface AppRoute {
     data object Settings : AppRoute
 
     @Serializable
+    data object Notifications : AppRoute
+
+    @Serializable
+    data object PrayerFocus : AppRoute
+
+    @Serializable
     data object Tasbih : AppRoute
 
     @Serializable

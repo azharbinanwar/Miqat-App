@@ -75,7 +75,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Pencil
 import com.composables.icons.lucide.Play
@@ -83,6 +84,7 @@ import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.widgets.AppBottomSheet
 import com.example.miqatapp.core.widgets.AppButton
 import com.example.miqatapp.core.widgets.AppTileGroup
@@ -244,7 +246,7 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Lucide.ArrowLeft, stringResource(Res.string.tasbih_back)) }
+                    IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.tasbih_back)) }
                 },
                 actions = {
                     IconButton(onClick = { showCustomize = true }) { Icon(Lucide.Palette, stringResource(Res.string.tasbih_counting_style)) }

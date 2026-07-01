@@ -38,9 +38,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.navigation.LocalNavController
 import kotlin.math.PI
 import kotlin.math.sin
@@ -154,7 +156,7 @@ fun MosqueSceneScreen() {
             Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.statusBars).padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = { nav.popBackStack() }) { Icon(Lucide.ArrowLeft, "Back", tint = Color.White) }
+            IconButton(onClick = { nav.popBackStack() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), "Back", tint = Color.White) }
             Text(prayers[index].name, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
         }
         Text(

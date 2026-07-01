@@ -26,9 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
+import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.widgets.AppCard
 import com.example.miqatapp.core.widgets.AppTile
@@ -71,7 +73,7 @@ fun TasbihHistoryScreen(dhikrId: String? = null, onBack: () -> Unit = {}) {
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.tasbih_history), fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Lucide.ArrowLeft, stringResource(Res.string.tasbih_back)) } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.tasbih_back)) } },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = c.scaffoldBackgroundColor,
                     titleContentColor = c.onSurface,

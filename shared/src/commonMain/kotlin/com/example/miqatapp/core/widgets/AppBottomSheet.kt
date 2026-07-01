@@ -48,7 +48,7 @@ fun AppBottomSheet(
         sheetState = sheetState,
         containerColor = AppTheme.colors.surfaceContainerHigh, // distinct from scaffold + cardColor so the edge and inner tiles read in both themes
         shape = RoundedCornerShape(28.dp),
-        scrimColor = AppTheme.colors.primary.copy(alpha = 0.10f), // subtle on-brand dim (+ blur) so the sheet stands out in dark & light
+        scrimColor = Color.Black.copy(alpha = 0.32f), // real dim so the sheet reads as a floating panel (matches AppDrawer)
         // float on every side: keep clear of status bar (top) AND nav bar (bottom) so it never touches the top
         modifier = modifier
             .windowInsetsPadding(WindowInsets.systemBars)

@@ -39,7 +39,9 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
+import com.example.miqatapp.core.locale.tr
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.core.enums.Prayer
 import com.example.miqatapp.core.navigation.LocalNavController
@@ -79,7 +81,7 @@ fun PrayerAnimationScreen() {
     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(sky))) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.statusBars)) {
             Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { nav.popBackStack() }) { Icon(Lucide.ArrowLeft, "Back", tint = Color.White) }
+                IconButton(onClick = { nav.popBackStack() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), "Back", tint = Color.White) }
                 Text("Sun Journey", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
             }
 

@@ -36,7 +36,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ChevronLeft
+import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Flame
@@ -49,6 +50,7 @@ import com.example.miqatapp.core.enums.Prayer
 import com.example.miqatapp.core.enums.PrayerTimeStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
+import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.navigation.LocalNavController
 import kotlin.math.PI
 import kotlin.math.cos
@@ -75,7 +77,7 @@ fun HomeAltScreen() {
     ) {
         // top bar
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { nav.popBackStack() }) { Icon(Lucide.ArrowLeft, "Back", tint = AppTheme.colors.onSurface) }
+            IconButton(onClick = { nav.popBackStack() }) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), "Back", tint = AppTheme.colors.onSurface) }
             Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Lucide.MapPin, null, tint = AppTheme.colors.primary, modifier = Modifier.size(16.dp))

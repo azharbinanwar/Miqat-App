@@ -28,7 +28,7 @@ actual fun rememberHeading(): HeadingState {
         }
         val matrix = FloatArray(9)
         val orientation = FloatArray(3)
-        val listener = object : SensorourEventListener {
+        val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(matrix, event.values)
                 SensorManager.getOrientation(matrix, orientation)

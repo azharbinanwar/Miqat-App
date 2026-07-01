@@ -27,6 +27,8 @@ import com.composables.icons.lucide.Settings
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.Prayer
 import com.example.miqatapp.core.enums.color
+import com.example.miqatapp.core.prefs.Prefs
+import com.example.miqatapp.core.prefs.TimeFormat
 import com.example.miqatapp.core.widgets.LocalDrawerState
 import com.example.miqatapp.core.widgets.AppTileGroup
 import com.example.miqatapp.core.widgets.AppTileItem
@@ -144,5 +146,5 @@ private fun mockTime(date: LocalDate, prayer: Prayer): String {
         Prayer.Isha -> 19 * 60 + 42
     }
     val m = base + (date.dayOfMonth % 7) - 3
-    return "${(m / 60).toString().padStart(2, '0')}:${(m % 60).toString().padStart(2, '0')}"
+    return TimeFormat.fromValue(Prefs.timeFormat).format(m)
 }

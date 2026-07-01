@@ -145,6 +145,78 @@
     <string name="allow_notifications">Allow Notifications</string>
     <string name="start_praying">Start Praying</string>
 
+    <!-- Prayer names (reminders / focus) -->
+    <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_dhuhr">Dhuhr</string>
+    <string name="prayer_asr">Asr</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isha</string>
+    <string name="prayer_jumuah">Jumu\'ah</string>
+
+    <!-- Prayer Focus -->
+    <string name="back">Back</string>
+    <string name="minutes_short">min</string>
+    <string name="silence_phone_around_each_prayer_set_separately">Silence your phone around each prayer, then restore it automatically. Set each prayer separately.</string>
+    <string name="start_after">Start after</string>
+    <string name="silence_for">Silence for</string>
+
+    <!-- Settings -->
+    <string name="menu">Menu</string>
+    <string name="general">General</string>
+    <string name="prayer_and_alerts">Prayer &amp; alerts</string>
+    <string name="about">About</string>
+    <string name="appearance">Appearance</string>
+    <string name="time_format">Time format</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="prayer_calculation">Prayer calculation</string>
+    <string name="notifications">Notifications</string>
+    <string name="prayer_focus">Prayer Focus</string>
+    <string name="auto_silence_around_prayer">Auto-silence around prayer</string>
+    <string name="all_alerts_on">All alerts on</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+    <string name="time_12_hour">12-hour</string>
+    <string name="time_24_hour">24-hour</string>
+
+    <!-- Notifications -->
+    <string name="all_alerts">All alerts</string>
+    <string name="master_switch_for_every_reminder">Master switch for every reminder</string>
+    <string name="each_prayer">Each prayer</string>
+    <string name="adhan_sound">Adhan sound</string>
+    <string name="vibration">Vibration</string>
+    <string name="remind_before">Remind before</string>
+    <string name="at_prayer_time">At prayer time</string>
+    <string name="jamaat_reminder">Jamaat reminder</string>
+    <string name="jamaat_after_start">Jamaat after start</string>
+    <string name="friday_jumuah">Friday · Jumu\'ah</string>
+    <string name="remind_if_missed">Remind if missed</string>
+    <string name="sunnah_reminders">Sunnah reminders</string>
+    <string name="after_isha">After Isha</string>
+    <string name="surah_al_kahf">Surah Al-Kahf</string>
+    <string name="friday">Friday</string>
+    <string name="tahajjud">Tahajjud</string>
+    <string name="last_third_of_the_night">Last third of the night</string>
+    <string name="duha">Duha</string>
+    <string name="mid_morning">Mid-morning</string>
+    <string name="dhikr">Dhikr</string>
+    <string name="morning_adhkar">Morning adhkar</string>
+    <string name="after_fajr">After Fajr</string>
+    <string name="evening_adhkar">Evening adhkar</string>
+    <string name="after_asr">After Asr</string>
+    <string name="daily_tasbih_nudge">Daily tasbih nudge</string>
+    <string name="a_gentle_reminder_to_count">A gentle reminder to count</string>
+    <string name="behaviour">Behaviour</string>
+    <string name="respect_do_not_disturb">Respect Do Not Disturb</string>
+    <string name="allow_snooze">Allow snooze</string>
+    <string name="i_prayed_quick_action">\"I prayed\" quick action</string>
+    <string name="log_a_prayer_from_the_notification">Log a prayer from the notification</string>
+    <string name="full_adhan">Full adhan</string>
+    <string name="takbir">Takbir</string>
+    <string name="beep">Beep</string>
+    <string name="silent">Silent</string>
+
     <string-array name="week_days">
         <item>M</item>
         <item>T</item>
