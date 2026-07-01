@@ -4,4 +4,10 @@ package com.example.miqatapp.core.enums
 enum class Madhab(val label: String) {
     Hanafi("Hanafi"),
     Shafi("Shafi'i"),
+    ;
+
+    companion object {
+        val default = Shafi
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
+    }
 }

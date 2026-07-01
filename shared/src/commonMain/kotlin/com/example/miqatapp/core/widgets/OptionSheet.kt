@@ -1,14 +1,9 @@
 package com.example.miqatapp.core.widgets
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
@@ -30,9 +25,7 @@ fun OptionSheet(
     onDismiss: () -> Unit,
 ) {
     val c = AppTheme.colors
-    AppBottomSheet(onDismiss = onDismiss) {
-        Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
-        Spacer(Modifier.height(12.dp))
+    AppBottomSheet(onDismiss = onDismiss, title = title) {
         AppTileGroup(
             items = options.map { (value, label) ->
                 AppTileItem(
@@ -59,9 +52,7 @@ fun <T : LabeledOption> OptionSheet(
     onDismiss: () -> Unit,
 ) {
     val c = AppTheme.colors
-    AppBottomSheet(onDismiss = onDismiss) {
-        Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = c.onSurface)
-        Spacer(Modifier.height(12.dp))
+    AppBottomSheet(onDismiss = onDismiss, title = title) {
         val items = ArrayList<AppTileItem>(options.size)
         for (option in options) {
             val isSelected = option == selected

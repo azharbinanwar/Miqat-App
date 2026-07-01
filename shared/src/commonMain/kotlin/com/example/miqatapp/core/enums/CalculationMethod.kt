@@ -21,9 +21,24 @@ enum class CalculationMethod(
     Moonsighting("Moonsighting Committee", "Global", 18.0, 18.0),
     Singapore("MUIS Singapore", "Singapore", 20.0, 18.0),
     Dubai("Dubai / UAE", "UAE", 18.2, 18.2),
-    Tehran("Institute of Geophysics, Tehran", "Iran", 17.7, 14.0);
+    Kuwait("Kuwait", "Kuwait", 18.0, 17.5),
+    Qatar("Qatar", "Qatar", 18.0, ishaAngle = null, ishaIntervalMinutes = 90),
+    Gulf("Gulf Region", "Gulf", 19.5, ishaAngle = null, ishaIntervalMinutes = 90),
+    France("Union des Organisations Islamiques de France", "France", 12.0, 12.0),
+    Russia("Spiritual Administration of Muslims of Russia", "Russia", 16.0, 15.0),
+    Malaysia("Jabatan Kemajuan Islam Malaysia (JAKIM)", "Malaysia", 20.0, 18.0),
+    Indonesia("Kementerian Agama Republik Indonesia", "Indonesia", 20.0, 18.0),
+    Tunisia("Tunisia", "Tunisia", 18.0, 18.0),
+    Algeria("Algeria", "Algeria", 19.0, 17.0),
+    Morocco("Morocco", "Morocco", 19.0, 17.0),
+    Portugal("Comunidade Islâmica de Lisboa", "Portugal", 18.0, ishaAngle = null, ishaIntervalMinutes = 77),
+    Tehran("Institute of Geophysics, Tehran", "Iran", 17.7, 14.0),
+    Jafari("Shia Ithna-Ashari (Jafari)", "Shia", 16.0, 14.0),
+    // angles are user-set (see Prefs.CUSTOM_*); the defaults here are just the seed shown first.
+    Custom("Custom", "Custom angles", 18.0, 17.0);
 
     companion object {
         val default = MWL
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
     }
 }

@@ -19,6 +19,8 @@ object PrefKeys {
     const val CALC_METHOD = "calc_method"
     const val MADHAB = "madhab"
     const val HIGH_LAT_RULE = "high_lat_rule"
+    const val CUSTOM_FAJR_ANGLE = "custom_fajr_angle" // used when CALC_METHOD = Custom
+    const val CUSTOM_ISHA_ANGLE = "custom_isha_angle"
     fun adjust(prayer: String) = "adjust_${prayer.lowercase()}" // ± minutes per prayer
 
     // ── Location ─────────────────────────────────────────────

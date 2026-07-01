@@ -147,6 +147,7 @@
 
     <!-- Prayer names (reminders / focus) -->
     <string name="prayer_fajr">Fajr</string>
+    <string name="prayer_sunrise">Sunrise</string>
     <string name="prayer_dhuhr">Dhuhr</string>
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
@@ -169,7 +170,18 @@
     <string name="time_format">Time format</string>
     <string name="language">Language</string>
     <string name="location">Location</string>
+    <string name="use_current_location">Use current location</string>
+    <string name="search_city">Search for a city</string>
+    <string name="saved">Saved</string>
+    <string name="no_cities_found">No cities found</string>
+    <string name="try_a_different_search">Try a different spelling</string>
     <string name="prayer_calculation">Prayer calculation</string>
+    <string name="calculation_method">Calculation method</string>
+    <string name="asr_method">Asr method</string>
+    <string name="high_latitude_rule">High latitude rule</string>
+    <string name="fajr_angle">Fajr angle</string>
+    <string name="isha_angle">Isha angle</string>
+    <string name="manual_adjustments">Manual adjustments</string>
     <string name="notifications">Notifications</string>
     <string name="prayer_focus">Prayer Focus</string>
     <string name="auto_silence_around_prayer">Auto-silence around prayer</string>

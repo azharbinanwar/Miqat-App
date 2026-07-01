@@ -11,15 +11,23 @@ import com.composables.icons.lucide.SunMedium
 import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.prayer_asr
+import com.example.miqatapp.resources.prayer_dhuhr
+import com.example.miqatapp.resources.prayer_fajr
+import com.example.miqatapp.resources.prayer_isha
+import com.example.miqatapp.resources.prayer_maghrib
+import com.example.miqatapp.resources.prayer_sunrise
+import org.jetbrains.compose.resources.StringResource
 
-/** The five daily prayers + sunrise. Icon here; colors live in AppColors (theme-aware). */
-enum class Prayer(val icon: ImageVector) {
-    Fajr(Lucide.Sunrise),
-    Sunrise(Lucide.SunMedium),
-    Dhuhr(Lucide.Sun),
-    Asr(Lucide.CloudSun),
-    Maghrib(Lucide.Sunset),
-    Isha(Lucide.Moon),
+/** The five daily prayers + sunrise. Icon + localized label here; colors live in AppColors (theme-aware). */
+enum class Prayer(val icon: ImageVector, val labelRes: StringResource) {
+    Fajr(Lucide.Sunrise, Res.string.prayer_fajr),
+    Sunrise(Lucide.SunMedium, Res.string.prayer_sunrise),
+    Dhuhr(Lucide.Sun, Res.string.prayer_dhuhr),
+    Asr(Lucide.CloudSun, Res.string.prayer_asr),
+    Maghrib(Lucide.Sunset, Res.string.prayer_maghrib),
+    Isha(Lucide.Moon, Res.string.prayer_isha),
 }
 
 val Prayer.color: Color

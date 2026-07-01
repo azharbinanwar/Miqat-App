@@ -36,6 +36,11 @@ object Prefs {
     /** Clock: TimeFormat.value ("Twelve" | "TwentyFour"), or null = default. */
     var timeFormat: String? by ReactivePref(settings, PrefKeys.TIME_FORMAT)
 
+    /** Prayer calc: each stores the enum's `name` (CalculationMethod / Madhab / HighLatRule), null = default. */
+    var calcMethod: String? by ReactivePref(settings, PrefKeys.CALC_METHOD)
+    var madhab: String? by ReactivePref(settings, PrefKeys.MADHAB)
+    var highLatRule: String? by ReactivePref(settings, PrefKeys.HIGH_LAT_RULE)
+
     // ── generic passthroughs (use a PrefKeys key) ────────────
     fun getString(key: String, default: String): String = settings.getString(key, default)
     fun getStringOrNull(key: String): String? = settings.getStringOrNull(key)

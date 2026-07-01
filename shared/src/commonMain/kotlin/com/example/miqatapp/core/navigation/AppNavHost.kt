@@ -20,7 +20,9 @@ import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
+import com.example.miqatapp.feature.settings.presentation.LocationScreen
 import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
+import com.example.miqatapp.feature.settings.presentation.PrayerCalculationScreen
 import com.example.miqatapp.feature.settings.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
@@ -48,7 +50,7 @@ fun AppNavHost() {
     ) {
         // One drawer around the whole NavHost — navigation only swaps content, never rebuilds it.
         AppDrawer(drawerState) {
-            NavHost(navController = navController, startDestination = AppRoute.Tasbih) {
+            NavHost(navController = navController, startDestination = AppRoute.Home) {
                 composable<AppRoute.Onboarding> { OnboardingScreen() }
                 composable<AppRoute.Home> { HomeScreen() }
                 composable<AppRoute.Sandbox> { SandboxScreen() }
@@ -59,10 +61,14 @@ fun AppNavHost() {
                     SettingsScreen(
                         onNotifications = { navController.navigate(AppRoute.Notifications) },
                         onPrayerFocus = { navController.navigate(AppRoute.PrayerFocus) },
+                        onPrayerCalc = { navController.navigate(AppRoute.PrayerCalculation) },
+                        onLocation = { navController.navigate(AppRoute.Location) },
                     )
                 }
                 composable<AppRoute.Notifications> { NotificationsScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.PrayerFocus> { PrayerFocusScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.PrayerCalculation> { PrayerCalculationScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.Location> { LocationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
                     TasbihScreen(

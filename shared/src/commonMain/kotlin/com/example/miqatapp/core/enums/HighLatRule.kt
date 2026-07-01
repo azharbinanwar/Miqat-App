@@ -5,4 +5,10 @@ enum class HighLatRule(val label: String) {
     MiddleNight("Middle of the Night"),
     SeventhNight("One-Seventh of the Night"),
     AngleBased("Angle-Based"),
+    ;
+
+    companion object {
+        val default = MiddleNight
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
+    }
 }

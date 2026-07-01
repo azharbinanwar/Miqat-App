@@ -12,12 +12,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.miqatapp.config.theme.AppTheme
 
@@ -33,6 +36,8 @@ import com.example.miqatapp.config.theme.AppTheme
 fun AppBottomSheet(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,                                 // pinned header — stays put while the body scrolls
+    subtitle: String? = null,
     footer: (@Composable ColumnScope.() -> Unit)? = null, // pinned below the scrollable body (e.g. action buttons)
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -55,6 +60,13 @@ fun AppBottomSheet(
             .padding(horizontal = 10.dp, vertical = 12.dp),
     ) {
         Column(Modifier.fillMaxWidth()) {
+            // pinned header — doesn't scroll with the body
+            if (title != null) {
+                Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
+                    Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = AppTheme.colors.onSurface)
+                    if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.onSurfaceVariant)
+                }
+            }
             // scrollable body — capped so a sticky footer always stays visible
             Column(
                 Modifier.fillMaxWidth().heightIn(max = 520.dp).verticalScroll(rememberScrollState())

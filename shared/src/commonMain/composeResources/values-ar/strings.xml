@@ -147,6 +147,7 @@
 
     <!-- Prayer names (reminders / focus) -->
     <string name="prayer_fajr">الفجر</string>
+    <string name="prayer_sunrise">الشروق</string>
     <string name="prayer_dhuhr">الظهر</string>
     <string name="prayer_asr">العصر</string>
     <string name="prayer_maghrib">المغرب</string>
@@ -169,7 +170,18 @@
     <string name="time_format">صيغة الوقت</string>
     <string name="language">اللغة</string>
     <string name="location">الموقع</string>
+    <string name="use_current_location">استخدام الموقع الحالي</string>
+    <string name="search_city">ابحث عن مدينة</string>
+    <string name="saved">المحفوظة</string>
+    <string name="no_cities_found">لم يتم العثور على مدن</string>
+    <string name="try_a_different_search">جرّب تهجئة مختلفة</string>
     <string name="prayer_calculation">حساب مواقيت الصلاة</string>
+    <string name="calculation_method">طريقة الحساب</string>
+    <string name="asr_method">طريقة العصر</string>
+    <string name="high_latitude_rule">قاعدة خطوط العرض العالية</string>
+    <string name="fajr_angle">زاوية الفجر</string>
+    <string name="isha_angle">زاوية العشاء</string>
+    <string name="manual_adjustments">تعديلات يدوية</string>
     <string name="notifications">الإشعارات</string>
     <string name="prayer_focus">تركيز الصلاة</string>
     <string name="auto_silence_around_prayer">كتم تلقائي حول الصلاة</string>

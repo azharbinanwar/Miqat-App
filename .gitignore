@@ -19,3 +19,6 @@ captures
 node_modules/
 
 /dev/
+
+# graphify knowledge-graph output/cache (regenerable via `graphify update .`)
+graphify-out/
