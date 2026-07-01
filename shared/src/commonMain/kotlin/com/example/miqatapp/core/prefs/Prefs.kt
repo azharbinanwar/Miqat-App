@@ -36,6 +36,9 @@ object Prefs {
     /** Clock: TimeFormat.value ("Twelve" | "TwentyFour"), or null = default. */
     var timeFormat: String? by ReactivePref(settings, PrefKeys.TIME_FORMAT)
 
+    /** The active city's display name (e.g. "Makkah"); null = the built-in default. ponytail: name only for now — full coords/tz record lands with the calc engine. */
+    var activeCity: String? by ReactivePref(settings, PrefKeys.ACTIVE_CITY)
+
     /** Prayer calc: each stores the enum's `name` (CalculationMethod / Madhab / HighLatRule), null = default. */
     var calcMethod: String? by ReactivePref(settings, PrefKeys.CALC_METHOD)
     var madhab: String? by ReactivePref(settings, PrefKeys.MADHAB)

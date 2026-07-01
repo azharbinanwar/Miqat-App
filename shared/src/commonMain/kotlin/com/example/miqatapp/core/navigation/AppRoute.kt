@@ -44,6 +44,9 @@ sealed interface AppRoute {
     data object Location : AppRoute
 
     @Serializable
+    data object HijriCalendar : AppRoute
+
+    @Serializable
     data object Tasbih : AppRoute
 
     @Serializable

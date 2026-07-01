@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellOff
+import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Globe
@@ -34,11 +35,15 @@ import com.composables.icons.lucide.Palette
 import com.example.miqatapp.core.platform.canControlDnd
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.config.theme.ThemeChoice
+import com.example.miqatapp.core.datetime.HijriMonth
+import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
+import com.example.miqatapp.core.prefs.PrefKeys
 import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.core.prefs.TimeFormat
 import com.example.miqatapp.core.widgets.AppTileGroup
 import com.example.miqatapp.core.widgets.AppTileItem
+import com.example.miqatapp.core.widgets.MiniStepper
 import com.example.miqatapp.core.widgets.OptionSheet
 import com.example.miqatapp.core.widgets.LocalDrawerState
 import com.example.miqatapp.resources.Res
@@ -47,7 +52,10 @@ import com.example.miqatapp.resources.all_alerts_on
 import com.example.miqatapp.resources.app_name
 import com.example.miqatapp.resources.appearance
 import com.example.miqatapp.resources.auto_silence_around_prayer
+import com.example.miqatapp.resources.days
 import com.example.miqatapp.resources.general
+import com.example.miqatapp.resources.hijri_calendar
+import com.example.miqatapp.resources.hijri_era
 import com.example.miqatapp.resources.language
 import com.example.miqatapp.resources.location
 import com.example.miqatapp.resources.menu
@@ -84,6 +92,9 @@ fun SettingsScreen(
     var showTheme by remember { mutableStateOf(false) }
     var showTime by remember { mutableStateOf(false) }
     var showLanguage by remember { mutableStateOf(false) }
+    // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
+    var hijriOffset by remember { mutableStateOf(Prefs.getInt(PrefKeys.HIJRI_OFFSET, 0)) }
+    val hijri = hijriToday(hijriOffset)
 
     Scaffold(
         containerColor = c.scaffoldBackgroundColor,
@@ -110,6 +121,12 @@ fun SettingsScreen(
                     AppTileItem(leadingIcon = Lucide.Palette, title = stringResource(Res.string.appearance), subtitle = theme.label(), onClick = { showTheme = true }),
                     AppTileItem(leadingIcon = Lucide.Clock, title = stringResource(Res.string.time_format), subtitle = timeFormat.label(), onClick = { showTime = true }),
                     AppTileItem(leadingIcon = Lucide.Globe, title = stringResource(Res.string.language), subtitle = language.label(), onClick = { showLanguage = true }),
+                    AppTileItem(
+                        leadingIcon = Lucide.Calendar,
+                        title = stringResource(Res.string.hijri_calendar),
+                        subtitle = "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}",
+                        trailing = { MiniStepper(hijriOffset, stringResource(Res.string.days), { hijriOffset = it; Prefs.putInt(PrefKeys.HIJRI_OFFSET, it) }, min = -2, max = 2) },
+                    ),
                 ),
             )
             AppTileGroup(

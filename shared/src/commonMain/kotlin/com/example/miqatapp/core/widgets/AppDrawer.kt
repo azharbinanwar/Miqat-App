@@ -56,12 +56,17 @@ import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MoonStar
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.SquareCheck
 import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.core.datetime.HijriMonth
+import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.navigation.AppRoute
 import com.example.miqatapp.core.navigation.LocalNavController
+import com.example.miqatapp.core.prefs.PrefKeys
+import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.about_miqat
 import com.example.miqatapp.resources.app_name
@@ -88,15 +93,18 @@ private val drawerItems = listOf(
     DrawerEntry(Res.string.prayer_times, Lucide.Clock, AppRoute.PrayerTimes),
     DrawerEntry(Res.string.qibla_compass, Lucide.Compass, AppRoute.Qibla),
     DrawerEntry(Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker),
-    DrawerEntry(Res.string.hijri_calendar, Lucide.Calendar, null),
+    // ponytail: hidden for now — screen/route kept for the future rich calendar (month grid + events).
+    // DrawerEntry(Res.string.hijri_calendar, Lucide.Calendar, AppRoute.HijriCalendar),
     DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, null),
     DrawerEntry(Res.string.tasbih_counter, Lucide.MoonStar, AppRoute.Tasbih),
 )
 
 private val footerItems = listOf(
     DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings),
-    DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
-    DrawerEntry(Res.string.about_miqat, Lucide.Info, null),
+    // ponytail: dev-only — kept out of the shipping drawer, route still registered for dev use.
+    // DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
+    // ponytail: dropped from drawer (did nothing — route null); About lives in Settings.
+    // DrawerEntry(Res.string.about_miqat, Lucide.Info, null),
 )
 
 /** Shared drawer state, hoisted at the nav host so navigating never rebuilds the drawer. */
@@ -154,14 +162,17 @@ fun AppDrawer(
             ) {
                 DrawerHeader()
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Column(Modifier.verticalScroll(rememberScrollState()).padding(vertical = 8.dp)) {
+                // main nav takes the available height; the footer (Settings) is pinned to the bottom
+                Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(vertical = 8.dp)) {
                     drawerItems.forEach { entry ->
                         DrawerRow(entry) { onSelect(entry) }
                     }
-                    HorizontalDivider(
-                        Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant,
-                    )
+                }
+                HorizontalDivider(
+                    Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                )
+                Column(Modifier.padding(bottom = 8.dp)) {
                     footerItems.forEach { entry ->
                         DrawerRow(entry) { onSelect(entry) }
                     }
@@ -190,15 +201,25 @@ private fun DrawerHeader() {
             )
         }
         Spacer(Modifier.width(14.dp))
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(
                 stringResource(Res.string.app_name),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
+            val hijri = hijriToday(Prefs.getInt(PrefKeys.HIJRI_OFFSET, 0))
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Icon(Lucide.MapPin, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(13.dp))
+                Text(
+                    Prefs.activeCity ?: "Makkah",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
             Text(
-                stringResource(Res.string.your_daily_prayer_companion),
+                "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

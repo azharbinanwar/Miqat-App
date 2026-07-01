@@ -44,6 +44,7 @@ import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.countryLabel
 import com.example.miqatapp.core.locale.tr
+import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.core.widgets.AppTextField
 import com.example.miqatapp.core.widgets.AppTile
 import com.example.miqatapp.core.widgets.AppTileGroup
@@ -99,6 +100,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
     fun choose(city: City) {
         if (saved.none { it.name == city.name && it.country == city.country }) saved.add(0, city)
         active = city
+        Prefs.activeCity = city.name // surfaced in the drawer header
     }
 
     // full-screen search takes over when open (LazyColumn handles hundreds of rows efficiently)
@@ -143,7 +145,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                             if (isActive) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp))
                             else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { saved.remove(city) })
                         },
-                        onClick = { active = city },
+                        onClick = { choose(city) },
                     )
                 },
             )

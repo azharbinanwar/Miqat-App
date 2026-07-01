@@ -17,6 +17,7 @@ import com.example.miqatapp.feature.home.presentation.HomeAltScreen
 import com.example.miqatapp.feature.onboarding.presentation.OnboardingScreen
 import com.example.miqatapp.feature.home.presentation.HomeScreen
 import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
+import com.example.miqatapp.feature.hijri.presentation.HijriCalendarScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
@@ -69,6 +70,7 @@ fun AppNavHost() {
                 composable<AppRoute.PrayerFocus> { PrayerFocusScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.PrayerCalculation> { PrayerCalculationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Location> { LocationScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.HijriCalendar> { HijriCalendarScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
                     TasbihScreen(
