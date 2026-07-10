@@ -70,6 +70,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -175,7 +177,11 @@ private data class TasbihSession(val title: String, val target: Int, val date: L
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
+fun TasbihScreen(
+    zikrs: List<Zikr> = emptyList(), // 1 or many — the screen doesn't care; each zikr carries its own target in [Zikr.defaultCount]
+    onBack: () -> Unit = {},
+    onHistory: (String) -> Unit = {},
+) {
     val haptics = LocalHapticFeedback.current
 
     val primary = AppTheme.colors.primary
@@ -188,10 +194,9 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
     var finish by remember { mutableStateOf(BeadFinish.Glossy) }
     val cfg = materials[selectedMaterial].second.copy(beadDiameter = beadSizes[sizeIdx], shape = shape, finish = finish)
 
-    // the set handed off from the hub; fall back to a single default if opened directly. Mutable so the
-    // active dhikr's target can be e
-    // dited via the pen.
-    val queue = remember { TasbihRun.queue.ifEmpty { listOf(Zikr("subhanallah", "SubhanAllah", "سُبْحَانَ ٱللَّٰه", 33, ZikrCategory.Tasbihat) to 33) }.toMutableStateList() }
+    // the set passed in by the caller; fall back to a single default if opened with nothing.
+    // Mutable so the active dhikr's target can be edited via the pen.
+    val queue = remember { zikrs.ifEmpty { listOf(Zikr("subhanallah", "SubhanAllah", "سُبْحَانَ ٱللَّٰه", 33, ZikrCategory.Tasbihat)) }.toMutableStateList() }
 
     // counter state
     var index by remember { mutableIntStateOf(0) }   // current item in the set
@@ -208,16 +213,16 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
     var startMark by remember { mutableStateOf<TimeMark?>(null) } // set on the first bead, for the Done-screen time
     var elapsedSec by remember { mutableIntStateOf(0) }
     val history = remember { mutableListOf<TasbihSession>().toMutableStateList() }
-    val curZikr = queue[index].first
-    val curTarget = queue[index].second
+    val curZikr = queue[index]
+    val curTarget = queue[index].defaultCount
 
     fun tick() { // one bead counted
         if (total == 0) startMark = TimeSource.Monotonic.markNow()
         total++
-        val target = queue[index].second
+        val target = queue[index].defaultCount
         if (target > 0 && count + 1 >= target) {              // target reached (0 = unlimited → never auto-completes)
             round++
-            history.add(0, TasbihSession(queue[index].first.title, target, currentDate()))
+            history.add(0, TasbihSession(queue[index].title, target, currentDate()))
             if (vibrate) haptics.performHapticFeedback(HapticFeedbackType.LongPress) // heavier on a completed dhikr
             if (index < queue.lastIndex) { index++; count = 0 } // auto-advance to the next dhikr in the set
             else { // whole set finished → success
@@ -249,6 +254,8 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
                     IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.tasbih_back)) }
                 },
                 actions = {
+                    IconButton(onClick = { onHistory(curZikr.id) }) { Icon(Lucide.History, stringResource(Res.string.tasbih_history)) }
+                    IconButton(onClick = { restart() }) { Icon(Lucide.RotateCcw, stringResource(Res.string.reset)) }
                     IconButton(onClick = { showCustomize = true }) { Icon(Lucide.Palette, stringResource(Res.string.tasbih_counting_style)) }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -274,23 +281,20 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
 
             // card drawn AFTER the body so its action icons receive taps
             DhikrHeader(
-                arabic = curZikr.arabic,
-                translit = curZikr.title,
-                target = curTarget,
+                queue = queue,
+                index = index,
                 count = count,
                 paused = paused,
                 round = round,
                 total = total,
                 onEdit = { showEditCount = true },
                 onPause = { paused = !paused },
-                onHistory = { onHistory(curZikr.id) },
-                onReset = { restart() },
                 modifier = Modifier.align(Alignment.TopCenter).padding(12.dp),
             )
 
             if (done) {
                 TasbihSuccessSheet(
-                    items = queue.map { it.first.title to it.second },
+                    items = queue.map { it.title to it.defaultCount },
                     total = total,
                     elapsedSec = elapsedSec,
                     onRepeat = { restart() },
@@ -302,7 +306,7 @@ fun TasbihScreen(onBack: () -> Unit = {}, onHistory: (String) -> Unit = {}) {
     }
 
     if (showEditCount) { // edit the active dhikr's target — reuses the hub's picker
-        CountSheet(current = curTarget, onPick = { queue[index] = curZikr to it }, onDismiss = { showEditCount = false })
+        CountSheet(current = curTarget, onPick = { queue[index] = curZikr.copy(defaultCount = it) }, onDismiss = { showEditCount = false })
     }
 
     if (showCustomize) {
@@ -485,49 +489,62 @@ private fun FocusCounter(count: Int, target: Int, enabled: Boolean, onCount: () 
 
 // ---- chrome ------------------------------------------------------------------------------------
 
-/** Compact 2-row counter card: counter · azkar on top, stats · actions below. */
+/**
+ * Slim counter card — one stat row (count/target · round · total, actions right) plus the dhikr
+ * text capped at two lines. The text zone is height-stable across short/long items so the
+ * counting surface below never reflows mid-session; every dp saved here goes to the tap zone.
+ */
 @Composable
 private fun DhikrHeader(
-    arabic: String,
-    translit: String,
-    target: Int,
+    queue: List<Zikr>, // the whole set — works the same for 1 or many items
+    index: Int,
     count: Int,
     paused: Boolean,
     round: Int,
     total: Int,
     onEdit: () -> Unit,
     onPause: () -> Unit,
-    onHistory: () -> Unit,
-    onReset: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val c = AppTheme.colors
+    // everything display-related is derived from the queue itself
+    val arabic = queue[index].arabic
+    val target = queue[index].defaultCount
+    val expectedRounds = queue.size
+    // grand total only makes sense when every item has a finite target (0 = unlimited)
+    val grandTotal = if (queue.all { it.defaultCount > 0 }) queue.sumOf { it.defaultCount } else 0
     AppCard(modifier.fillMaxWidth()) {
-        // row 1 — counter (left) · azkar (right)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Row(verticalAlignment = Alignment.Bottom) {
-                Text("$count", fontSize = 46.sp, fontWeight = FontWeight.Bold, color = if (paused) c.onSurfaceVariant else c.primary)
+        // arabic on top — regular weight, space for 2 lines always reserved so the card never jumps
+        Text(
+            arabic, fontSize = 20.sp, color = c.onSurface,
+            minLines = 2, maxLines = 2, overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.End, lineHeight = 26.sp,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(Modifier.height(4.dp))
+        // bottom row — count (primary + bold) next to target and round·total, actions on the right
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                Text("$count", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = if (paused) c.onSurfaceVariant else c.primary)
                 Spacer(Modifier.width(4.dp))
                 Text(
                     if (paused) stringResource(Res.string.tasbih_paused) else if (target <= 0) "∞" else "/ $target",
-                    fontSize = 14.sp, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = 7.dp),
+                    fontSize = 13.sp, color = c.onSurfaceVariant,
+                )
+                Spacer(Modifier.width(10.dp))
+                // progress format: current/expected — e.g. Round 2/3 · Total 45/99
+                val curRound = (round + 1).coerceAtMost(expectedRounds)
+                Text(
+                    stringResource(
+                        Res.string.tasbih_round_total,
+                        "$curRound/$expectedRounds",
+                        if (grandTotal > 0) "$total/$grandTotal" else "$total",
+                    ),
+                    fontSize = 13.sp, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
             }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(arabic, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = c.onSurface)
-                Text(translit, fontSize = 12.sp, color = c.onSurfaceVariant)
-            }
-        }
-        Spacer(Modifier.height(12.dp))
-        // row 2 — stats (left) · actions (right)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(Res.string.tasbih_round_total, round, total), fontSize = 12.sp, color = c.onSurfaceVariant)
-            Row {
-                CardAction(Lucide.Pencil, stringResource(Res.string.tasbih_edit_count), onEdit)
-                CardAction(if (paused) Lucide.Play else Lucide.Pause, if (paused) stringResource(Res.string.tasbih_resume) else stringResource(Res.string.tasbih_pause), onPause)
-                CardAction(Lucide.History, stringResource(Res.string.tasbih_history), onHistory)
-                CardAction(Lucide.RotateCcw, stringResource(Res.string.reset), onReset)
-            }
+            CardAction(Lucide.Pencil, stringResource(Res.string.tasbih_edit_count), onEdit)
+            CardAction(if (paused) Lucide.Play else Lucide.Pause, if (paused) stringResource(Res.string.tasbih_resume) else stringResource(Res.string.tasbih_pause), onPause)
         }
     }
 }

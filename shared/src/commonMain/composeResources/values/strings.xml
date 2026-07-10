@@ -53,7 +53,7 @@
     <string name="tasbih_mode_tap">Tap</string>
     <string name="tasbih_mode_focus">Focus</string>
     <string name="tasbih_paused">paused</string>
-    <string name="tasbih_round_total">Round %1$d  ·  Total %2$d</string>
+    <string name="tasbih_round_total">Round %1$s  ·  Total %2$s</string>
     <string name="tasbih_edit_count">Edit count</string>
     <string name="tasbih_resume">Resume</string>
     <string name="tasbih_pause">Pause</string>
@@ -255,5 +255,33 @@
     <string name="date_adjustment">Date adjustment</string>
     <string name="days">days</string>
     <string name="hijri_era">AH</string>
+    <!-- Duas & Adhkar -->
+    <string name="dua_of_the_day">Dua of the day</string>
+    <string name="collections">Collections</string>
+    <string name="favorites">Favorites</string>
+    <string name="n_duas">%1$d duas</string>
+    <string name="morning">Morning</string>
+    <string name="evening">Evening</string>
+    <string name="after_prayer">After prayer</string>
+    <string name="everyday_duas">Everyday duas</string>
+    <string name="tasbihat">Tasbihat</string>
+    <string name="start_on_tasbih">Start on Tasbih</string>
+    <string name="add_your_own">Add your own</string>
+    <string name="search_duas">Search duas…</string>
+    <string name="no_duas_found">No duas found</string>
+    <string name="arabic_text">Arabic</string>
+    <string name="translation_optional">Translation (optional)</string>
+    <string name="repetitions">Repetitions</string>
+    <string name="added_by_you">Added by you</string>
+    <string name="save">Save</string>
+    <string name="completed">Completed</string>
+    <string name="use_beads">Use beads</string>
+    <string name="all">All</string>
+    <string name="dua">Du\'a</string>
+    <string name="zikr">Zikr</string>
+    <string name="new_collection">New collection</string>
+    <string name="names_of_allah">99 Names of Allah</string>
+    <string name="azkar">Azkar (preview)</string>
+
     <string name="adjust_hijri_hint">Adjust if your local Hijri date differs from the calculated one.</string>
 </resources>

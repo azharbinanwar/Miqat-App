@@ -7,8 +7,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.ripple
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +60,9 @@ import kotlinx.coroutines.launch
 /** Where a tile sits in a group — drives corner rounding (first/last differ). */
 enum class TilePosition { Single, First, Middle, Last }
 
+/** A small icon action; tiles and group headers render these with one consistent size/tint/spacing. */
+class AppAction(val icon: ImageVector, val onClick: () -> Unit)
+
 /** Data for one tile in an [AppTileGroup]. */
 class AppTileItem(
     val title: String,
@@ -66,6 +72,7 @@ class AppTileItem(
     val leading: (@Composable () -> Unit)? = null,
     val trailing: (@Composable () -> Unit)? = null,
     val badge: (@Composable () -> Unit)? = null,
+    val actions: List<AppAction> = emptyList(),
     val selected: Boolean = false,
     val onClick: (() -> Unit)? = null,
     val onLongClick: (() -> Unit)? = null,
@@ -85,6 +92,7 @@ fun AppTile(
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     badge: (@Composable () -> Unit)? = null,
+    actions: List<AppAction> = emptyList(),
     selected: Boolean = false,
     position: TilePosition = TilePosition.Single,
     onClick: (() -> Unit)? = null,
@@ -93,7 +101,7 @@ fun AppTile(
     val c = AppTheme.colors
     val bg = if (selected) c.primary.copy(alpha = 0.10f) else c.cardColor
     Column(modifier.fillMaxWidth().clip(shapeFor(position)).background(bg)) {
-        TileRow(title, subtitle, leadingIcon, leadingColor, leading, trailing, badge, selected, onClick, onLongClick)
+        TileRow(title, subtitle, leadingIcon, leadingColor, leading, trailing, badge, actions, selected, onClick, onLongClick)
     }
 }
 
@@ -106,8 +114,9 @@ fun AppTileGroup(
     items: List<AppTileItem>,
     modifier: Modifier = Modifier,
     title: String? = null,
+    actions: List<AppAction> = emptyList(),
 ) {
-    GroupShell(modifier, title) {
+    GroupShell(modifier, title, actions) {
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             items.forEachIndexed { i, item -> Tile(item, positionFor(i, items.size)) }
         }
@@ -124,25 +133,53 @@ fun AppTileGroupReorderable(
     onReorder: (from: Int, to: Int) -> Unit,
     modifier: Modifier = Modifier,
     title: String? = null,
+    actions: List<AppAction> = emptyList(),
 ) {
-    GroupShell(modifier, title) { ReorderableTiles(items, onReorder) }
+    GroupShell(modifier, title, actions) { ReorderableTiles(items, onReorder) }
 }
 
 /** Shared chrome (outer padding + optional section title) for both group variants. */
 @Composable
-private fun GroupShell(modifier: Modifier, title: String?, content: @Composable () -> Unit) {
+private fun GroupShell(modifier: Modifier, title: String?, actions: List<AppAction> = emptyList(), content: @Composable () -> Unit) {
     val c = AppTheme.colors
     Column(modifier.fillMaxWidth().padding(bottom = 16.dp)) {
         if (title != null) {
-            Text(
-                text = title,
-                modifier = Modifier.padding(start = 4.dp, bottom = 8.dp),
-                style = MaterialTheme.typography.titleSmall,
-                color = c.primary,
-                fontWeight = FontWeight.Bold,
-            )
+            Row(
+                Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = title,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = c.primary,
+                    fontWeight = FontWeight.Bold,
+                )
+                ActionIcons(actions)
+            }
         }
         content()
+    }
+}
+
+/** Shared renderer for [AppAction]s — one look everywhere: 18dp icon, muted tint, 10dp gaps. */
+@Composable
+private fun ActionIcons(actions: List<AppAction>) {
+    val c = AppTheme.colors
+    actions.forEachIndexed { i, a ->
+        if (i > 0) Spacer(Modifier.width(2.dp))
+        // IconButton-style: unbounded circular ripple centered on the icon — never a box
+        Icon(
+            a.icon, null, tint = c.onSurfaceVariant,
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ripple(bounded = false, radius = 17.dp),
+                    onClick = a.onClick,
+                )
+                .padding(8.dp)
+                .size(18.dp),
+        )
     }
 }
 
@@ -156,6 +193,7 @@ private fun Tile(item: AppTileItem, position: TilePosition) {
         leading = item.leading,
         trailing = item.trailing,
         badge = item.badge,
+        actions = item.actions,
         selected = item.selected,
         position = position,
         onClick = item.onClick,
@@ -258,6 +296,7 @@ private fun TileRow(
     leading: (@Composable () -> Unit)?,
     trailing: (@Composable () -> Unit)?,
     badge: (@Composable () -> Unit)?,
+    actions: List<AppAction>,
     selected: Boolean,
     onClick: (() -> Unit)?,
     onLongClick: (() -> Unit)?,
@@ -298,13 +337,12 @@ private fun TileRow(
                 Text(subtitle, style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant)
             }
         }
-        when {
-            trailing != null -> { Spacer(Modifier.width(8.dp)); trailing() }
-            onClick != null -> {
-                Spacer(Modifier.width(8.dp))
-                // a vector icon (not a text glyph) so RTL doesn't double-mirror it; tr picks the forward direction
-                Icon(tr(Lucide.ChevronRight, Lucide.ChevronLeft), null, tint = if (selected) c.primary else c.onSurfaceVariant, modifier = Modifier.size(20.dp))
-            }
+        if (trailing != null) { Spacer(Modifier.width(8.dp)); trailing() }
+        if (actions.isNotEmpty()) { Spacer(Modifier.width(8.dp)); ActionIcons(actions) }
+        if (trailing == null && actions.isEmpty() && onClick != null) {
+            Spacer(Modifier.width(8.dp))
+            // a vector icon (not a text glyph) so RTL doesn't double-mirror it; tr picks the forward direction
+            Icon(tr(Lucide.ChevronRight, Lucide.ChevronLeft), null, tint = if (selected) c.primary else c.onSurfaceVariant, modifier = Modifier.size(20.dp))
         }
     }
 }

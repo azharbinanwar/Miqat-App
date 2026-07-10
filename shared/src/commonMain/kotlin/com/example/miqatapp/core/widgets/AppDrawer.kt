@@ -59,6 +59,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.MoonStar
 import com.composables.icons.lucide.Settings
+import com.composables.icons.lucide.Sparkles
 import com.composables.icons.lucide.SquareCheck
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.HijriMonth
@@ -95,8 +96,9 @@ private val drawerItems = listOf(
     DrawerEntry(Res.string.prayer_tracker, Lucide.SquareCheck, AppRoute.Tracker),
     // ponytail: hidden for now — screen/route kept for the future rich calendar (month grid + events).
     // DrawerEntry(Res.string.hijri_calendar, Lucide.Calendar, AppRoute.HijriCalendar),
-    DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, null),
-    DrawerEntry(Res.string.tasbih_counter, Lucide.MoonStar, AppRoute.Tasbih),
+    DrawerEntry(Res.string.duas_and_adhkar, Lucide.BookOpen, AppRoute.Azkar),
+    // ponytail: Tasbih merged into the Azkar library (it's a tab there now); beads counter still reached via "use beads". Route kept.
+    // DrawerEntry(Res.string.tasbih_counter, Lucide.MoonStar, AppRoute.Tasbih),
 )
 
 private val footerItems = listOf(

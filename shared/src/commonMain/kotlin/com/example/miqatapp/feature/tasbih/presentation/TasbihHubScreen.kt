@@ -135,11 +135,11 @@ private val COUNT_PRESETS = listOf(33, 99, 100, 0) // 0 = unlimited (∞)
 
 /** Hand-off to the counter. ponytail: in-memory; swap for VM/DB-backed session. */
 object TasbihRun {
-    var queue: List<Pair<Zikr, Int>> = emptyList()
+    var queue: List<Zikr> = emptyList()
 }
 
 /** A saved/named group of azkar. */
-data class TasbihSet(val id: String, val name: String, val subtitle: String, val items: List<Pair<Zikr, Int>>, val favorite: Boolean)
+data class TasbihSet(val id: String, val name: String, val subtitle: String, val items: List<Zikr>, val favorite: Boolean)
 
 /** Saved sets + favorited single azkar. ponytail: in-memory; move to DB later. */
 object TasbihStore {
@@ -151,7 +151,7 @@ object TasbihStore {
         if (seeded) return
         favIds.addAll(CATALOG.filter { it.favorite }.map { it.id })
         // a sample favourited set so the design is visible up front
-        sets.add(TasbihSet(nextId(), "Morning Adhkar", "After Fajr", listOf(zikrById("subhanallah") to 33, zikrById("alhamdulillah") to 33, zikrById("allahuakbar") to 34), favorite = true))
+        sets.add(TasbihSet(nextId(), "Morning Adhkar", "After Fajr", listOf(zikrById("subhanallah"), zikrById("alhamdulillah"), zikrById("allahuakbar")), favorite = true))
         seeded = true
     }
     fun nextId() = "set-${seq++}"
@@ -181,8 +181,9 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
     var favExpanded by remember { mutableStateOf(false) }
 
     fun toggle(z: Zikr) { if (z.id in order) { order.remove(z.id); counts.remove(z.id) } else { order.add(z.id); counts[z.id] = z.defaultCount } }
-    fun selectedItems() = order.map { id -> zikrById(id) to (counts[id] ?: zikrById(id).defaultCount) }
-    fun start(items: List<Pair<Zikr, Int>>) { if (items.isNotEmpty()) { TasbihRun.queue = items; nav.navigate(AppRoute.TasbihCounter) } }
+    // per-run count override rides inside the zikr itself (a copy — the catalog original is untouched)
+    fun selectedItems() = order.map { id -> zikrById(id).run { copy(defaultCount = counts[id] ?: defaultCount) } }
+    fun start(items: List<Zikr>) { if (items.isNotEmpty()) { TasbihRun.queue = items; nav.navigate(AppRoute.TasbihCounter) } }
     fun clearSelection() { order.clear(); counts.clear(); sheetVisible = false; setName = ""; setSubtitle = ""; setFav = false }
     val selectionMode = order.isNotEmpty() // long-press a tile to enter; tiles then multi-select
 
@@ -211,7 +212,7 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 item {
-                    ActiveSessionCard(name = "SubhanAllah", count = 18, target = 33) { start(listOf(zikrById("subhanallah") to 33)) }
+                    ActiveSessionCard(name = "SubhanAllah", count = 18, target = 33) { start(listOf(zikrById("subhanallah"))) }
                 }
                 item { Spacer(Modifier.height(8.dp)) }
 
@@ -227,7 +228,7 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
                                     AppTileItem(
                                         title = z.arabic, subtitle = z.title,
                                         selected = z.id in order,
-                                        onClick = { if (selectionMode) toggle(z) else start(listOf(z to (counts[z.id] ?: z.defaultCount))) },
+                                        onClick = { if (selectionMode) toggle(z) else start(listOf(z.copy(defaultCount = counts[z.id] ?: z.defaultCount))) },
                                         onLongClick = { toggle(z) },
                                         trailing = {
                                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -294,7 +295,7 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
                                     title = z.arabic,
                                     subtitle = z.title,
                                     selected = z.id in order,
-                                    onClick = { if (selectionMode) toggle(z) else start(listOf(z to (counts[z.id] ?: z.defaultCount))) },
+                                    onClick = { if (selectionMode) toggle(z) else start(listOf(z.copy(defaultCount = counts[z.id] ?: z.defaultCount))) },
                                     onLongClick = { toggle(z) }, // long-press enters selection mode
                                     trailing = {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -337,7 +338,7 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
             onCancel = { clearSelection() },             // discard
             onCreate = {
                 val items = selectedItems()
-                val name = setName.ifBlank { items.first().first.title + if (items.size > 1) " +${items.size - 1}" else "" }
+                val name = setName.ifBlank { items.first().title + if (items.size > 1) " +${items.size - 1}" else "" }
                 if (setFav || setName.isNotBlank()) TasbihStore.sets.add(0, TasbihSet(TasbihStore.nextId(), name, setSubtitle, items, setFav))
                 clearSelection()
                 start(items)
@@ -375,7 +376,7 @@ private fun ActiveSessionCard(name: String, count: Int, target: Int, onResume: (
 
 /** Repetition count shown on every catalog tile — tap to edit before starting. */
 @Composable
-private fun CountTag(shownCount: Int, onEditCount: () -> Unit) {
+internal fun CountTag(shownCount: Int, onEditCount: () -> Unit) {
     val c = AppTheme.colors
     Text(
         if (shownCount == 0) "∞" else "×$shownCount",
@@ -386,7 +387,7 @@ private fun CountTag(shownCount: Int, onEditCount: () -> Unit) {
 
 /** Selection-mode trailing: a check circle (tap = add/remove). */
 @Composable
-private fun SelectCheck(selected: Boolean, onToggle: () -> Unit) {
+internal fun SelectCheck(selected: Boolean, onToggle: () -> Unit) {
     val c = AppTheme.colors
     Box(
         Modifier.size(26.dp).clip(CircleShape).background(if (selected) c.primary else Color.Transparent)
@@ -450,7 +451,7 @@ private fun ViewSetSheet(
 
 /** Favorite heart from drawable files (Lucide has no heart): filled or outline, tintable. */
 @Composable
-private fun HeartIcon(filled: Boolean, tint: Color, size: Dp = 22.dp, modifier: Modifier = Modifier) {
+internal fun HeartIcon(filled: Boolean, tint: Color, size: Dp = 22.dp, modifier: Modifier = Modifier) {
     Icon(
         painter = painterResource(if (filled) Res.drawable.heart_filled else Res.drawable.  heart_outline),
         contentDescription = null,

@@ -17,6 +17,8 @@ import com.example.miqatapp.feature.home.presentation.HomeAltScreen
 import com.example.miqatapp.feature.onboarding.presentation.OnboardingScreen
 import com.example.miqatapp.feature.home.presentation.HomeScreen
 import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
+import com.example.miqatapp.feature.azkar.presentation.AzkarScreen
+import com.example.miqatapp.feature.duas.presentation.DuasScreen
 import com.example.miqatapp.feature.hijri.presentation.HijriCalendarScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
@@ -26,6 +28,7 @@ import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
 import com.example.miqatapp.feature.settings.presentation.PrayerCalculationScreen
 import com.example.miqatapp.feature.settings.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
+import com.example.miqatapp.feature.tasbih.presentation.TasbihRun
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHistoryScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHubScreen
@@ -71,9 +74,14 @@ fun AppNavHost() {
                 composable<AppRoute.PrayerCalculation> { PrayerCalculationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Location> { LocationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.HijriCalendar> { HijriCalendarScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.Duas> { DuasScreen() }
+                composable<AppRoute.Azkar> { AzkarScreen() }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
                     TasbihScreen(
+                        // nav args can't carry object lists — the handoff global is read ONCE here,
+                        // at the nav boundary, and the screen itself stays a pure function of its inputs
+                        zikrs = TasbihRun.queue,
                         onBack = { navController.popBackStack() },
                         onHistory = { id -> navController.navigate(AppRoute.TasbihHistory(id)) },
                     )

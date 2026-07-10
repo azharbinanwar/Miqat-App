@@ -255,5 +255,33 @@
     <string name="date_adjustment">تعديل التاريخ</string>
     <string name="days">أيام</string>
     <string name="hijri_era">هـ</string>
+    <!-- Duas & Adhkar -->
+    <string name="dua_of_the_day">دعاء اليوم</string>
+    <string name="collections">المجموعات</string>
+    <string name="favorites">المفضّلة</string>
+    <string name="n_duas">%1$d أدعية</string>
+    <string name="morning">الصباح</string>
+    <string name="evening">المساء</string>
+    <string name="after_prayer">بعد الصلاة</string>
+    <string name="everyday_duas">أدعية يومية</string>
+    <string name="tasbihat">التسبيحات</string>
+    <string name="start_on_tasbih">ابدأ في المسبحة</string>
+    <string name="add_your_own">أضف دعاءك</string>
+    <string name="search_duas">ابحث في الأدعية…</string>
+    <string name="no_duas_found">لا توجد أدعية</string>
+    <string name="arabic_text">العربية</string>
+    <string name="translation_optional">الترجمة (اختياري)</string>
+    <string name="repetitions">عدد التكرار</string>
+    <string name="added_by_you">من إضافتك</string>
+    <string name="save">حفظ</string>
+    <string name="completed">تمّ</string>
+    <string name="use_beads">بالمسبحة</string>
+    <string name="all">الكل</string>
+    <string name="dua">دعاء</string>
+    <string name="zikr">ذكر</string>
+    <string name="new_collection">مجموعة جديدة</string>
+    <string name="names_of_allah">أسماء الله الحسنى</string>
+    <string name="azkar">الأذكار (معاينة)</string>
+
     <string name="adjust_hijri_hint">عدّل إذا كان تاريخك الهجري المحلي يختلف عن التاريخ المحسوب.</string>
 </resources>
