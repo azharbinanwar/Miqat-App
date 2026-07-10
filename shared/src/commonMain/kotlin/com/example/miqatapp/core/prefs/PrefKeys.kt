@@ -24,8 +24,8 @@ object PrefKeys {
     fun adjust(prayer: String) = "adjust_${prayer.lowercase()}" // ± minutes per prayer
 
     // ── Location ─────────────────────────────────────────────
-    const val ACTIVE_CITY = "active_city"
-    const val SAVED_CITIES = "saved_cities"
+    const val ACTIVE_PLACE = "active_place"   // the selected Place, as JSON
+    const val SAVED_PLACES = "saved_places"   // saved Places (favorites), as a JSON array
 
     // ── Notifications ────────────────────────────────────────
     const val ALL_ALERTS = "notif_all_alerts"

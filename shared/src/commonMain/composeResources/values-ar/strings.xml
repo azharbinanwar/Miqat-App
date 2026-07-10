@@ -177,8 +177,15 @@
     <string name="language">اللغة</string>
     <string name="location">الموقع</string>
     <string name="use_current_location">استخدام الموقع الحالي</string>
+    <string name="cancel">إلغاء</string>
+    <string name="open_settings">فتح الإعدادات</string>
+    <string name="location_permission_needed">الوصول إلى الموقع مطلوب</string>
+    <string name="location_permission_rationale">يحتاج ميقات إلى موقعك لحساب مواقيت الصلاة واتجاه القبلة بدقة. فعّله من الإعدادات.</string>
     <string name="search_city">ابحث عن مدينة</string>
     <string name="saved">المحفوظة</string>
+    <string name="search_city_hint_title">ابحث عن مدينتك</string>
+    <string name="search_city_hint_message">اكتب اسم مدينة لتحديد موقعك والحصول على مواقيت دقيقة.</string>
+    <string name="clear_search">مسح البحث</string>
     <string name="no_cities_found">لم يتم العثور على مدن</string>
     <string name="try_a_different_search">جرّب تهجئة مختلفة</string>
     <string name="prayer_calculation">حساب مواقيت الصلاة</string>

@@ -35,10 +35,7 @@ import com.example.miqatapp.feature.tasbih.presentation.TasbihHubScreen
 import com.example.miqatapp.feature.tracker.presentation.TrackerScreen
 import com.example.miqatapp.feature.sandbox.presentation.SandboxScreen
 
-/**
- * App-wide navigation host. Sets up the NavController, exposes it both ways
- * (LocalNavController for UI, LocalAppNavigator for the interface), and lists routes.
- */
+
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()

@@ -24,6 +24,8 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     placeholder: String? = null,
     singleLine: Boolean = true,
+    leading: (@Composable () -> Unit)? = null,
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     val c = AppTheme.colors
     TextField(
@@ -31,6 +33,8 @@ fun AppTextField(
         onValueChange = onValueChange,
         modifier = modifier.fillMaxWidth(),
         placeholder = placeholder?.let { { Text(it, color = c.onSurfaceVariant) } },
+        leadingIcon = leading,
+        trailingIcon = trailing,
         singleLine = singleLine,
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(

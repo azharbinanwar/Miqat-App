@@ -3,7 +3,9 @@ package com.example.miqatapp.core.prefs
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.miqatapp.core.constants.Place
 import com.russhwolf.settings.Settings
+import kotlinx.serialization.json.Json
 import kotlin.reflect.KProperty
 
 /**
@@ -13,6 +15,7 @@ import kotlin.reflect.KProperty
  */
 object Prefs {
     private val settings: Settings = Settings()
+    private val json = Json { ignoreUnknownKeys = true }
 
     /**
      * A String? pref that's also Compose state: reading it in a composable recomposes when it changes,
@@ -36,8 +39,17 @@ object Prefs {
     /** Clock: TimeFormat.value ("Twelve" | "TwentyFour"), or null = default. */
     var timeFormat: String? by ReactivePref(settings, PrefKeys.TIME_FORMAT)
 
-    /** The active city's display name (e.g. "Makkah"); null = the built-in default. ponytail: name only for now — full coords/tz record lands with the calc engine. */
-    var activeCity: String? by ReactivePref(settings, PrefKeys.ACTIVE_CITY)
+    /** The selected location as JSON; null = none saved (engine falls back to MiqatDefaults.place). Reactive. */
+    private var activePlaceRaw: String? by ReactivePref(settings, PrefKeys.ACTIVE_PLACE)
+    var activePlace: Place?
+        get() = activePlaceRaw?.let { runCatching { json.decodeFromString<Place>(it) }.getOrNull() }
+        set(value) { activePlaceRaw = value?.let { json.encodeToString(it) } }
+
+    /** Saved locations (favorites) as a JSON array; empty when none. Reactive. */
+    private var savedPlacesRaw: String? by ReactivePref(settings, PrefKeys.SAVED_PLACES)
+    var savedPlaces: List<Place>
+        get() = savedPlacesRaw?.let { runCatching { json.decodeFromString<List<Place>>(it) }.getOrNull() } ?: emptyList()
+        set(value) { savedPlacesRaw = if (value.isEmpty()) null else json.encodeToString(value) }
 
     /** Prayer calc: each stores the enum's `name` (CalculationMethod / Madhab / HighLatRule), null = default. */
     var calcMethod: String? by ReactivePref(settings, PrefKeys.CALC_METHOD)

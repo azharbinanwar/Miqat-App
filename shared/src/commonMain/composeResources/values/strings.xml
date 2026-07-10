@@ -177,8 +177,15 @@
     <string name="language">Language</string>
     <string name="location">Location</string>
     <string name="use_current_location">Use current location</string>
+    <string name="cancel">Cancel</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="location_permission_needed">Location access needed</string>
+    <string name="location_permission_rationale">Miqat needs your location to calculate accurate prayer times and the Qibla direction. Turn it on in Settings.</string>
     <string name="search_city">Search for a city</string>
     <string name="saved">Saved</string>
+    <string name="search_city_hint_title">Find your city</string>
+    <string name="search_city_hint_message">Type a city name to set your location for accurate prayer times.</string>
+    <string name="clear_search">Clear search</string>
     <string name="no_cities_found">No cities found</string>
     <string name="try_a_different_search">Try a different spelling</string>
     <string name="prayer_calculation">Prayer calculation</string>

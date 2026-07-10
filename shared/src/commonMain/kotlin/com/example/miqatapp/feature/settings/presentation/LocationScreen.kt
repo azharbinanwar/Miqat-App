@@ -24,8 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,9 +42,16 @@ import com.composables.icons.lucide.Navigation
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.core.constants.Place
 import com.example.miqatapp.core.enums.countryLabel
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.prefs.Prefs
+import com.example.miqatapp.core.location.LocationRepository
+import com.example.miqatapp.core.location.nearestTo
+import com.example.miqatapp.core.location.rememberGeoLocator
+import com.example.miqatapp.core.permissions.AppPermission
+import com.example.miqatapp.core.permissions.PermissionDeniedSheet
+import com.example.miqatapp.core.permissions.PermissionStatus
+import com.example.miqatapp.core.permissions.rememberPermissionService
 import com.example.miqatapp.core.widgets.AppTextField
 import com.example.miqatapp.core.widgets.AppTile
 import com.example.miqatapp.core.widgets.AppTileGroup
@@ -53,32 +60,36 @@ import com.example.miqatapp.core.widgets.StateView
 import com.example.miqatapp.core.widgets.TilePosition
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.back
+import com.example.miqatapp.resources.clear_search
 import com.example.miqatapp.resources.location
 import com.example.miqatapp.resources.no_cities_found
+import com.example.miqatapp.resources.search_city_hint_message
+import com.example.miqatapp.resources.search_city_hint_title
 import com.example.miqatapp.resources.saved
 import com.example.miqatapp.resources.search_city
 import com.example.miqatapp.resources.try_a_different_search
 import com.example.miqatapp.resources.use_current_location
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.miqatapp.resources.location_permission_needed
+import com.example.miqatapp.resources.location_permission_rationale
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 
-/** A place prayer times are computed for. Carries [lat]/[lng]/[timezone] — the data the calc engine needs. */
-private data class City(val name: String, val ascii: String, val lat: Double, val lng: Double, val country: String, val timezone: String)
-
-/** Built-in default (Kaaba) — used until the user picks/detects their own city; also the permission-denied fallback. */
-private val MAKKAH = City("Makkah", "Makkah", 21.4225, 39.8262, "SA", "Asia/Riyadh")
-
-/** Parse the bundled GeoNames-style TSV: name, asciiname, lat, lng, countryCode, timezone. */
-private fun parseCities(bytes: ByteArray): List<City> =
+/** Parse the bundled GeoNames-style TSV into [Place]s: name, asciiname, lat, lng, countryCode, timezone. */
+private fun parseCities(bytes: ByteArray): List<Place> =
     bytes.decodeToString().lineSequence().mapNotNull { line ->
         if (line.isBlank()) return@mapNotNull null
         val p = line.split('\t')
         if (p.size < 6) return@mapNotNull null
         val lat = p[2].toDoubleOrNull() ?: return@mapNotNull null
         val lng = p[3].toDoubleOrNull() ?: return@mapNotNull null
-        City(p[0], p[1], lat, lng, p[4], p[5])
+        Place(name = p[0], countryCode = p[4], latitude = lat, longitude = lng, timeZone = p[5], ascii = p[1])
     }.toList()
+
+/** Same place regardless of coord precision — dedupe key for the saved list. */
+private fun Place.sameAs(other: Place) = name == other.name && countryCode == other.countryCode
 
 /**
  * Location picker — a tidy hub: "Use current location" + "Search for a city" (opens a full-screen search
@@ -89,24 +100,54 @@ private fun parseCities(bytes: ByteArray): List<City> =
 @Composable
 fun LocationScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
-    val saved = remember { mutableStateListOf(MAKKAH) }
-    var active by remember { mutableStateOf(MAKKAH) }
+    // Single source of truth — the repo resolves Prefs ?: MiqatDefaults and emits on every change.
+    val active by LocationRepository.activePlace.collectAsState()
+    val savedRaw by LocationRepository.savedPlaces.collectAsState()
+    val saved = savedRaw.ifEmpty { listOf(active) } // show the active place even before anything is saved
     var showSearch by remember { mutableStateOf(false) }
 
     // load the 49k-row catalog once, off the main thread — so opening search is instant
-    var all by remember { mutableStateOf<List<City>>(emptyList()) }
+    var all by remember { mutableStateOf<List<Place>>(emptyList()) }
     LaunchedEffect(Unit) { all = withContext(Dispatchers.Default) { parseCities(Res.readBytes("files/cities.txt")) } }
 
-    fun choose(city: City) {
-        if (saved.none { it.name == city.name && it.country == city.country }) saved.add(0, city)
-        active = city
-        Prefs.activeCity = city.name // surfaced in the drawer header
+    // GPS: request permission → get a fix → snap to the nearest catalog city (offline) → save it.
+    val perms = rememberPermissionService()
+    val geo = rememberGeoLocator()
+    val scope = rememberCoroutineScope()
+    var showDeniedSheet by remember { mutableStateOf(false) }
+    var locating by remember { mutableStateOf(false) } // GPS in flight — drives the tile spinner
+    fun useCurrentLocation() {
+        if (locating) return
+        locating = true
+        scope.launch {
+            try {
+                when (perms.request(AppPermission.Location)) {
+                    PermissionStatus.Granted -> {
+                        val fix = geo.current()
+                        val place = fix?.let { all.nearestTo(it.latitude, it.longitude) }
+                        if (place != null) LocationRepository.setActive(place) // else: no fix / catalog still loading — keep current
+                    }
+                    else -> showDeniedSheet = true // denied/dismissed → explain + offer Settings
+                }
+            } finally {
+                locating = false
+            }
+        }
     }
 
     // full-screen search takes over when open (LazyColumn handles hundreds of rows efficiently)
     if (showSearch) {
-        CitySearchScreen(all = all, onPick = { choose(it); showSearch = false }, onClose = { showSearch = false })
+        CitySearchScreen(all = all, onPick = { LocationRepository.setActive(it); showSearch = false }, onClose = { showSearch = false })
         return
+    }
+
+    if (showDeniedSheet) {
+        PermissionDeniedSheet(
+            title = stringResource(Res.string.location_permission_needed),
+            message = stringResource(Res.string.location_permission_rationale),
+            onOpenSettings = { showDeniedSheet = false; perms.openAppSettings() },
+            onDismiss = { showDeniedSheet = false },
+        )
     }
 
     Scaffold(
@@ -126,26 +167,30 @@ fun LocationScreen(onBack: () -> Unit = {}) {
         Column(Modifier.fillMaxSize().padding(pad).padding(16.dp).verticalScroll(rememberScrollState())) {
             AppTileGroup(
                 items = listOf(
-                    // ponytail: mock GPS — real fix (permissions + on-device coords) lands with the calc engine
-                    AppTileItem(title = stringResource(Res.string.use_current_location), leadingIcon = Lucide.Navigation, onClick = { choose(MAKKAH) }),
+                    AppTileItem(
+                        title = stringResource(Res.string.use_current_location),
+                        leadingIcon = Lucide.Navigation,
+                        trailing = { if (locating) CircularProgressIndicator(modifier = Modifier.size(18.dp), color = c.primary, strokeWidth = 2.dp) },
+                        onClick = { useCurrentLocation() },
+                    ),
                     AppTileItem(title = stringResource(Res.string.search_city), leadingIcon = Lucide.Search, onClick = { showSearch = true }),
                 ),
             )
             Spacer(Modifier.height(12.dp))
             AppTileGroup(
                 title = stringResource(Res.string.saved),
-                items = saved.map { city ->
-                    val isActive = city.name == active.name && city.country == active.country
+                items = saved.map { place ->
+                    val isActive = place.sameAs(active)
                     AppTileItem(
-                        title = city.name,
-                        subtitle = countryLabel(city.country),
+                        title = place.name,
+                        subtitle = countryLabel(place.countryCode),
                         leadingIcon = Lucide.MapPin,
                         selected = isActive,
                         trailing = {
                             if (isActive) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp))
-                            else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { saved.remove(city) })
+                            else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { LocationRepository.remove(place) })
                         },
-                        onClick = { choose(city) },
+                        onClick = { LocationRepository.setActive(place) },
                     )
                 },
             )
@@ -159,16 +204,16 @@ fun LocationScreen(onBack: () -> Unit = {}) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CitySearchScreen(all: List<City>, onPick: (City) -> Unit, onClose: () -> Unit) {
+private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose: () -> Unit) {
     val c = AppTheme.colors
     var query by remember { mutableStateOf("") }
-    var results by remember { mutableStateOf<List<City>>(emptyList()) }
+    var results by remember { mutableStateOf<List<Place>>(emptyList()) }
     LaunchedEffect(query, all) {
         val q = query.trim()
         results = if (q.isBlank()) emptyList() else withContext(Dispatchers.Default) {
             all.asSequence()
                 .filter { it.ascii.contains(q, ignoreCase = true) || it.name.contains(q, ignoreCase = true) }
-                .sortedWith(compareByDescending<City> { it.ascii.startsWith(q, ignoreCase = true) }.thenBy { it.ascii })
+                .sortedWith(compareByDescending<Place> { it.ascii.startsWith(q, ignoreCase = true) }.thenBy { it.ascii })
                 .take(200).toList()
         }
     }
@@ -188,22 +233,35 @@ private fun CitySearchScreen(all: List<City>, onPick: (City) -> Unit, onClose: (
         },
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
-            AppTextField(value = query, onValueChange = { query = it }, placeholder = stringResource(Res.string.search_city))
+            AppTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = stringResource(Res.string.search_city),
+                trailing = if (query.isNotEmpty()) {
+                    { IconButton(onClick = { query = "" }) { Icon(Lucide.X, stringResource(Res.string.clear_search), tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp)) } }
+                } else null,
+            )
             Spacer(Modifier.height(12.dp))
             Box(Modifier.fillMaxWidth().weight(1f)) {
                 when {
                     all.isEmpty() -> CircularProgressIndicator(color = c.primary, modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp))
-                    query.isBlank() -> Unit
+                    query.isBlank() -> StateView(
+                        title = stringResource(Res.string.search_city_hint_title),
+                        message = stringResource(Res.string.search_city_hint_message),
+                        icon = { Icon(Lucide.Search, null, tint = c.primary, modifier = Modifier.size(40.dp)) },
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp),
+                    )
                     results.isEmpty() -> StateView(
                         title = stringResource(Res.string.no_cities_found),
                         message = stringResource(Res.string.try_a_different_search),
+                        icon = { Icon(Lucide.MapPin, null, tint = c.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
                         modifier = Modifier.align(Alignment.TopCenter).padding(top = 24.dp),
                     )
                     else -> LazyColumn(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        itemsIndexed(results, key = { _, city -> city.name + city.country + city.lat }) { i, city ->
+                        itemsIndexed(results, key = { _, place -> place.name + place.countryCode + place.latitude }) { i, place ->
                             AppTile(
-                                title = city.name,
-                                subtitle = countryLabel(city.country),
+                                title = place.name,
+                                subtitle = countryLabel(place.countryCode),
                                 leadingIcon = Lucide.MapPin,
                                 position = when {
                                     results.size == 1 -> TilePosition.Single
@@ -211,7 +269,7 @@ private fun CitySearchScreen(all: List<City>, onPick: (City) -> Unit, onClose: (
                                     i == results.lastIndex -> TilePosition.Last
                                     else -> TilePosition.Middle
                                 },
-                                onClick = { onPick(city) },
+                                onClick = { onPick(place) },
                             )
                         }
                     }

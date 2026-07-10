@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
+import com.example.miqatapp.core.location.LocationRepository
 import com.example.miqatapp.core.prefs.PrefKeys
 import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.core.prefs.TimeFormat
@@ -46,6 +48,7 @@ import com.example.miqatapp.core.widgets.AppTileItem
 import com.example.miqatapp.core.widgets.MiniStepper
 import com.example.miqatapp.core.widgets.OptionSheet
 import com.example.miqatapp.core.widgets.LocalDrawerState
+import com.example.miqatapp.feature.prayer.domain.PrayerCalculationRepository
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.about
 import com.example.miqatapp.resources.all_alerts_on
@@ -129,11 +132,16 @@ fun SettingsScreen(
                     ),
                 ),
             )
+            val activeCity by LocationRepository.activePlace.collectAsState()
+            val asrMadhab by PrayerCalculationRepository.madhab.collectAsState()
+            val calcMethod by PrayerCalculationRepository.method.collectAsState()
+            val highLat by PrayerCalculationRepository.highLatRule.collectAsState()
             AppTileGroup(
                 title = stringResource(Res.string.prayer_and_alerts),
                 items = buildList {
-                    add(AppTileItem(leadingIcon = Lucide.MapPin, title = stringResource(Res.string.location), subtitle = "Karachi", onClick = onLocation))
-                    add(AppTileItem(leadingIcon = Lucide.Compass, title = stringResource(Res.string.prayer_calculation), subtitle = "Karachi · Hanafi", onClick = onPrayerCalc))
+                    add(AppTileItem(leadingIcon = Lucide.MapPin, title = stringResource(Res.string.location), subtitle = activeCity.name, onClick = onLocation))
+                    // madhab · method · high-lat — one line, ellipsized by the tile if long
+                    add(AppTileItem(leadingIcon = Lucide.Compass, title = stringResource(Res.string.prayer_calculation), subtitle = "${asrMadhab.label} · ${calcMethod.label} · ${highLat.label}", onClick = onPrayerCalc))
                     add(AppTileItem(leadingIcon = Lucide.Bell, title = stringResource(Res.string.notifications), subtitle = stringResource(Res.string.all_alerts_on), onClick = onNotifications))
                     if (canControlDnd) add(AppTileItem(leadingIcon = Lucide.BellOff, title = stringResource(Res.string.prayer_focus), subtitle = stringResource(Res.string.auto_silence_around_prayer), onClick = onPrayerFocus))
                 },

@@ -16,15 +16,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
@@ -36,12 +34,11 @@ import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.prefs.PrefKeys
-import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.core.widgets.AppBottomSheet
 import com.example.miqatapp.core.widgets.AppTileGroup
 import com.example.miqatapp.core.widgets.AppTileItem
 import com.example.miqatapp.core.widgets.MiniStepper
+import com.example.miqatapp.feature.prayer.domain.PrayerCalculationRepository
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.asr_method
 import com.example.miqatapp.resources.back
@@ -62,30 +59,24 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
-    val c = AppTheme.colors
-    val method = CalculationMethod.fromName(Prefs.calcMethod)
-    val madhab = Madhab.fromName(Prefs.madhab)
-    val highLat = HighLatRule.fromName(Prefs.highLatRule)
-    var fajrAngle by remember { mutableStateOf(Prefs.getInt(PrefKeys.CUSTOM_FAJR_ANGLE, 18)) }
-    var ishaAngle by remember { mutableStateOf(Prefs.getInt(PrefKeys.CUSTOM_ISHA_ANGLE, 17)) }
-    // per-prayer ± minute tweak (local mosque / observed sighting differs from the computed time)
-    val adjust = remember { mutableStateMapOf<Miqat, Int>().apply { Miqat.DAILY.forEach { put(it, Prefs.getInt(PrefKeys.adjust(it.name), 0)) } } }
+    // Single source of truth — repo resolves Prefs ?: MiqatDefaults; writes flow back through its setters.
+    val repo = PrayerCalculationRepository
+    val method by repo.method.collectAsState()
+    val madhab by repo.madhab.collectAsState()
+    val highLat by repo.highLatRule.collectAsState()
+    val fajrAngle by repo.fajrAngle.collectAsState()
+    val ishaAngle by repo.ishaAngle.collectAsState()
+    val adjust by repo.adjustments.collectAsState()
 
     var showMethod by remember { mutableStateOf(false) }
     var showMadhab by remember { mutableStateOf(false) }
     var showHighLat by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.prayer_calculation), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.prayer_calculation)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { pad ->
@@ -97,8 +88,8 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
                 items = buildList {
                     add(AppTileItem(title = stringResource(Res.string.calculation_method), subtitle = method.label, onClick = { showMethod = true }))
                     if (method == CalculationMethod.Custom) {
-                        add(AppTileItem(title = stringResource(Res.string.fajr_angle), trailing = { MiniStepper(fajrAngle, "°", { fajrAngle = it; Prefs.putInt(PrefKeys.CUSTOM_FAJR_ANGLE, it) }, min = 10, max = 21) }))
-                        add(AppTileItem(title = stringResource(Res.string.isha_angle), trailing = { MiniStepper(ishaAngle, "°", { ishaAngle = it; Prefs.putInt(PrefKeys.CUSTOM_ISHA_ANGLE, it) }, min = 10, max = 21) }))
+                        add(AppTileItem(title = stringResource(Res.string.fajr_angle), trailing = { MiniStepper(fajrAngle, "°", { repo.setFajrAngle(it) }, min = 10, max = 21) }))
+                        add(AppTileItem(title = stringResource(Res.string.isha_angle), trailing = { MiniStepper(ishaAngle, "°", { repo.setIshaAngle(it) }, min = 10, max = 21) }))
                     }
                     add(AppTileItem(title = stringResource(Res.string.asr_method), subtitle = madhab.label, onClick = { showMadhab = true }))
                     add(AppTileItem(title = stringResource(Res.string.high_latitude_rule), subtitle = highLat.label, onClick = { showHighLat = true }))
@@ -112,16 +103,16 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
                     AppTileItem(
                         title = stringResource(p.labelRes),
                         leadingIcon = p.icon,
-                        trailing = { MiniStepper(adjust.getValue(p), minLabel, { adjust[p] = it; Prefs.putInt(PrefKeys.adjust(p.name), it) }, min = -30, max = 30) },
+                        trailing = { MiniStepper(adjust[p] ?: 0, minLabel, { repo.setAdjustment(p, it) }, min = -30, max = 30) },
                     )
                 },
             )
         }
     }
 
-    if (showMethod) PickerSheet(stringResource(Res.string.calculation_method), CalculationMethod.entries, method, { it.label }, { it.region }, { Prefs.calcMethod = it.name; showMethod = false }) { showMethod = false }
-    if (showMadhab) PickerSheet(stringResource(Res.string.asr_method), Madhab.entries, madhab, { it.label }, onPick = { Prefs.madhab = it.name; showMadhab = false }, onDismiss = { showMadhab = false })
-    if (showHighLat) PickerSheet(stringResource(Res.string.high_latitude_rule), HighLatRule.entries, highLat, { it.label }, onPick = { Prefs.highLatRule = it.name; showHighLat = false }, onDismiss = { showHighLat = false })
+    if (showMethod) PickerSheet(stringResource(Res.string.calculation_method), CalculationMethod.entries, method, { it.label }, { it.region }, { repo.setMethod(it); showMethod = false }) { showMethod = false }
+    if (showMadhab) PickerSheet(stringResource(Res.string.asr_method), Madhab.entries, madhab, { it.label }, onPick = { repo.setMadhab(it); showMadhab = false }, onDismiss = { showMadhab = false })
+    if (showHighLat) PickerSheet(stringResource(Res.string.high_latitude_rule), HighLatRule.entries, highLat, { it.label }, onPick = { repo.setHighLatRule(it); showHighLat = false }, onDismiss = { showHighLat = false })
 }
 
 /**
