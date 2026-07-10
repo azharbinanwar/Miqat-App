@@ -35,7 +35,7 @@ import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.MosqueScene
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.tap_header_to_preview_each_prayer
@@ -47,7 +47,7 @@ import org.jetbrains.compose.resources.stringResource
  */
 @Composable
 fun PrayerSceneHeader(
-    prayer: Prayer,
+    prayer: Miqat,
     fraction: Float,
     locationName: String,
     dateLabel: String,

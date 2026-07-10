@@ -154,6 +154,12 @@
     <string name="prayer_isha">Isha</string>
     <string name="prayer_jumuah">Jumu\'ah</string>
 
+    <!-- Miqat time points (non-prayer) -->
+    <string name="miqat_imsak">Imsak</string>
+    <string name="miqat_zawal">Zawal</string>
+    <string name="miqat_sunset">Sunset</string>
+    <string name="miqat_midnight">Midnight</string>
+
     <!-- Prayer Focus -->
     <string name="back">Back</string>
     <string name="minutes_short">min</string>

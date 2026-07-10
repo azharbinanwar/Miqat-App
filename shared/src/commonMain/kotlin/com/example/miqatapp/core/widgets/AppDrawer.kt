@@ -103,8 +103,8 @@ private val drawerItems = listOf(
 
 private val footerItems = listOf(
     DrawerEntry(Res.string.settings, Lucide.Settings, AppRoute.Settings),
-    // ponytail: dev-only — kept out of the shipping drawer, route still registered for dev use.
-    // DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
+    // ponytail: dev-only — re-shown while we review the Miqat migration; hide again before shipping.
+    DrawerEntry(Res.string.developer_sandbox, Lucide.Flame, AppRoute.Sandbox),
     // ponytail: dropped from drawer (did nothing — route null); About lives in Settings.
     // DrawerEntry(Res.string.about_miqat, Lucide.Info, null),
 )

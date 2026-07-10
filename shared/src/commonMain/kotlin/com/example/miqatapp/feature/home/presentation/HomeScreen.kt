@@ -43,7 +43,7 @@ import com.composables.icons.lucide.MoonStar
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.components.PrayerSceneHeader
 import com.example.miqatapp.core.enums.PrayerTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
@@ -69,7 +69,7 @@ import com.example.miqatapp.core.widgets.AppTileItem
 import com.example.miqatapp.core.widgets.PulseDot
 
 private data class SceneRow(
-    val prayer: Prayer,
+    val prayer: Miqat,
     val time: String,
     val status: PrayerTimeStatus?,
     val tracked: PrayerTrackerStatus? = null,
@@ -77,12 +77,12 @@ private data class SceneRow(
 )
 
 private val sceneRows = listOf(
-    SceneRow(Prayer.Fajr, "4:32 AM", null, PrayerTrackerStatus.PrayedOnTime),
-    SceneRow(Prayer.Sunrise, "5:58 AM", null, trackable = false),
-    SceneRow(Prayer.Dhuhr, "12:21 PM", null, PrayerTrackerStatus.PrayedWithJamaat),
-    SceneRow(Prayer.Asr, "3:47 PM", PrayerTimeStatus.Current),
-    SceneRow(Prayer.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
-    SceneRow(Prayer.Isha, "8:14 PM", null),
+    SceneRow(Miqat.Fajr, "4:32 AM", null, PrayerTrackerStatus.PrayedOnTime),
+    SceneRow(Miqat.Sunrise, "5:58 AM", null, trackable = false),
+    SceneRow(Miqat.Dhuhr, "12:21 PM", null, PrayerTrackerStatus.PrayedWithJamaat),
+    SceneRow(Miqat.Asr, "3:47 PM", PrayerTimeStatus.Current),
+    SceneRow(Miqat.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
+    SceneRow(Miqat.Isha, "8:14 PM", null),
 )
 
 private val ExpandedHeader = 380.dp
@@ -90,13 +90,13 @@ private val CollapsedHeader = 116.dp
 
 @Composable
 fun HomeScreen() {
-    val prayers = Prayer.entries
-    var index by remember { mutableStateOf(prayers.indexOf(Prayer.Maghrib)) }
+    val prayers = Miqat.DAILY
+    var index by remember { mutableStateOf(prayers.indexOf(Miqat.Maghrib)) }
     val next = prayers[index]
     val nextTime = sceneRows.firstOrNull { it.prayer == next }?.time ?: ""
 
-    val tracked = remember { mutableStateMapOf<Prayer, PrayerTrackerStatus?>().apply { sceneRows.forEach { put(it.prayer, it.tracked) } } }
-    var sheetPrayer by remember { mutableStateOf<Prayer?>(null) }
+    val tracked = remember { mutableStateMapOf<Miqat, PrayerTrackerStatus?>().apply { sceneRows.forEach { put(it.prayer, it.tracked) } } }
+    var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
     val total = sceneRows.count { it.trackable }
     val prayedCount = sceneRows.count { it.trackable && tracked[it.prayer].let { s -> s != null && s != PrayerTrackerStatus.Missed } }
 
@@ -184,7 +184,7 @@ private fun TrackControl(tracked: PrayerTrackerStatus?) {
 
 @Composable
 private fun TrackingSheet(
-    prayer: Prayer,
+    prayer: Miqat,
     current: PrayerTrackerStatus?,
     onSelect: (PrayerTrackerStatus?) -> Unit,
     onDismiss: () -> Unit,

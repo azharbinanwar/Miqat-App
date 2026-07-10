@@ -11,22 +11,22 @@ import com.example.miqatapp.resources.prayer_maghrib
 import org.jetbrains.compose.resources.StringResource
 
 /**
- * The prayers that carry reminders / Prayer-Focus config. The five daily prayers plus **Jumu'ah**, which
+ * The prayers that carry reminders / Miqat-Focus config. The five daily prayers plus **Jumu'ah**, which
  * is the Friday variant of Dhuhr (same time slot — [time] = Dhuhr) and gets a longer [maxFocusMin] for the
- * khutbah. Icon comes from the time-calculation [Prayer] enum; [labelRes] carries the localized name.
+ * khutbah. Icon comes from the time-calculation [Miqat] enum; [labelRes] carries the localized name.
  */
 enum class ReminderPrayer(
-    val time: Prayer,
+    val time: Miqat,
     val labelRes: StringResource,
     val maxFocusMin: Int = 120,
     val fridayOnly: Boolean = false,
 ) {
-    Fajr(Prayer.Fajr, Res.string.prayer_fajr),
-    Dhuhr(Prayer.Dhuhr, Res.string.prayer_dhuhr),
-    Asr(Prayer.Asr, Res.string.prayer_asr),
-    Maghrib(Prayer.Maghrib, Res.string.prayer_maghrib),
-    Isha(Prayer.Isha, Res.string.prayer_isha),
-    Jumuah(Prayer.Dhuhr, Res.string.prayer_jumuah, maxFocusMin = 180, fridayOnly = true), // Friday Dhuhr — runs longer
+    Fajr(Miqat.Fajr, Res.string.prayer_fajr),
+    Dhuhr(Miqat.Dhuhr, Res.string.prayer_dhuhr),
+    Asr(Miqat.Asr, Res.string.prayer_asr),
+    Maghrib(Miqat.Maghrib, Res.string.prayer_maghrib),
+    Isha(Miqat.Isha, Res.string.prayer_isha),
+    Jumuah(Miqat.Dhuhr, Res.string.prayer_jumuah, maxFocusMin = 180, fridayOnly = true), // Friday Dhuhr — runs longer
     ;
 
     val icon: ImageVector get() = time.icon

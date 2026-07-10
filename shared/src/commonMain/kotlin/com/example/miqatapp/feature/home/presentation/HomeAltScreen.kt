@@ -46,7 +46,7 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.TrendingUp
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTimeStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
@@ -56,15 +56,15 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-private data class AltPrayer(val prayer: Prayer, val time: String, val status: PrayerTimeStatus?)
+private data class AltPrayer(val prayer: Miqat, val time: String, val status: PrayerTimeStatus?)
 
 private val altTimes = listOf(
-    AltPrayer(Prayer.Fajr, "4:32 AM", null),
-    AltPrayer(Prayer.Sunrise, "5:58 AM", null),
-    AltPrayer(Prayer.Dhuhr, "12:21 PM", null),
-    AltPrayer(Prayer.Asr, "3:47 PM", PrayerTimeStatus.Current),
-    AltPrayer(Prayer.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
-    AltPrayer(Prayer.Isha, "8:14 PM", null),
+    AltPrayer(Miqat.Fajr, "4:32 AM", null),
+    AltPrayer(Miqat.Sunrise, "5:58 AM", null),
+    AltPrayer(Miqat.Dhuhr, "12:21 PM", null),
+    AltPrayer(Miqat.Asr, "3:47 PM", PrayerTimeStatus.Current),
+    AltPrayer(Miqat.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
+    AltPrayer(Miqat.Isha, "8:14 PM", null),
 )
 
 @Composable
@@ -96,7 +96,7 @@ fun HomeAltScreen() {
         )
 
         Spacer(Modifier.height(16.dp))
-        RadialDial(next = Prayer.Maghrib, time = "6:44 PM", countdown = "02:14:30", progress = 0.62f, times = altTimes)
+        RadialDial(next = Miqat.Maghrib, time = "6:44 PM", countdown = "02:14:30", progress = 0.62f, times = altTimes)
 
         Spacer(Modifier.height(24.dp))
         Text(
@@ -122,7 +122,7 @@ fun HomeAltScreen() {
 }
 
 @Composable
-private fun RadialDial(next: Prayer, time: String, countdown: String, progress: Float, times: List<AltPrayer>) {
+private fun RadialDial(next: Miqat, time: String, countdown: String, progress: Float, times: List<AltPrayer>) {
     val ring = next.color
     val track = AppTheme.colors.neutralMutedContainer
     val cardBg = AppTheme.colors.cardColor

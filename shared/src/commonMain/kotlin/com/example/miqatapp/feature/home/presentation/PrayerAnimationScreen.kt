@@ -43,7 +43,7 @@ import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.example.miqatapp.core.locale.tr
 import com.composables.icons.lucide.Lucide
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.navigation.LocalNavController
 import kotlin.math.PI
 import kotlin.math.sin
@@ -99,7 +99,7 @@ fun PrayerAnimationScreen() {
                 Modifier.fillMaxWidth().padding(horizontal = 28.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Prayer.entries.forEach { p ->
+                Miqat.DAILY.forEach { p ->
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Box(Modifier.size(8.dp).background(Color.White.copy(alpha = 0.9f), androidx.compose.foundation.shape.CircleShape))
                         Text(p.name.take(3), color = Color.White.copy(alpha = 0.75f), fontSize = 10.sp)

@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.navigation.LocalNavController
 import kotlin.math.PI
@@ -49,13 +49,18 @@ import kotlin.math.sin
 
 private data class Scene(val arcPos: Float, val sky: List<Color>, val moon: Boolean, val night: Float)
 
-private fun sceneFor(p: Prayer): Scene = when (p) {
-    Prayer.Fajr -> Scene(0.10f, listOf(Color(0xFF1A1740), Color(0xFF3B2E63), Color(0xFF7A5A86)), moon = true, night = 0.70f)
-    Prayer.Sunrise -> Scene(0.15f, listOf(Color(0xFF2A4A8A), Color(0xFFB85C73), Color(0xFFF0A85C)), moon = false, night = 0.18f)
-    Prayer.Dhuhr -> Scene(0.50f, listOf(Color(0xFF2E83C9), Color(0xFF6FB6E8), Color(0xFFC6E6FB)), moon = false, night = 0f)
-    Prayer.Asr -> Scene(0.80f, listOf(Color(0xFF3E78B0), Color(0xFF8FB4D8), Color(0xFFE6D6A8)), moon = false, night = 0.08f)
-    Prayer.Maghrib -> Scene(0.94f, listOf(Color(0xFF2B1E55), Color(0xFF8E3A63), Color(0xFFE8843C)), moon = false, night = 0.42f)
-    Prayer.Isha -> Scene(0.55f, listOf(Color(0xFF050912), Color(0xFF0E1430), Color(0xFF221A45)), moon = true, night = 0.95f)
+private fun sceneFor(p: Miqat): Scene = when (p) {
+    Miqat.Fajr -> Scene(0.10f, listOf(Color(0xFF1A1740), Color(0xFF3B2E63), Color(0xFF7A5A86)), moon = true, night = 0.70f)
+    Miqat.Sunrise -> Scene(0.15f, listOf(Color(0xFF2A4A8A), Color(0xFFB85C73), Color(0xFFF0A85C)), moon = false, night = 0.18f)
+    Miqat.Dhuhr -> Scene(0.50f, listOf(Color(0xFF2E83C9), Color(0xFF6FB6E8), Color(0xFFC6E6FB)), moon = false, night = 0f)
+    Miqat.Asr -> Scene(0.80f, listOf(Color(0xFF3E78B0), Color(0xFF8FB4D8), Color(0xFFE6D6A8)), moon = false, night = 0.08f)
+    Miqat.Maghrib -> Scene(0.94f, listOf(Color(0xFF2B1E55), Color(0xFF8E3A63), Color(0xFFE8843C)), moon = false, night = 0.42f)
+    Miqat.Isha -> Scene(0.55f, listOf(Color(0xFF050912), Color(0xFF0E1430), Color(0xFF221A45)), moon = true, night = 0.95f)
+    // non-carousel points reuse the nearest daily scene (carousel only cycles Miqat.DAILY)
+    Miqat.Imsak -> sceneFor(Miqat.Fajr)
+    Miqat.Duha, Miqat.Zawal -> sceneFor(Miqat.Dhuhr)
+    Miqat.Sunset -> sceneFor(Miqat.Maghrib)
+    Miqat.Midnight, Miqat.LastThird -> sceneFor(Miqat.Isha)
 }
 
 /**
@@ -69,7 +74,7 @@ private val starField = listOf(
 )
 
 @Composable
-fun MosqueScene(prayer: Prayer, modifier: Modifier = Modifier) {
+fun MosqueScene(prayer: Miqat, modifier: Modifier = Modifier) {
     val scene = sceneFor(prayer)
     val density = LocalDensity.current
     val topInsetPx = WindowInsets.statusBars.getTop(density).toFloat()
@@ -147,8 +152,8 @@ fun MosqueScene(prayer: Prayer, modifier: Modifier = Modifier) {
 @Composable
 fun MosqueSceneScreen() {
     val nav = LocalNavController.current
-    val prayers = Prayer.entries
-    var index by remember { mutableStateOf(prayers.indexOf(Prayer.Dhuhr)) }
+    val prayers = Miqat.DAILY
+    var index by remember { mutableStateOf(prayers.indexOf(Miqat.Dhuhr)) }
 
     Box(Modifier.fillMaxSize().clickable { index = (index + 1) % prayers.size }) {
         MosqueScene(prayers[index], Modifier.fillMaxSize())

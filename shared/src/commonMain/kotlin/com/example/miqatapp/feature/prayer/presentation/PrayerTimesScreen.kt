@@ -25,7 +25,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Settings
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.prefs.Prefs
 import com.example.miqatapp.core.prefs.TimeFormat
@@ -105,10 +105,10 @@ fun PrayerTimesScreen() {
 
                 AppTileGroup(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    items = Prayer.entries.map { p ->
+                    items = Miqat.DAILY.map { p ->
                         AppTileItem(
                             title = p.name,
-                            selected = selected == today && p == Prayer.Dhuhr,
+                            selected = selected == today && p == Miqat.Dhuhr,
                             leadingIcon = p.icon,
                             leadingColor = p.color,
                             trailing = {
@@ -119,7 +119,7 @@ fun PrayerTimesScreen() {
                                 )
                             },
                             // ponytail: real "current prayer" needs Adhan + now; mock highlights Dhuhr on today
-                            badge = if (selected == today && p == Prayer.Dhuhr) {
+                            badge = if (selected == today && p == Miqat.Dhuhr) {
                                 { PulseDot(color = AppTheme.colors.primary) }
                             } else null,
                         )
@@ -136,14 +136,15 @@ private fun formatSelected(date: LocalDate): String {
 }
 
 /** Placeholder times until PrayerRepository (Adhan) is wired. Deterministic per date. */
-private fun mockTime(date: LocalDate, prayer: Prayer): String {
+private fun mockTime(date: LocalDate, prayer: Miqat): String {
     val base = when (prayer) {
-        Prayer.Fajr -> 5 * 60 + 12
-        Prayer.Sunrise -> 6 * 60 + 34
-        Prayer.Dhuhr -> 12 * 60 + 21
-        Prayer.Asr -> 15 * 60 + 47
-        Prayer.Maghrib -> 18 * 60 + 14
-        Prayer.Isha -> 19 * 60 + 42
+        Miqat.Fajr -> 5 * 60 + 12
+        Miqat.Sunrise -> 6 * 60 + 34
+        Miqat.Dhuhr -> 12 * 60 + 21
+        Miqat.Asr -> 15 * 60 + 47
+        Miqat.Maghrib -> 18 * 60 + 14
+        Miqat.Isha -> 19 * 60 + 42
+        else -> 12 * 60 // DAILY-only list; other Miqat points unused here
     }
     val m = base + (date.dayOfMonth % 7) - 3
     return TimeFormat.fromValue(Prefs.timeFormat).format(m)

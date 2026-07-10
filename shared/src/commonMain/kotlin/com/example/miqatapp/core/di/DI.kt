@@ -9,7 +9,7 @@ import org.koin.dsl.module
  */
 val appModule = module {
     // registrations go here, e.g.:
-    // single<PrayerRepository> { PrayerRepositoryImpl(get()) }
+    // single<MiqatRepository> { MiqatRepositoryImpl(get()) }
     // viewModel { PrayerViewModel(get()) }
 }
 

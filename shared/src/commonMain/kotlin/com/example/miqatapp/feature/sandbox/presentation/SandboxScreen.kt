@@ -40,13 +40,14 @@ import com.example.miqatapp.core.enums.AdhanRoundingStyle
 import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import org.jetbrains.compose.resources.stringResource
 
 /** Scratch page to eyeball every button and color in light + dark. */
 @Composable
@@ -71,8 +72,10 @@ private fun Panel(title: String, mode: ThemeMode) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SectionTitle(title)
-            SectionTitle("Prayers")
-            PrayerShowcase()
+            SectionTitle("Miqat — All (chronological)")
+            MiqatAllShowcase()
+            SectionTitle("Miqat — Groups")
+            MiqatGroupsShowcase()
             SectionTitle("Tracker Status")
             TrackerStatusShowcase()
             SectionTitle("Time Status")
@@ -115,24 +118,44 @@ private fun ButtonShowcase() {
     }
 }
 
+/** All 12 time points in day order — enum order IS the sort order. */
 @Composable
-private fun PrayerShowcase() {
+private fun MiqatAllShowcase() {
     AppTileGroup(
-        items = Prayer.entries.map { prayer ->
+        items = Miqat.entries.map { m ->
             AppTileItem(
-                title = prayer.name,
+                title = stringResource(m.labelRes),
+                subtitle = m.category.name.lowercase() + if (m.isPrayer) " · tracked" else "",
                 leading = {
                     Box(
-                        Modifier.size(40.dp).background(prayer.color, CircleShape),
+                        Modifier.size(40.dp).background(m.color, CircleShape),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(prayer.icon, contentDescription = prayer.name, tint = prayer.onColor, modifier = Modifier.size(20.dp))
+                        Icon(m.icon, contentDescription = m.name, tint = m.onColor, modifier = Modifier.size(20.dp))
                     }
                 },
                 onClick = {},
             )
         },
     )
+}
+
+/** Same data sliced by category — what each screen would pick from. */
+@Composable
+private fun MiqatGroupsShowcase() {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        listOf(
+            "PRAYERS (Tracker, logging, notifications)" to Miqat.PRAYERS,
+            "SOLAR (timeline extras: Sunrise/Duha/Zawal/Sunset)" to Miqat.SOLAR,
+            "NIGHT (Midnight, Last third)" to Miqat.NIGHT,
+            "RAMADAN (Imsak)" to Miqat.RAMADAN,
+        ).forEach { (label, group) ->
+            Text(label, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                group.forEach { m -> AccentChip(stringResource(m.labelRes), m.color, m.onColor, m.icon) }
+            }
+        }
+    }
 }
 
 @Composable

@@ -34,7 +34,7 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.prefs.PrefKeys
 import com.example.miqatapp.core.prefs.Prefs
@@ -69,7 +69,7 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
     var fajrAngle by remember { mutableStateOf(Prefs.getInt(PrefKeys.CUSTOM_FAJR_ANGLE, 18)) }
     var ishaAngle by remember { mutableStateOf(Prefs.getInt(PrefKeys.CUSTOM_ISHA_ANGLE, 17)) }
     // per-prayer ± minute tweak (local mosque / observed sighting differs from the computed time)
-    val adjust = remember { mutableStateMapOf<Prayer, Int>().apply { Prayer.entries.forEach { put(it, Prefs.getInt(PrefKeys.adjust(it.name), 0)) } } }
+    val adjust = remember { mutableStateMapOf<Miqat, Int>().apply { Miqat.DAILY.forEach { put(it, Prefs.getInt(PrefKeys.adjust(it.name), 0)) } } }
 
     var showMethod by remember { mutableStateOf(false) }
     var showMadhab by remember { mutableStateOf(false) }
@@ -108,7 +108,7 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
             Spacer(Modifier.height(8.dp))
             AppTileGroup(
                 title = stringResource(Res.string.manual_adjustments),
-                items = Prayer.entries.map { p ->
+                items = Miqat.DAILY.map { p ->
                     AppTileItem(
                         title = stringResource(p.labelRes),
                         leadingIcon = p.icon,

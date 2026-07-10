@@ -154,6 +154,12 @@
     <string name="prayer_isha">العشاء</string>
     <string name="prayer_jumuah">الجمعة</string>
 
+    <!-- Miqat time points (non-prayer) -->
+    <string name="miqat_imsak">الإمساك</string>
+    <string name="miqat_zawal">الزوال</string>
+    <string name="miqat_sunset">الغروب</string>
+    <string name="miqat_midnight">منتصف الليل</string>
+
     <!-- Prayer Focus -->
     <string name="back">رجوع</string>
     <string name="minutes_short">د</string>

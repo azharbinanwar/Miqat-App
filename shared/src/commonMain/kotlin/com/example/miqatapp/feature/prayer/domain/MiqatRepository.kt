@@ -6,11 +6,11 @@ import com.example.miqatapp.core.enums.Madhab
 import kotlinx.datetime.LocalDate
 
 /** Computes prayer times. Impl uses Adhan; UI/ViewModel only see this. */
-interface PrayerRepository {
+interface MiqatRepository {
     fun timesFor(
         date: LocalDate,
         place: Place,
         method: CalculationMethod,
         madhab: Madhab,
-    ): PrayerTimes
+    ): MiqatTimes
 }

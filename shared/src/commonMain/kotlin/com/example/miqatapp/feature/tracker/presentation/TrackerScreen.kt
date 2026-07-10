@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.enums.Prayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.widgets.AppCard
@@ -59,10 +59,10 @@ private val cycleOrder = listOf(
     PrayerTrackerStatus.PrayedKaza,
     PrayerTrackerStatus.Missed,
 )
-private val trackablePrayers = Prayer.entries.filter { it != Prayer.Sunrise }
+private val trackablePrayers = Miqat.PRAYERS
 
 /**
- * Prayer tracker UI. Log each prayer's status per day; month heatmap tints days by
+ * Miqat tracker UI. Log each prayer's status per day; month heatmap tints days by
  * completion. Mock stats + local state until the Room repo is wired.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,14 +71,14 @@ fun TrackerScreen() {
     val today = remember { currentDate() }
     var visible by remember { mutableStateOf(today) }
     var selected by remember { mutableStateOf(today) }
-    val tracked = remember { mutableStateMapOf<Pair<LocalDate, Prayer>, PrayerTrackerStatus>() }
+    val tracked = remember { mutableStateMapOf<Pair<LocalDate, Miqat>, PrayerTrackerStatus>() }
 
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
     val statusColors = PrayerTrackerStatus.entries.associateWith { it.color }
     val emptyDot = AppTheme.colors.onSurfaceVariant.copy(alpha = 0.22f)
 
-    fun cycle(p: Prayer) {
+    fun cycle(p: Miqat) {
         val key = selected to p
         val next = when (val cur = tracked[key]) {
             null -> cycleOrder.first()
@@ -176,7 +176,7 @@ private fun Stat(value: String, label: String) {
 }
 
 // mock per-prayer status for past days (deterministic); future = untracked. ponytail: replace with Room.
-private fun mockStatus(date: LocalDate, p: Prayer, today: LocalDate): PrayerTrackerStatus? {
+private fun mockStatus(date: LocalDate, p: Miqat, today: LocalDate): PrayerTrackerStatus? {
     if (date > today) return null
     return when ((date.dayOfMonth + p.ordinal * 3) % 5) {
         0, 1 -> PrayerTrackerStatus.PrayedOnTime
