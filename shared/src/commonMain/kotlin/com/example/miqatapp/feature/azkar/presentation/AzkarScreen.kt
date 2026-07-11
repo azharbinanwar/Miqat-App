@@ -25,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -125,16 +124,10 @@ fun AzkarScreen() {
     val categories = DuaSection.entries.filter { tab == ZTab.All || kindOf(it) == tab }
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Azkar & Du'a", fontWeight = FontWeight.Bold) },
+                title = { Text("Azkar & Du'a") },
                 navigationIcon = { IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { pad ->

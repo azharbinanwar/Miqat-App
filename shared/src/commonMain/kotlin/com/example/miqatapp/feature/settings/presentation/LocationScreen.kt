@@ -140,7 +140,6 @@ fun LocationScreen(onBack: () -> Unit = {}) {
     }
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.location)) },
@@ -216,7 +215,6 @@ private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose:
     }
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.search_city)) },

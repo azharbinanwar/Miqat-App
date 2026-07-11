@@ -19,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -69,16 +68,10 @@ fun TasbihHistoryScreen(dhikrId: String? = null, onBack: () -> Unit = {}) {
     val totalRecited = sessions.sumOf { it.count }
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.tasbih_history), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.tasbih_history)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.tasbih_back)) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { pad ->

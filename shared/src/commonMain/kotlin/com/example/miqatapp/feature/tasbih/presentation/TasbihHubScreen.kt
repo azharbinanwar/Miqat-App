@@ -25,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -188,10 +187,9 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
     val selectionMode = order.isNotEmpty() // long-press a tile to enter; tiles then multi-select
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(if (selectionMode) stringResource(Res.string.tasbih_n_selected, order.size) else stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
+                title = { Text(if (selectionMode) stringResource(Res.string.tasbih_n_selected, order.size) else stringResource(Res.string.tasbih)) },
                 navigationIcon = {
                     if (selectionMode) IconButton(onClick = { clearSelection() }) { Icon(Lucide.X, stringResource(Res.string.tasbih_cancel_selection)) }
                     else IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.tasbih_menu)) }
@@ -199,10 +197,6 @@ fun TasbihHubScreen(onHistory: () -> Unit = {}) {
                 actions = {
                     if (!selectionMode) IconButton(onClick = onHistory) { Icon(Lucide.History, stringResource(Res.string.tasbih_history)) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor, titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface, actionIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { innerPadding ->

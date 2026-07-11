@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,7 +33,6 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.core.platform.canControlDnd
-import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.hijriToday
@@ -78,7 +76,6 @@ fun SettingsScreen(
     onNotifications: () -> Unit = {},
     onPrayerFocus: () -> Unit = {},
 ) {
-    val c = AppTheme.colors
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
 
@@ -94,7 +91,6 @@ fun SettingsScreen(
     val hijri = hijriToday(hijriOffset)
 
     Scaffold(
-        containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(Res.string.settings)) },

@@ -39,7 +39,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -246,10 +245,9 @@ fun TasbihScreen(
     }
 
     Scaffold(
-        containerColor = AppTheme.colors.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.tasbih), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.tasbih)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.tasbih_back)) }
                 },
@@ -258,12 +256,6 @@ fun TasbihScreen(
                     IconButton(onClick = { restart() }) { Icon(Lucide.RotateCcw, stringResource(Res.string.reset)) }
                     IconButton(onClick = { showCustomize = true }) { Icon(Lucide.Palette, stringResource(Res.string.tasbih_counting_style)) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = AppTheme.colors.scaffoldBackgroundColor,
-                    titleContentColor = AppTheme.colors.onSurface,
-                    navigationIconContentColor = AppTheme.colors.onSurface,
-                    actionIconContentColor = AppTheme.colors.onSurface,
-                ),
             )
         },
     ) { innerPadding ->

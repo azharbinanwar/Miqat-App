@@ -66,9 +66,8 @@ fun SandboxScreen() {
 @Composable
 private fun Panel(title: String, mode: ThemeMode) {
     AppTheme(themeMode = mode) {
-        val c = AppTheme.colors
         Column(
-            modifier = Modifier.fillMaxWidth().background(c.scaffoldBackgroundColor).padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SectionTitle(title)

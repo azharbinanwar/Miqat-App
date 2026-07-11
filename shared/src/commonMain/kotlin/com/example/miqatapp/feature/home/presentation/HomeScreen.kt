@@ -134,7 +134,7 @@ fun HomeScreen() {
         "in ${mins / 60}h ${mins % 60}m"
     } ?: ""
 
-    Box(Modifier.fillMaxSize().background(AppTheme.colors.scaffoldBackgroundColor)) {
+    Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
             Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {

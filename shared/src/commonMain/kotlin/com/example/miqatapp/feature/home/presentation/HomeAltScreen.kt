@@ -71,7 +71,7 @@ private val altTimes = listOf(
 fun HomeAltScreen() {
     val nav = LocalNavController.current
     Column(
-        Modifier.fillMaxSize().background(AppTheme.colors.scaffoldBackgroundColor)
+        Modifier.fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars)
             .verticalScroll(rememberScrollState()),
     ) {
