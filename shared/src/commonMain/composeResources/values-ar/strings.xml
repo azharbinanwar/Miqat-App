@@ -190,7 +190,7 @@
     <string name="try_a_different_search">جرّب تهجئة مختلفة</string>
     <string name="prayer_calculation">حساب مواقيت الصلاة</string>
     <string name="calculation_method">طريقة الحساب</string>
-    <string name="asr_method">طريقة العصر</string>
+    <string name="madhab">المذهب</string>
     <string name="high_latitude_rule">قاعدة خطوط العرض العالية</string>
     <string name="fajr_angle">زاوية الفجر</string>
     <string name="isha_angle">زاوية العشاء</string>

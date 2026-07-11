@@ -45,19 +45,19 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.constants.Place
 import com.example.miqatapp.core.enums.countryLabel
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.location.LocationRepository
+import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.location.nearestTo
 import com.example.miqatapp.core.location.rememberGeoLocator
 import com.example.miqatapp.core.permissions.AppPermission
 import com.example.miqatapp.core.permissions.PermissionDeniedSheet
 import com.example.miqatapp.core.permissions.PermissionStatus
 import com.example.miqatapp.core.permissions.rememberPermissionService
-import com.example.miqatapp.core.widgets.AppTextField
-import com.example.miqatapp.core.widgets.AppTile
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.StateView
-import com.example.miqatapp.core.widgets.TilePosition
+import com.example.miqatapp.core.components.AppTextField
+import com.example.miqatapp.core.components.AppTile
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.StateView
+import com.example.miqatapp.core.components.TilePosition
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.back
 import com.example.miqatapp.resources.clear_search
@@ -101,8 +101,8 @@ private fun Place.sameAs(other: Place) = name == other.name && countryCode == ot
 fun LocationScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
     // Single source of truth — the repo resolves Prefs ?: MiqatDefaults and emits on every change.
-    val active by LocationRepository.activePlace.collectAsState()
-    val savedRaw by LocationRepository.savedPlaces.collectAsState()
+    val active by LocationStore.activePlace.collectAsState()
+    val savedRaw by LocationStore.savedPlaces.collectAsState()
     val saved = savedRaw.ifEmpty { listOf(active) } // show the active place even before anything is saved
     var showSearch by remember { mutableStateOf(false) }
 
@@ -125,7 +125,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                     PermissionStatus.Granted -> {
                         val fix = geo.current()
                         val place = fix?.let { all.nearestTo(it.latitude, it.longitude) }
-                        if (place != null) LocationRepository.setActive(place) // else: no fix / catalog still loading — keep current
+                        if (place != null) LocationStore.setActive(place) // else: no fix / catalog still loading — keep current
                     }
                     else -> showDeniedSheet = true // denied/dismissed → explain + offer Settings
                 }
@@ -137,7 +137,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
 
     // full-screen search takes over when open (LazyColumn handles hundreds of rows efficiently)
     if (showSearch) {
-        CitySearchScreen(all = all, onPick = { LocationRepository.setActive(it); showSearch = false }, onClose = { showSearch = false })
+        CitySearchScreen(all = all, onPick = { LocationStore.setActive(it); showSearch = false }, onClose = { showSearch = false })
         return
     }
 
@@ -188,9 +188,9 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                         selected = isActive,
                         trailing = {
                             if (isActive) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp))
-                            else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { LocationRepository.remove(place) })
+                            else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { LocationStore.remove(place) })
                         },
-                        onClick = { LocationRepository.setActive(place) },
+                        onClick = { LocationStore.setActive(place) },
                     )
                 },
             )

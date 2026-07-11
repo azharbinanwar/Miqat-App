@@ -73,10 +73,10 @@ import com.example.miqatapp.resources.tahajjud
 import com.example.miqatapp.resources.takbir
 import com.example.miqatapp.resources.vibration
 import org.jetbrains.compose.resources.stringResource
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.OptionSheet
-import com.example.miqatapp.core.widgets.MiniStepper
-import com.example.miqatapp.core.widgets.AppTileItem
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.OptionSheet
+import com.example.miqatapp.core.components.MiniStepper
+import com.example.miqatapp.core.components.AppTileItem
 
 /** Per-prayer alert state (mock, UI-first). Enabling reveals its settings — no separate expand control. */
 private class PrayerAlert(val rp: ReminderPrayer) {

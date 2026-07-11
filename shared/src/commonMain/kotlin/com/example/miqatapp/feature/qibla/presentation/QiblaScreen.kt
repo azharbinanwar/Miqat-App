@@ -31,8 +31,8 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.constants.Places
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.core.widgets.StateView
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.core.components.StateView
 import com.example.miqatapp.feature.qibla.domain.distanceToMakkahKm
 import com.example.miqatapp.feature.qibla.domain.qiblaBearing
 import com.example.miqatapp.feature.qibla.presentation.components.QiblaDial

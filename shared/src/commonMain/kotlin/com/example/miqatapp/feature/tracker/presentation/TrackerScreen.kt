@@ -33,11 +33,11 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
-import com.example.miqatapp.core.widgets.AppCard
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.feature.prayer.presentation.components.MonthCalendar
+import com.example.miqatapp.core.components.AppCard
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.feature.miqat.presentation.components.MonthCalendar
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.best
 import com.example.miqatapp.resources.day_streak

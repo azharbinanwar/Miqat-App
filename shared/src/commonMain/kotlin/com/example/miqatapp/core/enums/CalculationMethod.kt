@@ -38,7 +38,6 @@ enum class CalculationMethod(
     Custom("Custom", "Custom angles", 18.0, 17.0);
 
     companion object {
-        val default = MWL
-        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name }
     }
 }

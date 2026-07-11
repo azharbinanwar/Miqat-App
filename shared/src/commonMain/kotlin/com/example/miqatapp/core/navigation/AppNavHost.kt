@@ -9,10 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.miqatapp.core.widgets.AppDrawer
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.core.widgets.LocalOverlay
-import com.example.miqatapp.core.widgets.OverlayState
+import com.example.miqatapp.core.components.AppDrawer
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.core.components.LocalOverlay
+import com.example.miqatapp.core.components.OverlayState
 import com.example.miqatapp.feature.home.presentation.HomeAltScreen
 import com.example.miqatapp.feature.onboarding.presentation.OnboardingScreen
 import com.example.miqatapp.feature.home.presentation.HomeScreen
@@ -21,11 +21,11 @@ import com.example.miqatapp.feature.azkar.presentation.AzkarScreen
 import com.example.miqatapp.feature.duas.presentation.DuasScreen
 import com.example.miqatapp.feature.hijri.presentation.HijriCalendarScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
-import com.example.miqatapp.feature.prayer.presentation.PrayerTimesScreen
+import com.example.miqatapp.feature.miqat.presentation.MiqatTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.settings.presentation.LocationScreen
 import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
-import com.example.miqatapp.feature.settings.presentation.PrayerCalculationScreen
+import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
 import com.example.miqatapp.feature.settings.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihRun
@@ -55,20 +55,20 @@ fun AppNavHost() {
                 composable<AppRoute.Onboarding> { OnboardingScreen() }
                 composable<AppRoute.Home> { HomeScreen() }
                 composable<AppRoute.Sandbox> { SandboxScreen() }
-                composable<AppRoute.PrayerTimes> { PrayerTimesScreen() }
+                composable<AppRoute.PrayerTimes> { MiqatTimesScreen() }
                 composable<AppRoute.Qibla> { QiblaScreen() }
                 composable<AppRoute.Tracker> { TrackerScreen() }
                 composable<AppRoute.Settings> {
                     SettingsScreen(
                         onNotifications = { navController.navigate(AppRoute.Notifications) },
                         onPrayerFocus = { navController.navigate(AppRoute.PrayerFocus) },
-                        onPrayerCalc = { navController.navigate(AppRoute.PrayerCalculation) },
+                        onPrayerCalc = { navController.navigate(AppRoute.MiqatCalculation) },
                         onLocation = { navController.navigate(AppRoute.Location) },
                     )
                 }
                 composable<AppRoute.Notifications> { NotificationsScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.PrayerFocus> { PrayerFocusScreen(onBack = { navController.popBackStack() }) }
-                composable<AppRoute.PrayerCalculation> { PrayerCalculationScreen(onBack = { navController.popBackStack() }) }
+                composable<AppRoute.MiqatCalculation> { MiqatCalculationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Location> { LocationScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.HijriCalendar> { HijriCalendarScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Duas> { DuasScreen() }

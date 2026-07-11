@@ -40,9 +40,9 @@ import com.example.miqatapp.resources.start_after
 import com.example.miqatapp.resources.prayer_focus
 import com.example.miqatapp.resources.minutes_short
 import org.jetbrains.compose.resources.stringResource
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.MiniStepper
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.MiniStepper
 
 /** Per-prayer auto-silence config (mock, UI-first). */
 private class FocusState(startAfter: Int, duration: Int) {

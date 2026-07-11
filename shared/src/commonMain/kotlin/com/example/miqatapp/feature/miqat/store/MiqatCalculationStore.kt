@@ -1,12 +1,13 @@
-package com.example.miqatapp.feature.prayer.domain
+package com.example.miqatapp.feature.miqat.store
 
-import com.example.miqatapp.core.constants.MiqatDefaults
+import com.example.miqatapp.core.constants.defaults.MiqatDefaults
 import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
-import com.example.miqatapp.core.prefs.PrefKeys
-import com.example.miqatapp.core.prefs.Prefs
+import com.example.miqatapp.core.constants.PrefConst
+import com.example.miqatapp.core.prefs.PrefsService
+import com.example.miqatapp.feature.miqat.domain.MiqatCalculation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,58 +23,68 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * Plain `object` = one app-wide instance. Screens observe via `collectAsState()`; the engine reads `.value`.
  */
-object PrayerCalculationRepository {
+object MiqatCalculationStore {
 
-    private val _method = MutableStateFlow(CalculationMethod.fromName(Prefs.calcMethod))
+    private val _method = MutableStateFlow(CalculationMethod.fromName(PrefsService.getStringOrNull(PrefConst.CALC_METHOD)) ?: MiqatDefaults.method)
     val method: StateFlow<CalculationMethod> = _method.asStateFlow()
 
-    private val _madhab = MutableStateFlow(Madhab.fromName(Prefs.madhab))
+    private val _madhab = MutableStateFlow(Madhab.fromName(PrefsService.getStringOrNull(PrefConst.MADHAB)) ?: MiqatDefaults.madhab)
     val madhab: StateFlow<Madhab> = _madhab.asStateFlow()
 
-    private val _highLatRule = MutableStateFlow(HighLatRule.fromName(Prefs.highLatRule))
+    private val _highLatRule = MutableStateFlow(HighLatRule.fromName(PrefsService.getStringOrNull(PrefConst.HIGH_LAT_RULE)) ?: MiqatDefaults.highLatRule)
     val highLatRule: StateFlow<HighLatRule> = _highLatRule.asStateFlow()
 
-    private val _fajrAngle = MutableStateFlow(Prefs.getInt(PrefKeys.CUSTOM_FAJR_ANGLE, MiqatDefaults.FAJR_ANGLE))
+    private val _fajrAngle = MutableStateFlow(PrefsService.getInt(PrefConst.CUSTOM_FAJR_ANGLE, MiqatDefaults.FAJR_ANGLE))
     val fajrAngle: StateFlow<Int> = _fajrAngle.asStateFlow()
 
-    private val _ishaAngle = MutableStateFlow(Prefs.getInt(PrefKeys.CUSTOM_ISHA_ANGLE, MiqatDefaults.ISHA_ANGLE))
+    private val _ishaAngle = MutableStateFlow(PrefsService.getInt(PrefConst.CUSTOM_ISHA_ANGLE, MiqatDefaults.ISHA_ANGLE))
     val ishaAngle: StateFlow<Int> = _ishaAngle.asStateFlow()
 
     /** Per-prayer ± minute tweak, keyed by the six daily Miqats; missing = default (0). */
     private val _adjustments = MutableStateFlow(
-        Miqat.DAILY.associateWith { Prefs.getInt(PrefKeys.adjust(it.name), MiqatDefaults.MINUTE_ADJUSTMENT) },
+        Miqat.DAILY.associateWith { PrefsService.getInt(PrefConst.adjust(it.name), MiqatDefaults.MINUTE_ADJUSTMENT) },
     )
     val adjustments: StateFlow<Map<Miqat, Int>> = _adjustments.asStateFlow()
 
     // ── setters: persist + emit (the only way to write these settings) ──
 
     fun setMethod(value: CalculationMethod) {
-        Prefs.calcMethod = value.name
+        PrefsService.putString(PrefConst.CALC_METHOD, value.name)
         _method.value = value
     }
 
     fun setMadhab(value: Madhab) {
-        Prefs.madhab = value.name
+        PrefsService.putString(PrefConst.MADHAB, value.name)
         _madhab.value = value
     }
 
     fun setHighLatRule(value: HighLatRule) {
-        Prefs.highLatRule = value.name
+        PrefsService.putString(PrefConst.HIGH_LAT_RULE, value.name)
         _highLatRule.value = value
     }
 
     fun setFajrAngle(degrees: Int) {
-        Prefs.putInt(PrefKeys.CUSTOM_FAJR_ANGLE, degrees)
+        PrefsService.putInt(PrefConst.CUSTOM_FAJR_ANGLE, degrees)
         _fajrAngle.value = degrees
     }
 
     fun setIshaAngle(degrees: Int) {
-        Prefs.putInt(PrefKeys.CUSTOM_ISHA_ANGLE, degrees)
+        PrefsService.putInt(PrefConst.CUSTOM_ISHA_ANGLE, degrees)
         _ishaAngle.value = degrees
     }
 
     fun setAdjustment(miqat: Miqat, minutes: Int) {
-        Prefs.putInt(PrefKeys.adjust(miqat.name), minutes)
-        _adjustments.value = _adjustments.value + (miqat to minutes)
+        PrefsService.putInt(PrefConst.adjust(miqat.name), minutes)
+        _adjustments.value += (miqat to minutes)
     }
+
+    /** Freeze the current settings into an immutable [MiqatCalculation] — the engine's input DTO. */
+    fun snapshot() = MiqatCalculation(
+        method = _method.value,
+        madhab = _madhab.value,
+        highLatRule = _highLatRule.value,
+        fajrAngle = _fajrAngle.value,
+        ishaAngle = _ishaAngle.value,
+        adjustments = _adjustments.value,
+    )
 }

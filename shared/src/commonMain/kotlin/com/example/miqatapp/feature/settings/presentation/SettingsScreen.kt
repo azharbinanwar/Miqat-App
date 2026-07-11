@@ -39,16 +39,15 @@ import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
-import com.example.miqatapp.core.location.LocationRepository
-import com.example.miqatapp.core.prefs.PrefKeys
-import com.example.miqatapp.core.prefs.Prefs
+import com.example.miqatapp.core.store.LocationStore
+import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.core.prefs.TimeFormat
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.MiniStepper
-import com.example.miqatapp.core.widgets.OptionSheet
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.feature.prayer.domain.PrayerCalculationRepository
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.MiniStepper
+import com.example.miqatapp.core.components.OptionSheet
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.about
 import com.example.miqatapp.resources.all_alerts_on
@@ -88,15 +87,15 @@ fun SettingsScreen(
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
 
-    // basic prefs — read from Prefs (reactive), enums carry both id and localized label
-    val theme = ThemeChoice.fromValue(Prefs.theme)
-    val timeFormat = TimeFormat.fromValue(Prefs.timeFormat)
-    val language = Language.fromCode(Prefs.language)
+    // basic prefs — observe the SettingsStore (resolves PrefsService ?: SettingsDefaults)
+    val theme by SettingsStore.theme.collectAsState()
+    val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val language by SettingsStore.language.collectAsState()
     var showTheme by remember { mutableStateOf(false) }
     var showTime by remember { mutableStateOf(false) }
     var showLanguage by remember { mutableStateOf(false) }
     // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
-    var hijriOffset by remember { mutableStateOf(Prefs.getInt(PrefKeys.HIJRI_OFFSET, 0)) }
+    val hijriOffset by SettingsStore.hijriOffset.collectAsState()
     val hijri = hijriToday(hijriOffset)
 
     Scaffold(
@@ -128,14 +127,14 @@ fun SettingsScreen(
                         leadingIcon = Lucide.Calendar,
                         title = stringResource(Res.string.hijri_calendar),
                         subtitle = "${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}",
-                        trailing = { MiniStepper(hijriOffset, stringResource(Res.string.days), { hijriOffset = it; Prefs.putInt(PrefKeys.HIJRI_OFFSET, it) }, min = -2, max = 2) },
+                        trailing = { MiniStepper(hijriOffset, stringResource(Res.string.days), { SettingsStore.setHijriOffset(it) }, min = -2, max = 2) },
                     ),
                 ),
             )
-            val activeCity by LocationRepository.activePlace.collectAsState()
-            val asrMadhab by PrayerCalculationRepository.madhab.collectAsState()
-            val calcMethod by PrayerCalculationRepository.method.collectAsState()
-            val highLat by PrayerCalculationRepository.highLatRule.collectAsState()
+            val activeCity by LocationStore.activePlace.collectAsState()
+            val asrMadhab by MiqatCalculationStore.madhab.collectAsState()
+            val calcMethod by MiqatCalculationStore.method.collectAsState()
+            val highLat by MiqatCalculationStore.highLatRule.collectAsState()
             AppTileGroup(
                 title = stringResource(Res.string.prayer_and_alerts),
                 items = buildList {
@@ -155,10 +154,10 @@ fun SettingsScreen(
         }
     }
 
-    if (showTheme) OptionSheet(stringResource(Res.string.appearance), ThemeChoice.entries, theme, { Prefs.theme = it.value; showTheme = false }) { showTheme = false }
-    if (showTime) OptionSheet(stringResource(Res.string.time_format), TimeFormat.entries, timeFormat, { Prefs.timeFormat = it.value; showTime = false }) { showTime = false }
+    if (showTheme) OptionSheet(stringResource(Res.string.appearance), ThemeChoice.entries, theme, { SettingsStore.setTheme(it); showTheme = false }) { showTheme = false }
+    if (showTime) OptionSheet(stringResource(Res.string.time_format), TimeFormat.entries, timeFormat, { SettingsStore.setTimeFormat(it); showTime = false }) { showTime = false }
     if (showLanguage) OptionSheet(
         stringResource(Res.string.language),
-        Language.entries, language, { Prefs.language = it.code; showLanguage = false },
+        Language.entries, language, { SettingsStore.setLanguage(it); showLanguage = false },
     ) { showLanguage = false }
 }

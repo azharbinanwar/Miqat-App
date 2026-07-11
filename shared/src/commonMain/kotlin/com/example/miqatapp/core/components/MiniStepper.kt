@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.widgets
+package com.example.miqatapp.core.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -60,7 +60,7 @@ private fun RepeatButton(icon: ImageVector, label: String, enabled: Boolean, onS
                         var period = 110L
                         while (isActive) {
                             step()
-                            delay(period)
+                            delay(period.milliseconds)
                             if (period > 35) period -= 12 // accelerate
                         }
                     }

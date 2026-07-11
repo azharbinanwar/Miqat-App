@@ -1,4 +1,4 @@
-package com.example.miqatapp.feature.prayer.presentation
+package com.example.miqatapp.feature.miqat.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,13 +27,12 @@ import com.composables.icons.lucide.Settings
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.color
-import com.example.miqatapp.core.prefs.Prefs
-import com.example.miqatapp.core.prefs.TimeFormat
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.PulseDot
-import com.example.miqatapp.feature.prayer.presentation.components.MonthCalendar
+import com.example.miqatapp.core.store.SettingsStore
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.PulseDot
+import com.example.miqatapp.feature.miqat.presentation.components.MonthCalendar
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.prayer_times
 import androidx.compose.ui.graphics.Color
@@ -45,7 +44,6 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
-import kotlin.time.Instant
 
 /**
  * Calendar-first prayer times. Today is shown on Home; here you pick any date.
@@ -53,7 +51,7 @@ import kotlin.time.Instant
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrayerTimesScreen() {
+fun MiqatTimesScreen() {
     val today =
         remember { currentDate() }
     var visible by remember { mutableStateOf(today) } // any day of the visible month
@@ -147,5 +145,5 @@ private fun mockTime(date: LocalDate, prayer: Miqat): String {
         else -> 12 * 60 // DAILY-only list; other Miqat points unused here
     }
     val m = base + (date.dayOfMonth % 7) - 3
-    return TimeFormat.fromValue(Prefs.timeFormat).format(m)
+    return SettingsStore.timeFormat.value.format(m)
 }

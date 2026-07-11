@@ -56,12 +56,12 @@ import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.icons.TasbihIcon
-import com.example.miqatapp.core.widgets.AppAction
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
+import com.example.miqatapp.core.components.AppAction
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.navigation.AppRoute
 import com.example.miqatapp.core.navigation.LocalNavController
-import com.example.miqatapp.core.widgets.LocalDrawerState
+import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.feature.duas.presentation.AzkarCollectionReader
 import com.example.miqatapp.feature.duas.presentation.AzkarListReader
 import com.example.miqatapp.feature.duas.presentation.Dua

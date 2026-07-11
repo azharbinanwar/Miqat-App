@@ -8,7 +8,6 @@ enum class HighLatRule(val label: String) {
     ;
 
     companion object {
-        val default = MiddleNight
-        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name }
     }
 }

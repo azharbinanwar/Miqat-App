@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.widgets.AppBottomSheet
-import com.example.miqatapp.core.widgets.AppButton
-import com.example.miqatapp.core.widgets.AppButtonVariant
+import com.example.miqatapp.core.components.AppBottomSheet
+import com.example.miqatapp.core.components.AppButton
+import com.example.miqatapp.core.components.AppButtonVariant
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.cancel
 import com.example.miqatapp.resources.open_settings

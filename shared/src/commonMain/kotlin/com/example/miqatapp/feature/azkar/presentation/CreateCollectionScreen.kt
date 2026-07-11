@@ -43,10 +43,10 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.widgets.AppButton
-import com.example.miqatapp.core.widgets.AppTextField
-import com.example.miqatapp.core.widgets.AppTile
-import com.example.miqatapp.core.widgets.TilePosition
+import com.example.miqatapp.core.components.AppButton
+import com.example.miqatapp.core.components.AppTextField
+import com.example.miqatapp.core.components.AppTile
+import com.example.miqatapp.core.components.TilePosition
 import com.example.miqatapp.feature.duas.presentation.Dua
 import com.example.miqatapp.feature.duas.presentation.DuaSection
 import com.example.miqatapp.feature.duas.presentation.duasOf

@@ -1,9 +1,10 @@
 package com.example.miqatapp.core.locale
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.LayoutDirection
 import com.example.miqatapp.core.prefs.LabeledOption
-import com.example.miqatapp.core.prefs.Prefs
+import com.example.miqatapp.core.store.SettingsStore
 
 /**
  * Supported UI languages. The label stays in its own script (not translated — you always see "English"
@@ -26,7 +27,7 @@ enum class Language(private val text: String, val code: String, val direction: L
 
         /** The language in effect right now (reactive — recomposes on switch). */
         val current: Language
-            @Composable get() = fromCode(Prefs.language)
+            @Composable get() = SettingsStore.language.collectAsState().value
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.miqatapp.feature.prayer.presentation.components
+package com.example.miqatapp.feature.miqat.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

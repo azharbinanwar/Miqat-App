@@ -1,4 +1,4 @@
-package com.example.miqatapp.feature.prayer.domain
+package com.example.miqatapp.feature.miqat.domain
 
 import com.example.miqatapp.core.enums.Miqat
 import kotlinx.datetime.LocalDate

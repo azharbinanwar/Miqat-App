@@ -32,10 +32,10 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.widgets.AppCard
-import com.example.miqatapp.core.widgets.AppTile
-import com.example.miqatapp.core.widgets.StateView
-import com.example.miqatapp.core.widgets.TilePosition
+import com.example.miqatapp.core.components.AppCard
+import com.example.miqatapp.core.components.AppTile
+import com.example.miqatapp.core.components.StateView
+import com.example.miqatapp.core.components.TilePosition
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.tasbih_all_dhikr
 import com.example.miqatapp.resources.tasbih_all_sessions

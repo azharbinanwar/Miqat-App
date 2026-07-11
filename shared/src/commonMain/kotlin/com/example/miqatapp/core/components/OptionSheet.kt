@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.widgets
+package com.example.miqatapp.core.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -9,7 +9,6 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.prefs.LabeledOption
-import org.jetbrains.compose.resources.stringResource
 
 /**
  * Single-choice picker in a bottom sheet, built on [AppTileGroup]. Each option is a `(value, label)` pair —

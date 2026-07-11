@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.widgets
+package com.example.miqatapp.core.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape

@@ -1,5 +1,6 @@
-package com.example.miqatapp.core.constants
+package com.example.miqatapp.core.constants.defaults
 
+import com.example.miqatapp.core.constants.Places
 import com.example.miqatapp.core.enums.AdhanRoundingStyle
 import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
@@ -14,9 +15,10 @@ import com.example.miqatapp.core.enums.Madhab
  * every user who never overrode it.
  */
 object MiqatDefaults {
-    val method = CalculationMethod.default    // MWL — global fallback. ponytail: country-derived override lands when Place carries an ISO code.
-    val madhab = Madhab.default               // Shafi'i
-    val highLatRule = HighLatRule.default     // Middle of the Night
+    // Every ship-default lives here — one file to change. Enums only parse; they don't hold a default.
+    val method = CalculationMethod.MWL         // Muslim World League — global fallback
+    val madhab = Madhab.Shafi
+    val highLatRule = HighLatRule.MiddleNight
     val rounding = AdhanRoundingStyle.Nearest
 
     /** Seed angles for the Custom method (whole degrees), shown until the user sets their own. */

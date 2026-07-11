@@ -1,8 +1,9 @@
-package com.example.miqatapp.core.widgets
+package com.example.miqatapp.core.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
@@ -52,43 +53,36 @@ import org.jetbrains.compose.resources.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.BookOpen
-import com.composables.icons.lucide.Calendar
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.House
-import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
-import com.composables.icons.lucide.MoonStar
+import com.composables.icons.lucide.Repeat
+import com.composables.icons.lucide.Scale
 import com.composables.icons.lucide.Settings
-import com.composables.icons.lucide.Sparkles
 import com.composables.icons.lucide.SquareCheck
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.enums.Madhab
-import com.example.miqatapp.core.location.LocationRepository
+import com.example.miqatapp.core.store.LocationStore
+import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.core.navigation.AppRoute
 import com.example.miqatapp.core.navigation.LocalNavController
-import com.example.miqatapp.core.prefs.PrefKeys
-import com.example.miqatapp.core.prefs.Prefs
-import com.example.miqatapp.feature.prayer.domain.PrayerCalculationRepository
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.about_miqat
 import com.example.miqatapp.resources.app_name
-import com.example.miqatapp.resources.asr_method
+import com.example.miqatapp.resources.madhab
 import com.example.miqatapp.resources.developer_sandbox
 import com.example.miqatapp.resources.duas_and_adhkar
-import com.example.miqatapp.resources.hijri_calendar
 import com.example.miqatapp.resources.home
 import com.example.miqatapp.resources.miqat_logo
 import com.example.miqatapp.resources.prayer_times
 import com.example.miqatapp.resources.prayer_tracker
 import com.example.miqatapp.resources.qibla_compass
 import com.example.miqatapp.resources.settings
-import com.example.miqatapp.resources.tasbih_counter
-import com.example.miqatapp.resources.your_daily_prayer_companion
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -207,7 +201,7 @@ fun AppDrawer(
 
 @Composable
 private fun DrawerHeader(onLocationClick: () -> Unit) {
-    val place by LocationRepository.activePlace.collectAsState()
+    val place by LocationStore.activePlace.collectAsState()
     Row(
         Modifier.fillMaxWidth().padding(24.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -231,7 +225,8 @@ private fun DrawerHeader(onLocationClick: () -> Unit) {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            val hijri = hijriToday(Prefs.getInt(PrefKeys.HIJRI_OFFSET, 0))
+            val hijriOffset by SettingsStore.hijriOffset.collectAsState()
+            val hijri = hijriToday(hijriOffset)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -255,42 +250,38 @@ private fun DrawerHeader(onLocationClick: () -> Unit) {
 }
 
 /**
- * Quick Asr-madhab switch in the drawer footer — a segmented Hanafi | Shafi'i toggle. Reads/writes the
- * shared [PrayerCalculationRepository], so flipping here keeps Settings (and later the engine) in sync.
+ * Quick Asr-madhab switch in the drawer footer — a real drawer row (so it lines up with the nav items):
+ * scale icon + "Asr madhab" label, with the current madhab as a pill badge. Tapping the row flips it
+ * (only two values). Reads/writes the shared [MiqatCalculationStore], keeping Settings (and later the
+ * engine) in sync.
  */
 @Composable
 private fun MadhabToggle() {
-    val madhab by PrayerCalculationRepository.madhab.collectAsState()
+    val madhab by MiqatCalculationStore.madhab.collectAsState()
+    NavigationDrawerItem(
+        label = { Text(stringResource(Res.string.madhab)) },
+        icon = { Icon(Lucide.Scale, null, modifier = Modifier.size(22.dp)) },
+        badge = { MadhabBadge(madhab.label) },
+        selected = false,
+        onClick = { MiqatCalculationStore.setMadhab(Madhab.entries.first { it != madhab }) },
+        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding).height(52.dp),
+    )
+}
+
+/** The current madhab shown as a soft accent pill with a swap hint — the row's trailing badge. */
+@Composable
+private fun MadhabBadge(label: String) {
     val c = AppTheme.colors
-    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)) {
-        Text(
-            stringResource(Res.string.asr_method),
-            style = MaterialTheme.typography.labelMedium,
-            color = c.onSurfaceVariant,
-            modifier = Modifier.padding(start = 4.dp, bottom = 6.dp),
-        )
-        Row(
-            Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(c.surfaceContainerHighest).padding(3.dp),
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
-        ) {
-            Madhab.entries.forEach { m ->
-                val selected = m == madhab
-                Box(
-                    Modifier.weight(1f).clip(RoundedCornerShape(9.dp))
-                        .background(if (selected) c.primary else Color.Transparent)
-                        .clickable { PrayerCalculationRepository.setMadhab(m) }
-                        .padding(vertical = 8.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        m.label,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                        color = if (selected) c.onPrimary else c.onSurface,
-                    )
-                }
-            }
-        }
+    val shape = RoundedCornerShape(50)
+    Row(
+        Modifier.clip(shape).background(c.primary.copy(alpha = 0.12f))
+            .border(1.dp, c.primary.copy(alpha = 0.40f), shape)
+            .padding(horizontal = 10.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
+        Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold, color = c.primary)
+        Icon(Lucide.Repeat, null, tint = c.primary.copy(alpha = 0.75f), modifier = Modifier.size(12.dp))
     }
 }
 

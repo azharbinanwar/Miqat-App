@@ -60,13 +60,13 @@ import com.example.miqatapp.resources.week_days
 import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 import com.example.miqatapp.core.enums.color
-import com.example.miqatapp.core.widgets.AppBottomSheet
-import com.example.miqatapp.core.widgets.AppCard
-import com.example.miqatapp.core.widgets.LocalDrawerState
-import com.example.miqatapp.core.widgets.AppTile
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.PulseDot
+import com.example.miqatapp.core.components.AppBottomSheet
+import com.example.miqatapp.core.components.AppCard
+import com.example.miqatapp.core.components.LocalDrawerState
+import com.example.miqatapp.core.components.AppTile
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.PulseDot
 
 private data class SceneRow(
     val prayer: Miqat,

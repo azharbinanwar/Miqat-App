@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.prefs
+package com.example.miqatapp.core.constants
 
 /**
  * One place for every persisted-preference key. The storage layer (DataStore/Settings) isn't wired yet —
@@ -7,7 +7,7 @@ package com.example.miqatapp.core.prefs
  *
  * ponytail: keys only; the actual read/write store comes with persistence.
  */
-object PrefKeys {
+object PrefConst {
 
     // ── General ──────────────────────────────────────────────
     const val THEME = "theme"                 // light | dark | system

@@ -33,12 +33,12 @@ import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.currentDate
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.prefs.PrefKeys
-import com.example.miqatapp.core.prefs.Prefs
-import com.example.miqatapp.core.widgets.AppCard
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.MiniStepper
+import com.example.miqatapp.core.constants.PrefConst
+import com.example.miqatapp.core.prefs.PrefsService
+import com.example.miqatapp.core.components.AppCard
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.MiniStepper
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.adjust_hijri_hint
 import com.example.miqatapp.resources.back
@@ -51,13 +51,13 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * Hijri calendar — shows today's Islamic (Umm al-Qura) date from the platform calendar, with a ±day
  * adjustment for when the local moon-sighting differs from the calculation. The hero updates live as you
- * adjust; the offset persists ([PrefKeys.HIJRI_OFFSET]) and affects the Hijri date shown across the app.
+ * adjust; the offset persists ([PrefConst.HIJRI_OFFSET]) and affects the Hijri date shown across the app.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HijriCalendarScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
-    var offset by remember { mutableStateOf(Prefs.getInt(PrefKeys.HIJRI_OFFSET, 0)) }
+    var offset by remember { mutableStateOf(PrefsService.getInt(PrefConst.HIJRI_OFFSET, 0)) }
     val hijri = hijriToday(offset)
     val gregorian = currentDate()
 
@@ -92,7 +92,7 @@ fun HijriCalendarScreen(onBack: () -> Unit = {}) {
                         title = stringResource(Res.string.date_adjustment),
                         subtitle = stringResource(Res.string.adjust_hijri_hint),
                         trailing = {
-                            MiniStepper(offset, stringResource(Res.string.days), { offset = it; Prefs.putInt(PrefKeys.HIJRI_OFFSET, it) }, min = -2, max = 2)
+                            MiniStepper(offset, stringResource(Res.string.days), { offset = it; PrefsService.putInt(PrefConst.HIJRI_OFFSET, it) }, min = -2, max = 2)
                         },
                     ),
                 ),

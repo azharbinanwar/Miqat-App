@@ -7,7 +7,6 @@ enum class Madhab(val label: String) {
     ;
 
     companion object {
-        val default = Shafi
-        fun fromName(name: String?) = entries.firstOrNull { it.name == name } ?: default
+        fun fromName(name: String?) = entries.firstOrNull { it.name == name }
     }
 }

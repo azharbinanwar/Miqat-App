@@ -34,13 +34,13 @@ import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.widgets.AppBottomSheet
-import com.example.miqatapp.core.widgets.AppTileGroup
-import com.example.miqatapp.core.widgets.AppTileItem
-import com.example.miqatapp.core.widgets.MiniStepper
-import com.example.miqatapp.feature.prayer.domain.PrayerCalculationRepository
+import com.example.miqatapp.core.components.AppBottomSheet
+import com.example.miqatapp.core.components.AppTileGroup
+import com.example.miqatapp.core.components.AppTileItem
+import com.example.miqatapp.core.components.MiniStepper
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.asr_method
+import com.example.miqatapp.resources.madhab
 import com.example.miqatapp.resources.back
 import com.example.miqatapp.resources.calculation_method
 import com.example.miqatapp.resources.fajr_angle
@@ -51,22 +51,17 @@ import com.example.miqatapp.resources.minutes_short
 import com.example.miqatapp.resources.prayer_calculation
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Prayer calculation — three enum-backed choices (method / Asr madhab / high-latitude rule), each opened as
- * a bottom-sheet list of the enum's entries. Picking "Custom" reveals two angle steppers. Persisted via
- * [Prefs]. ponytail: angles are whole degrees for now (real methods use fractions like 18.5°).
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
+fun MiqatCalculationScreen(onBack: () -> Unit = {}) {
     // Single source of truth — repo resolves Prefs ?: MiqatDefaults; writes flow back through its setters.
-    val repo = PrayerCalculationRepository
-    val method by repo.method.collectAsState()
-    val madhab by repo.madhab.collectAsState()
-    val highLat by repo.highLatRule.collectAsState()
-    val fajrAngle by repo.fajrAngle.collectAsState()
-    val ishaAngle by repo.ishaAngle.collectAsState()
-    val adjust by repo.adjustments.collectAsState()
+    val viewModel = MiqatCalculationStore
+    val method by viewModel.method.collectAsState()
+    val madhab by viewModel.madhab.collectAsState()
+    val highLat by viewModel.highLatRule.collectAsState()
+    val fajrAngle by viewModel.fajrAngle.collectAsState()
+    val ishaAngle by viewModel.ishaAngle.collectAsState()
+    val adjust by viewModel.adjustments.collectAsState()
 
     var showMethod by remember { mutableStateOf(false) }
     var showMadhab by remember { mutableStateOf(false) }
@@ -88,10 +83,10 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
                 items = buildList {
                     add(AppTileItem(title = stringResource(Res.string.calculation_method), subtitle = method.label, onClick = { showMethod = true }))
                     if (method == CalculationMethod.Custom) {
-                        add(AppTileItem(title = stringResource(Res.string.fajr_angle), trailing = { MiniStepper(fajrAngle, "°", { repo.setFajrAngle(it) }, min = 10, max = 21) }))
-                        add(AppTileItem(title = stringResource(Res.string.isha_angle), trailing = { MiniStepper(ishaAngle, "°", { repo.setIshaAngle(it) }, min = 10, max = 21) }))
+                        add(AppTileItem(title = stringResource(Res.string.fajr_angle), trailing = { MiniStepper(fajrAngle, "°", { viewModel.setFajrAngle(it) }, min = 10, max = 21) }))
+                        add(AppTileItem(title = stringResource(Res.string.isha_angle), trailing = { MiniStepper(ishaAngle, "°", { viewModel.setIshaAngle(it) }, min = 10, max = 21) }))
                     }
-                    add(AppTileItem(title = stringResource(Res.string.asr_method), subtitle = madhab.label, onClick = { showMadhab = true }))
+                    add(AppTileItem(title = stringResource(Res.string.madhab), subtitle = madhab.label, onClick = { showMadhab = true }))
                     add(AppTileItem(title = stringResource(Res.string.high_latitude_rule), subtitle = highLat.label, onClick = { showHighLat = true }))
                 },
             )
@@ -103,16 +98,16 @@ fun PrayerCalculationScreen(onBack: () -> Unit = {}) {
                     AppTileItem(
                         title = stringResource(p.labelRes),
                         leadingIcon = p.icon,
-                        trailing = { MiniStepper(adjust[p] ?: 0, minLabel, { repo.setAdjustment(p, it) }, min = -30, max = 30) },
+                        trailing = { MiniStepper(adjust[p] ?: 0, minLabel, { viewModel.setAdjustment(p, it) }, min = -30, max = 30) },
                     )
                 },
             )
         }
     }
 
-    if (showMethod) PickerSheet(stringResource(Res.string.calculation_method), CalculationMethod.entries, method, { it.label }, { it.region }, { repo.setMethod(it); showMethod = false }) { showMethod = false }
-    if (showMadhab) PickerSheet(stringResource(Res.string.asr_method), Madhab.entries, madhab, { it.label }, onPick = { repo.setMadhab(it); showMadhab = false }, onDismiss = { showMadhab = false })
-    if (showHighLat) PickerSheet(stringResource(Res.string.high_latitude_rule), HighLatRule.entries, highLat, { it.label }, onPick = { repo.setHighLatRule(it); showHighLat = false }, onDismiss = { showHighLat = false })
+    if (showMethod) PickerSheet(stringResource(Res.string.calculation_method), CalculationMethod.entries, method, { it.label }, { it.region }, { viewModel.setMethod(it); showMethod = false }) { showMethod = false }
+    if (showMadhab) PickerSheet(stringResource(Res.string.madhab), Madhab.entries, madhab, { it.label }, onPick = { viewModel.setMadhab(it); showMadhab = false }, onDismiss = { showMadhab = false })
+    if (showHighLat) PickerSheet(stringResource(Res.string.high_latitude_rule), HighLatRule.entries, highLat, { it.label }, onPick = { viewModel.setHighLatRule(it); showHighLat = false }, onDismiss = { showHighLat = false })
 }
 
 /**

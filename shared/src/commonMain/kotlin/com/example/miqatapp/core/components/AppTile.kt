@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.widgets
+package com.example.miqatapp.core.components
 
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
