@@ -27,6 +27,9 @@ object PrefConst {
     const val ACTIVE_PLACE = "active_place"   // the selected Place, as JSON
     const val SAVED_PLACES = "saved_places"   // saved Places (favorites), as a JSON array
 
+    // ── Qibla ────────────────────────────────────────────────
+    const val QIBLA_STYLE = "qibla_style"     // enum name: Modern | Classic | CompassRose
+
     // ── Notifications ────────────────────────────────────────
     const val ALL_ALERTS = "notif_all_alerts"
     /** Per-prayer alert field, e.g. notif_fajr_enabled / _sound / _vibrate / _remind_before / _at_time / _jamaat / _jamaat_after. */
