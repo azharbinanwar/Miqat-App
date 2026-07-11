@@ -45,8 +45,28 @@ import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.components.PrayerSceneHeader
-import com.example.miqatapp.core.enums.PrayerTimeStatus
+import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
+import com.example.miqatapp.core.datetime.currentTime
+import com.example.miqatapp.core.store.LocationStore
+import com.example.miqatapp.core.store.SettingsStore
+import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
+import com.example.miqatapp.core.enums.CalculationMethod
+import com.example.miqatapp.core.location.LocationResolver
+import com.example.miqatapp.core.location.LocationMoveSheet
+import com.example.miqatapp.core.location.rememberGeoLocator
+import androidx.compose.runtime.LaunchedEffect
+import com.example.miqatapp.feature.miqat.domain.MiqatCalculation
+import com.example.miqatapp.feature.miqat.domain.MiqatTime
+import com.example.miqatapp.core.constants.Place
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import com.composables.icons.lucide.Copy
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.produceState
+import kotlinx.coroutines.delay
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.clear
 import com.example.miqatapp.resources.day_streak
@@ -68,37 +88,36 @@ import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.PulseDot
 
-private data class SceneRow(
-    val prayer: Miqat,
-    val time: String,
-    val status: PrayerTimeStatus?,
-    val tracked: PrayerTrackerStatus? = null,
-    val trackable: Boolean = true,
-)
-
-private val sceneRows = listOf(
-    SceneRow(Miqat.Fajr, "4:32 AM", null, PrayerTrackerStatus.PrayedOnTime),
-    SceneRow(Miqat.Sunrise, "5:58 AM", null, trackable = false),
-    SceneRow(Miqat.Dhuhr, "12:21 PM", null, PrayerTrackerStatus.PrayedWithJamaat),
-    SceneRow(Miqat.Asr, "3:47 PM", PrayerTimeStatus.Current),
-    SceneRow(Miqat.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
-    SceneRow(Miqat.Isha, "8:14 PM", null),
-)
-
 private val ExpandedHeader = 380.dp
 private val CollapsedHeader = 116.dp
 
 @Composable
 fun HomeScreen() {
-    val prayers = Miqat.DAILY
-    var index by remember { mutableStateOf(prayers.indexOf(Miqat.Maghrib)) }
-    val next = prayers[index]
-    val nextTime = sceneRows.firstOrNull { it.prayer == next }?.time ?: ""
+    val today by MiqatTimesStore.today.collectAsState()
+    val place by LocationStore.activePlace.collectAsState()
+    val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val calc by MiqatCalculationStore.calculation.collectAsState()
+    val now by produceState(currentTime()) {
+        while (true) { value = currentTime(); delay(30_000) }
+    }
 
-    val tracked = remember { mutableStateMapOf<Miqat, PrayerTrackerStatus?>().apply { sceneRows.forEach { put(it.prayer, it.tracked) } } }
+    // silent GPS check on launch — geo.current() returns null if permission isn't granted, so it never prompts
+    val geo = rememberGeoLocator()
+    var moveCandidate by remember { mutableStateOf<Place?>(null) }
+    LaunchedEffect(Unit) {
+        val fix = geo.current() ?: return@LaunchedEffect
+        moveCandidate = LocationResolver.detectMove(LocationStore.activePlace.value, fix)
+    }
+
+    val dailyTimes = remember(today) { today.filter { it.miqat in Miqat.DAILY } }
+    val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
+    val currentPrayer = prayerTimes.lastOrNull { it.at.time <= now }?.miqat
+    val nextMt = prayerTimes.firstOrNull { it.at.time > now } ?: prayerTimes.firstOrNull()
+
+    val tracked = remember { mutableStateMapOf<Miqat, PrayerTrackerStatus?>() }
     var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
-    val total = sceneRows.count { it.trackable }
-    val prayedCount = sceneRows.count { it.trackable && tracked[it.prayer].let { s -> s != null && s != PrayerTrackerStatus.Missed } }
+    val total = Miqat.PRAYERS.size
+    val prayedCount = Miqat.PRAYERS.count { tracked[it].let { s -> s != null && s != PrayerTrackerStatus.Missed } }
 
     val scroll = rememberScrollState()
     val density = LocalDensity.current
@@ -107,6 +126,14 @@ fun HomeScreen() {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
 
+    // minutes until the next prayer, wrapping past midnight to tomorrow's first
+    val countdown = nextMt?.let {
+        val n = now.hour * 60 + now.minute
+        val t = it.at.time.hour * 60 + it.at.time.minute
+        val mins = if (t > n) t - n else t + 24 * 60 - n
+        "in ${mins / 60}h ${mins % 60}m"
+    } ?: ""
+
     Box(Modifier.fillMaxSize().background(AppTheme.colors.scaffoldBackgroundColor)) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
@@ -114,30 +141,36 @@ fun HomeScreen() {
                 StreakCard(today = prayedCount, total = total, streak = 12, best = 21, onTimePct = 85)
                 AppTileGroup(
                     title = stringResource(Res.string.today),
-                    items = sceneRows.map { row ->
+                    items = dailyTimes.map { mt ->
+                        val status = when (mt.miqat) {
+                            currentPrayer -> MiqatTimeStatus.Current
+                            nextMt?.miqat -> MiqatTimeStatus.Soon
+                            else -> null
+                        }
                         AppTileItem(
-                            title = row.prayer.name,
-                            subtitle = row.time,
-                            selected = row.status == PrayerTimeStatus.Current,
-                            leadingIcon = row.prayer.icon,
+                            title = stringResource(mt.miqat.labelRes),
+                            subtitle = timeFormat.format(mt.at.time.hour * 60 + mt.at.time.minute),
+                            selected = status == MiqatTimeStatus.Current,
+                            leadingIcon = mt.miqat.icon,
                             leadingColor = AppTheme.colors.primary,
-                            badge = if (row.status == PrayerTimeStatus.Current) {
+                            badge = if (status == MiqatTimeStatus.Current) {
                                 { PulseDot(color = AppTheme.colors.primary) }
                             } else null,
-                            trailing = if (row.trackable) {
+                            trailing = if (mt.miqat.isPrayer) {
                                 {
                                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        if (row.status == PrayerTimeStatus.Soon) {
-                                            Text(PrayerTimeStatus.Soon.label, color = PrayerTimeStatus.Soon.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                                        if (status == MiqatTimeStatus.Soon) {
+                                            Text(MiqatTimeStatus.Soon.label, color = MiqatTimeStatus.Soon.color, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                                         }
-                                        TrackControl(tracked[row.prayer])
+                                        TrackControl(tracked[mt.miqat])
                                     }
                                 }
                             } else null,
-                            onClick = if (row.trackable) { { sheetPrayer = row.prayer } } else null,
+                            onClick = if (mt.miqat.isPrayer) { { sheetPrayer = mt.miqat } } else null,
                         )
                     },
                 )
+                CopyTimesButton(today, calc, place)
                 MulkReminderCard()
                 DailyVerseCard()
                 Spacer(Modifier.height(8.dp))
@@ -145,16 +178,16 @@ fun HomeScreen() {
         }
 
         PrayerSceneHeader(
-            prayer = next,
+            prayer = nextMt?.miqat ?: Miqat.Fajr,
             fraction = fraction,
-            locationName = "Makkah",
-            dateLabel = "Friday, 12 Dhul-Hijjah 1447",
-            nextTime = nextTime,
-            countdown = "in 2h 14m",
+            locationName = place.name,
+            dateLabel = "Friday, 12 Dhul-Hijjah 1447",   // ponytail: Hijri label still static — wire when the Hijri store lands
+            nextTime = nextMt?.let { timeFormat.format(it.at.time.hour * 60 + it.at.time.minute) } ?: "",
+            countdown = countdown,
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,
             onMenuClick = { scope.launch { drawerState.open() } },
-            onTap = { index = (index + 1) % prayers.size },
+            onTap = {},
         )
 
         sheetPrayer?.let { p ->
@@ -165,7 +198,41 @@ fun HomeScreen() {
                 onDismiss = { sheetPrayer = null },
             )
         }
+
+        moveCandidate?.let { cand ->
+            // show the method option whenever moving there would actually change the method — no country string compare
+            val newMethod = CalculationMethod.forCountry(cand.countryCode)
+            val methodChange = if (newMethod != calc.method) calc.method to newMethod else null
+            LocationMoveSheet(
+                candidate = cand,
+                current = place,
+                methodChange = methodChange,
+                onUpdate = { switchMethod ->
+                    LocationStore.setActive(cand)
+                    if (switchMethod) MiqatCalculationStore.setMethod(newMethod)
+                    moveCandidate = null
+                },
+                onKeep = { moveCandidate = null },
+            )
+        }
     }
+}
+
+// ponytail: debug affordance — copies the full timetable + settings for offline analysis. Remove later.
+@Composable
+private fun CopyTimesButton(times: List<MiqatTime>, calc: MiqatCalculation, place: Place) {
+    val clipboard = LocalClipboardManager.current
+    TextButton(onClick = { clipboard.setText(AnnotatedString(diagnostics(times, calc, place))) }) {
+        Icon(Lucide.Copy, null, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(6.dp))
+        Text("Copy times for analysis")
+    }
+}
+
+private fun diagnostics(times: List<MiqatTime>, calc: MiqatCalculation, place: Place) = buildString {
+    appendLine("Place: ${place.name} (${place.latitude}, ${place.longitude}) tz=${place.timeZone}")
+    appendLine("Method ${calc.method} | Madhab ${calc.madhab} | HighLat ${calc.highLatRule} | Fajr ${calc.fajrAngle} | Isha ${calc.ishaAngle}")
+    times.forEach { appendLine("${it.miqat.name.padEnd(9)} ${it.at}") }
 }
 
 @Composable

@@ -41,7 +41,7 @@ import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
-import com.example.miqatapp.core.enums.PrayerTimeStatus
+import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
@@ -178,7 +178,7 @@ private fun TrackerStatusShowcase() {
 @Composable
 private fun TimeStatusShowcase() {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        PrayerTimeStatus.entries.forEach { AccentChip(it.label, it.color, it.onColor, it.icon) }
+        MiqatTimeStatus.entries.forEach { AccentChip(it.label, it.color, it.onColor, it.icon) }
     }
 }
 

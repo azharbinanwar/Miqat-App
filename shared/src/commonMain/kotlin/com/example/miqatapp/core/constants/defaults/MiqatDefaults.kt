@@ -1,8 +1,7 @@
 package com.example.miqatapp.core.constants.defaults
 
-import com.example.miqatapp.core.constants.Places
+import com.example.miqatapp.core.constants.Place
 import com.example.miqatapp.core.enums.AdhanRoundingStyle
-import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 
@@ -15,9 +14,8 @@ import com.example.miqatapp.core.enums.Madhab
  * every user who never overrode it.
  */
 object MiqatDefaults {
-    // Every ship-default lives here — one file to change. Enums only parse; they don't hold a default.
-    val method = CalculationMethod.MWL         // Muslim World League — global fallback
-    val madhab = Madhab.Shafi
+    // Ship defaults. The method default is derived from the place's country, so it isn't a constant here.
+    val madhab = Madhab.Hanafi
     val highLatRule = HighLatRule.MiddleNight
     val rounding = AdhanRoundingStyle.Nearest
 
@@ -30,6 +28,15 @@ object MiqatDefaults {
     const val MINUTE_ADJUSTMENT = 0
     val adjustmentRange = -30..30
 
-    /** Location used before GPS / city is set. */
-    val place = Places.default                 // Makkah
+    /** Offsets for the derived points (minutes): Imsak before Fajr, Duha after Sunrise. */
+    const val IMSAK_OFFSET_MIN = 10
+    const val DUHA_OFFSET_MIN = 15
+
+    /** Suggested starting locations (shown on the Locations screen); the first is the pre-GPS fallback. */
+    val places = listOf(
+        Place("Makkah", "SA", 21.4225, 39.8262, "Asia/Riyadh"),
+        Place("Madinah", "SA", 24.4672, 39.6111, "Asia/Riyadh"),
+        Place("Karachi", "PK", 24.8607, 67.0011, "Asia/Karachi"),
+    )
+    val fallbackPlace = places.first()         // Makkah — before GPS / city is set
 }

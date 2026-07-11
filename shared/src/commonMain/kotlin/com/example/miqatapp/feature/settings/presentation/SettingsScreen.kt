@@ -70,11 +70,6 @@ import com.example.miqatapp.resources.time_format
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Settings hub — a tiled menu, not a dumping ground. Basic prefs (appearance / time / language) are edited
- * inline via a small picker sheet; the heavier modules (Location, Prayer calculation, Notifications) are
- * their own screens, opened from a row. ponytail: values are mock until prefs persistence lands.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -102,15 +97,10 @@ fun SettingsScreen(
         containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.settings), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, stringResource(Res.string.menu)) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { innerPadding ->
@@ -140,7 +130,7 @@ fun SettingsScreen(
                 items = buildList {
                     add(AppTileItem(leadingIcon = Lucide.MapPin, title = stringResource(Res.string.location), subtitle = activeCity.name, onClick = onLocation))
                     // madhab · method · high-lat — one line, ellipsized by the tile if long
-                    add(AppTileItem(leadingIcon = Lucide.Compass, title = stringResource(Res.string.prayer_calculation), subtitle = "${asrMadhab.label} · ${calcMethod.label} · ${highLat.label}", onClick = onPrayerCalc))
+                    add(AppTileItem(leadingIcon = Lucide.Compass, title = stringResource(Res.string.prayer_calculation), subtitle = "${asrMadhab.label} · ${calcMethod.shortName} · ${highLat.label}", onClick = onPrayerCalc))
                     add(AppTileItem(leadingIcon = Lucide.Bell, title = stringResource(Res.string.notifications), subtitle = stringResource(Res.string.all_alerts_on), onClick = onNotifications))
                     if (canControlDnd) add(AppTileItem(leadingIcon = Lucide.BellOff, title = stringResource(Res.string.prayer_focus), subtitle = stringResource(Res.string.auto_silence_around_prayer), onClick = onPrayerFocus))
                 },

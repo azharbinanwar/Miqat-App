@@ -43,10 +43,11 @@ import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.X
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.constants.Place
-import com.example.miqatapp.core.enums.countryLabel
+import com.example.miqatapp.core.constants.countryLabel
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.location.nearestTo
+import com.example.miqatapp.core.constants.defaults.MiqatDefaults
 import com.example.miqatapp.core.location.rememberGeoLocator
 import com.example.miqatapp.core.permissions.AppPermission
 import com.example.miqatapp.core.permissions.PermissionDeniedSheet
@@ -77,17 +78,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 
-/** Parse the bundled GeoNames-style TSV into [Place]s: name, asciiname, lat, lng, countryCode, timezone. */
-private fun parseCities(bytes: ByteArray): List<Place> =
-    bytes.decodeToString().lineSequence().mapNotNull { line ->
-        if (line.isBlank()) return@mapNotNull null
-        val p = line.split('\t')
-        if (p.size < 6) return@mapNotNull null
-        val lat = p[2].toDoubleOrNull() ?: return@mapNotNull null
-        val lng = p[3].toDoubleOrNull() ?: return@mapNotNull null
-        Place(name = p[0], countryCode = p[4], latitude = lat, longitude = lng, timeZone = p[5], ascii = p[1])
-    }.toList()
-
 /** Same place regardless of coord precision — dedupe key for the saved list. */
 private fun Place.sameAs(other: Place) = name == other.name && countryCode == other.countryCode
 
@@ -108,7 +98,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
 
     // load the 49k-row catalog once, off the main thread — so opening search is instant
     var all by remember { mutableStateOf<List<Place>>(emptyList()) }
-    LaunchedEffect(Unit) { all = withContext(Dispatchers.Default) { parseCities(Res.readBytes("files/cities.txt")) } }
+    LaunchedEffect(Unit) { all = withContext(Dispatchers.Default) { Place.fromCatalog(Res.readBytes("files/cities.txt")) } }
 
     // GPS: request permission → get a fix → snap to the nearest catalog city (offline) → save it.
     val perms = rememberPermissionService()
@@ -183,13 +173,26 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                     val isActive = place.sameAs(active)
                     AppTileItem(
                         title = place.name,
-                        subtitle = countryLabel(place.countryCode),
+                        subtitle = place.countryLabel,
                         leadingIcon = Lucide.MapPin,
                         selected = isActive,
                         trailing = {
                             if (isActive) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp))
                             else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { LocationStore.remove(place) })
                         },
+                        onClick = { LocationStore.setActive(place) },
+                    )
+                },
+            )
+            Spacer(Modifier.height(12.dp))
+            AppTileGroup(
+                title = "Suggested",   // ponytail: to resources later
+                items = MiqatDefaults.places.map { place ->
+                    AppTileItem(
+                        title = place.name,
+                        subtitle = place.countryLabel,
+                        leadingIcon = Lucide.MapPin,
+                        selected = place.sameAs(active),
                         onClick = { LocationStore.setActive(place) },
                     )
                 },
@@ -261,7 +264,7 @@ private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose:
                         itemsIndexed(results, key = { _, place -> place.name + place.countryCode + place.latitude }) { i, place ->
                             AppTile(
                                 title = place.name,
-                                subtitle = countryLabel(place.countryCode),
+                                subtitle = place.countryLabel,
                                 leadingIcon = Lucide.MapPin,
                                 position = when {
                                     results.size == 1 -> TilePosition.Single

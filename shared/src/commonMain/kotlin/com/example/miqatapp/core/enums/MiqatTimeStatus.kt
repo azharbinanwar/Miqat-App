@@ -10,26 +10,26 @@ import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 
 /** A prayer's timing state relative to now. Icon/label here; colors in AppColors. */
-enum class PrayerTimeStatus(val label: String, val icon: ImageVector) {
+enum class MiqatTimeStatus(val label: String, val icon: ImageVector) {
     Current("Now", Lucide.CircleDot),
     Soon("Soon", Lucide.Clock),
     Upcoming("Upcoming", Lucide.CalendarClock),
 }
 
-val PrayerTimeStatus.color: Color
+val MiqatTimeStatus.color: Color
     @Composable get() = AppTheme.colors.let {
         when (this) {
-            PrayerTimeStatus.Current -> it.currentColor
-            PrayerTimeStatus.Soon -> it.soonColor
-            PrayerTimeStatus.Upcoming -> it.upcomingColor
+            MiqatTimeStatus.Current -> it.currentColor
+            MiqatTimeStatus.Soon -> it.soonColor
+            MiqatTimeStatus.Upcoming -> it.upcomingColor
         }
     }
 
-val PrayerTimeStatus.onColor: Color
+val MiqatTimeStatus.onColor: Color
     @Composable get() = AppTheme.colors.let {
         when (this) {
-            PrayerTimeStatus.Current -> it.onCurrentColor
-            PrayerTimeStatus.Soon -> it.onSoonColor
-            PrayerTimeStatus.Upcoming -> it.onUpcomingColor
+            MiqatTimeStatus.Current -> it.onCurrentColor
+            MiqatTimeStatus.Soon -> it.onSoonColor
+            MiqatTimeStatus.Upcoming -> it.onUpcomingColor
         }
     }

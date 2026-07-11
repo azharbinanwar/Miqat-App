@@ -8,9 +8,7 @@ import org.koin.dsl.module
  * get added to [appModules] as they're built.
  */
 val appModule = module {
-    // registrations go here, e.g.:
-    // single<MiqatRepository> { MiqatRepositoryImpl(get()) }
-    // viewModel { PrayerViewModel(get()) }
+    // feature registrations go here as they need DI — the pure engine and the stores don't
 }
 
 val appModules = listOf(appModule)

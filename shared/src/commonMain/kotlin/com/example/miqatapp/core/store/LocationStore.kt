@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 object LocationStore {
     private val json = Json { ignoreUnknownKeys = true }
 
-    private val _activePlace = MutableStateFlow(readActive() ?: MiqatDefaults.place)
+    private val _activePlace = MutableStateFlow(readActive() ?: MiqatDefaults.fallbackPlace)
     val activePlace: StateFlow<Place> = _activePlace.asStateFlow()
 
     private val _savedPlaces = MutableStateFlow(readSaved())
@@ -43,8 +43,8 @@ object LocationStore {
         _savedPlaces.value = updated
         if (_activePlace.value.sameAs(place)) {
             val next = updated.firstOrNull()
-            writeActive(next)                                     // null → next read resolves to MiqatDefaults.place
-            _activePlace.value = next ?: MiqatDefaults.place
+            writeActive(next)                                     // null → next read resolves to the fallback
+            _activePlace.value = next ?: MiqatDefaults.fallbackPlace
         }
     }
 

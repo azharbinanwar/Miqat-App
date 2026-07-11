@@ -30,7 +30,7 @@ import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.constants.Places
+import com.example.miqatapp.core.constants.defaults.MiqatDefaults
 import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.core.components.StateView
 import com.example.miqatapp.feature.qibla.domain.distanceToMakkahKm
@@ -62,7 +62,7 @@ fun QiblaScreen() {
     val scope = rememberCoroutineScope()
 
     // ponytail: no Location module yet — use the default place (Makkah). Swap when Location lands.
-    val place = Places.default
+    val place = MiqatDefaults.fallbackPlace
     val qiblaDeg = qiblaBearing(place.latitude, place.longitude).toFloat()
     val distance = distanceToMakkahKm(place.latitude, place.longitude)
 

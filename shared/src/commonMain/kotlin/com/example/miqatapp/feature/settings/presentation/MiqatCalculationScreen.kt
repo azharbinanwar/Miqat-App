@@ -28,8 +28,12 @@ import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
 import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.core.components.AppTextField
+import com.example.miqatapp.core.components.StateView
 import com.example.miqatapp.core.enums.CalculationMethod
+import com.example.miqatapp.core.enums.searchText
 import com.example.miqatapp.core.enums.HighLatRule
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
@@ -105,7 +109,17 @@ fun MiqatCalculationScreen(onBack: () -> Unit = {}) {
         }
     }
 
-    if (showMethod) PickerSheet(stringResource(Res.string.calculation_method), CalculationMethod.entries, method, { it.label }, { it.region }, { viewModel.setMethod(it); showMethod = false }) { showMethod = false }
+    if (showMethod) PickerSheet(
+        stringResource(Res.string.calculation_method),
+        CalculationMethod.entries,
+        method,
+        { it.label },
+        { it.region },
+        searchable = true,
+        searchText = { it.searchText },
+        onPick = { viewModel.setMethod(it); showMethod = false },
+        onDismiss = { showMethod = false },
+    )
     if (showMadhab) PickerSheet(stringResource(Res.string.madhab), Madhab.entries, madhab, { it.label }, onPick = { viewModel.setMadhab(it); showMadhab = false }, onDismiss = { showMadhab = false })
     if (showHighLat) PickerSheet(stringResource(Res.string.high_latitude_rule), HighLatRule.entries, highLat, { it.label }, onPick = { viewModel.setHighLatRule(it); showHighLat = false }, onDismiss = { showHighLat = false })
 }
@@ -121,22 +135,50 @@ private fun <T> PickerSheet(
     selected: T,
     label: (T) -> String,
     sublabel: ((T) -> String)? = null,
+    searchable: Boolean = false,
+    searchText: ((T) -> String)? = null,   // everything searchable for this option; falls back to label + sublabel
     onPick: (T) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val c = AppTheme.colors
-    AppBottomSheet(onDismiss = onDismiss, title = title) {
-        AppTileGroup(
-            items = options.map { opt ->
-                val sel = opt == selected
-                AppTileItem(
-                    title = label(opt),
-                    subtitle = sublabel?.invoke(opt),
-                    selected = sel,
-                    trailing = { if (sel) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp)) },
-                    onClick = { onPick(opt) },
-                )
-            },
-        )
+    var query by remember { mutableStateOf("") }
+    val shown = if (searchable && query.isNotBlank()) {
+        options.filter { opt ->
+            val hay = searchText?.invoke(opt) ?: "${label(opt)} ${sublabel?.invoke(opt).orEmpty()}"
+            hay.contains(query, ignoreCase = true)
+        }
+    } else options
+    AppBottomSheet(onDismiss = onDismiss, title = title, fillHeight = searchable) {
+        if (searchable) {
+            AppTextField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = "Search",
+                leading = { Icon(Lucide.Search, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp)) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(12.dp))
+        }
+        if (shown.isEmpty()) {
+            StateView(
+                title = "No methods found",
+                message = "Try a different search",
+                icon = { Icon(Lucide.Search, null, tint = c.onSurfaceVariant, modifier = Modifier.size(40.dp)) },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+            )
+        } else {
+            AppTileGroup(
+                items = shown.map { opt ->
+                    val sel = opt == selected
+                    AppTileItem(
+                        title = label(opt),
+                        subtitle = sublabel?.invoke(opt),
+                        selected = sel,
+                        trailing = { if (sel) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp)) },
+                        onClick = { onPick(opt) },
+                    )
+                },
+            )
+        }
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,13 +26,14 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Settings
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
-import com.example.miqatapp.core.components.PulseDot
+import com.example.miqatapp.core.store.LocationStore
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
+import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
 import com.example.miqatapp.feature.miqat.presentation.components.MonthCalendar
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.prayer_times
@@ -45,10 +47,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Calendar-first prayer times. Today is shown on Home; here you pick any date.
- * Times are placeholder until the Adhan repo lands.
- */
+/** Calendar-first prayer times — today is on Home; here you pick any date. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiqatTimesScreen() {
@@ -56,6 +55,11 @@ fun MiqatTimesScreen() {
         remember { currentDate() }
     var visible by remember { mutableStateOf(today) } // any day of the visible month
     var selected by remember { mutableStateOf(today) }
+
+    val place by LocationStore.activePlace.collectAsState()
+    val calc by MiqatCalculationStore.calculation.collectAsState()
+    val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val times = remember(selected, place, calc) { MiqatTimesStore.timesFor(selected) }
 
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
@@ -103,23 +107,18 @@ fun MiqatTimesScreen() {
 
                 AppTileGroup(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    items = Miqat.DAILY.map { p ->
+                    items = times.map { mt ->
                         AppTileItem(
-                            title = p.name,
-                            selected = selected == today && p == Miqat.Dhuhr,
-                            leadingIcon = p.icon,
-                            leadingColor = p.color,
+                            title = stringResource(mt.miqat.labelRes),
+                            leadingIcon = mt.miqat.icon,
+                            leadingColor = mt.miqat.color,
                             trailing = {
                                 Text(
-                                    mockTime(selected, p),
+                                    timeFormat.format(mt.at.time.hour * 60 + mt.at.time.minute),
                                     fontWeight = FontWeight.SemiBold,
                                     color = AppTheme.colors.onSurface,
                                 )
                             },
-                            // ponytail: real "current prayer" needs Adhan + now; mock highlights Dhuhr on today
-                            badge = if (selected == today && p == Miqat.Dhuhr) {
-                                { PulseDot(color = AppTheme.colors.primary) }
-                            } else null,
                         )
                     },
                 )
@@ -131,19 +130,4 @@ private fun formatSelected(date: LocalDate): String {
     val day = date.dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() }
     val month = Month(date.monthNumber).name.lowercase().replaceFirstChar { it.uppercase() }
     return "$day, ${date.dayOfMonth} $month ${date.year}"
-}
-
-/** Placeholder times until PrayerRepository (Adhan) is wired. Deterministic per date. */
-private fun mockTime(date: LocalDate, prayer: Miqat): String {
-    val base = when (prayer) {
-        Miqat.Fajr -> 5 * 60 + 12
-        Miqat.Sunrise -> 6 * 60 + 34
-        Miqat.Dhuhr -> 12 * 60 + 21
-        Miqat.Asr -> 15 * 60 + 47
-        Miqat.Maghrib -> 18 * 60 + 14
-        Miqat.Isha -> 19 * 60 + 42
-        else -> 12 * 60 // DAILY-only list; other Miqat points unused here
-    }
-    val m = base + (date.dayOfMonth % 7) - 3
-    return SettingsStore.timeFormat.value.format(m)
 }

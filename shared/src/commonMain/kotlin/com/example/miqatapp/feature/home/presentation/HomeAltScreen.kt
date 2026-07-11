@@ -47,7 +47,7 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.TrendingUp
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.enums.Miqat
-import com.example.miqatapp.core.enums.PrayerTimeStatus
+import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
 import com.example.miqatapp.core.locale.tr
@@ -56,14 +56,14 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-private data class AltPrayer(val prayer: Miqat, val time: String, val status: PrayerTimeStatus?)
+private data class AltPrayer(val prayer: Miqat, val time: String, val status: MiqatTimeStatus?)
 
 private val altTimes = listOf(
     AltPrayer(Miqat.Fajr, "4:32 AM", null),
     AltPrayer(Miqat.Sunrise, "5:58 AM", null),
     AltPrayer(Miqat.Dhuhr, "12:21 PM", null),
-    AltPrayer(Miqat.Asr, "3:47 PM", PrayerTimeStatus.Current),
-    AltPrayer(Miqat.Maghrib, "6:44 PM", PrayerTimeStatus.Soon),
+    AltPrayer(Miqat.Asr, "3:47 PM", MiqatTimeStatus.Current),
+    AltPrayer(Miqat.Maghrib, "6:44 PM", MiqatTimeStatus.Soon),
     AltPrayer(Miqat.Isha, "8:14 PM", null),
 )
 

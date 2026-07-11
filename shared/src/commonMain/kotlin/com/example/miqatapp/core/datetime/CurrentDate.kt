@@ -1,6 +1,7 @@
 package com.example.miqatapp.core.datetime
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 /**
  * Today's date from the platform calendar.
@@ -8,3 +9,6 @@ import kotlinx.datetime.LocalDate
  * and resolve differently per platform — the source of cross-platform build breakage.
  */
 expect fun currentDate(): LocalDate
+
+/** Device wall-clock time now (hour + minute), same platform-calendar approach. */
+expect fun currentTime(): LocalTime

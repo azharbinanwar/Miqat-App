@@ -7,10 +7,17 @@ import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.constants.PrefConst
 import com.example.miqatapp.core.prefs.PrefsService
+import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.feature.miqat.domain.MiqatCalculation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * Single source of truth for prayer-calculation settings. Owns the only `Prefs ?: MiqatDefaults`
@@ -25,7 +32,10 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 object MiqatCalculationStore {
 
-    private val _method = MutableStateFlow(CalculationMethod.fromName(PrefsService.getStringOrNull(PrefConst.CALC_METHOD)) ?: MiqatDefaults.method)
+    private val _method = MutableStateFlow(
+        CalculationMethod.fromName(PrefsService.getStringOrNull(PrefConst.CALC_METHOD))
+            ?: CalculationMethod.forCountry(LocationStore.activePlace.value.countryCode),
+    )
     val method: StateFlow<CalculationMethod> = _method.asStateFlow()
 
     private val _madhab = MutableStateFlow(Madhab.fromName(PrefsService.getStringOrNull(PrefConst.MADHAB)) ?: MiqatDefaults.madhab)
@@ -45,6 +55,16 @@ object MiqatCalculationStore {
         Miqat.DAILY.associateWith { PrefsService.getInt(PrefConst.adjust(it.name), MiqatDefaults.MINUTE_ADJUSTMENT) },
     )
     val adjustments: StateFlow<Map<Miqat, Int>> = _adjustments.asStateFlow()
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /** All settings as one observable DTO — the reactive input the times store watches. */
+    val calculation: StateFlow<MiqatCalculation> = combine(
+        combine(method, madhab, highLatRule) { m, md, h -> Triple(m, md, h) },
+        combine(fajrAngle, ishaAngle, adjustments) { f, i, a -> Triple(f, i, a) },
+    ) { core, ang ->
+        MiqatCalculation(core.first, core.second, core.third, ang.first, ang.second, ang.third)
+    }.stateIn(scope, SharingStarted.Eagerly, snapshot())
 
     // ── setters: persist + emit (the only way to write these settings) ──
 

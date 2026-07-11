@@ -29,6 +29,10 @@ expect fun rememberGeoLocator(): GeoLocator
 fun List<Place>.nearestTo(latitude: Double, longitude: Double): Place? =
     minByOrNull { haversineKm(latitude, longitude, it.latitude, it.longitude) }
 
+/** Straight-line distance (km) from a GPS fix to a place — used to tell a real move from GPS drift. */
+fun distanceKm(from: Coordinates, to: Place): Double =
+    haversineKm(from.latitude, from.longitude, to.latitude, to.longitude)
+
 private fun haversineKm(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
     val r = 6371.0
     val dLat = (lat2 - lat1).toRadians()
