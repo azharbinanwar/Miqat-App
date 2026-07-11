@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -144,13 +143,8 @@ fun LocationScreen(onBack: () -> Unit = {}) {
         containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.location), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.location)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { pad ->
@@ -225,13 +219,8 @@ private fun CitySearchScreen(all: List<Place>, onPick: (Place) -> Unit, onClose:
         containerColor = c.scaffoldBackgroundColor,
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(stringResource(Res.string.search_city), fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(Res.string.search_city)) },
                 navigationIcon = { IconButton(onClick = onClose) { Icon(tr(Lucide.ChevronLeft, Lucide.ChevronRight), stringResource(Res.string.back)) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = c.scaffoldBackgroundColor,
-                    titleContentColor = c.onSurface,
-                    navigationIconContentColor = c.onSurface,
-                ),
             )
         },
     ) { pad ->

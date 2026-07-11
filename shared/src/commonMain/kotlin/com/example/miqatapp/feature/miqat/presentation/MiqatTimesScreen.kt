@@ -11,7 +11,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,20 +66,13 @@ fun MiqatTimesScreen() {
     Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text(stringResource(Res.string.prayer_times), fontWeight = FontWeight.Bold) },
+                    title = { Text(stringResource(Res.string.prayer_times)) },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) { Icon(Lucide.Menu, "Menu") }
                     },
                     actions = {
                         IconButton(onClick = { /* TODO settings */ }) { Icon(Lucide.Settings, "Settings") }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = AppTheme.colors.scaffoldBackgroundColor,
-                        scrolledContainerColor = Color.Unspecified,
-                        navigationIconContentColor = AppTheme.colors.onSurface,
-                        titleContentColor = AppTheme.colors.onSurface,
-                        actionIconContentColor = AppTheme.colors.onSurface
-                    ),
                 )
             },
         ) { innerPadding ->

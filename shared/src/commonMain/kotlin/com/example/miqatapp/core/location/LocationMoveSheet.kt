@@ -51,11 +51,7 @@ import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.constants.countryLabel
 import kotlinx.coroutines.launch
 
-/**
- * Shown on launch when GPS says you've moved to a new city. Quiet by default — the city and (only when
- * the method would change) an optional switch, its reason tucked behind an info button.
- * ponytail: strings inline; move to resources with the rest.
- */
+/** Shown when GPS says you've moved — the new city + an optional method switch. ponytail: strings inline. */
 @Composable
 fun LocationMoveSheet(
     candidate: Place,

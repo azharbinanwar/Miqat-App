@@ -101,7 +101,7 @@ fun HomeScreen() {
         while (true) { value = currentTime(); delay(30_000) }
     }
 
-    // silent GPS check on launch — geo.current() returns null if permission isn't granted, so it never prompts
+    // silent GPS check — never prompts
     val geo = rememberGeoLocator()
     var moveCandidate by remember { mutableStateOf<Place?>(null) }
     LaunchedEffect(Unit) {
@@ -200,7 +200,7 @@ fun HomeScreen() {
         }
 
         moveCandidate?.let { cand ->
-            // show the method option whenever moving there would actually change the method — no country string compare
+            // show only when the method actually changes
             val newMethod = CalculationMethod.forCountry(cand.countryCode)
             val methodChange = if (newMethod != calc.method) calc.method to newMethod else null
             LocationMoveSheet(

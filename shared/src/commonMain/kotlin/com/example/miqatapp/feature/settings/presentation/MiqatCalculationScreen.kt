@@ -58,7 +58,7 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiqatCalculationScreen(onBack: () -> Unit = {}) {
-    // Single source of truth — repo resolves Prefs ?: MiqatDefaults; writes flow back through its setters.
+    // the calc-settings store
     val viewModel = MiqatCalculationStore
     val method by viewModel.method.collectAsState()
     val madhab by viewModel.madhab.collectAsState()
