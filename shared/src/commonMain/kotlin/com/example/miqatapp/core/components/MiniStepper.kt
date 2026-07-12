@@ -9,7 +9,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +22,7 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Minus
 import com.composables.icons.lucide.Plus
 import com.example.miqatapp.config.theme.AppTheme
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -47,25 +47,28 @@ fun MiniStepper(value: Int, suffix: String, onChange: (Int) -> Unit, min: Int, m
 @Composable
 private fun RepeatButton(icon: ImageVector, label: String, enabled: Boolean, onStep: () -> Unit) {
     val c = AppTheme.colors
-    val scope = rememberCoroutineScope()
     val step by rememberUpdatedState(onStep)
     Box(
         Modifier.size(34.dp).pointerInput(enabled) {
             if (!enabled) return@pointerInput
             detectTapGestures(
                 onPress = {
-                    val job = scope.launch {
-                        step()                  // immediate first step
-                        delay(400.milliseconds)              // hold threshold before auto-repeat kicks in
-                        var period = 110L
-                        while (isActive) {
-                            step()
-                            delay(period.milliseconds)
-                            if (period > 35) period -= 12 // accelerate
+                    step()                       // immediate first step — fires synchronously so every tap counts
+                    // repeat runs in the gesture's own scope: it's cancelled the instant the press ends OR the
+                    // button gets disabled at a boundary (pointerInput restarts) — so no leaked loop forcing the value.
+                    coroutineScope {
+                        val repeat = launch {
+                            delay(400.milliseconds)          // hold threshold before auto-repeat kicks in
+                            var period = 110L
+                            while (isActive) {
+                                step()
+                                delay(period.milliseconds)
+                                if (period > 35) period -= 12 // accelerate
+                            }
                         }
+                        tryAwaitRelease()
+                        repeat.cancel()
                     }
-                    tryAwaitRelease()
-                    job.cancel()
                 },
             )
         },

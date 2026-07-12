@@ -69,7 +69,7 @@ fun AppBottomSheet(
         Column(Modifier.fillMaxWidth().then(if (fillHeight) Modifier.height(maxSheetHeight) else Modifier)) {
             // pinned header — doesn't scroll with the body
             if (title != null) {
-                Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
+                Column(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 2.dp, bottom = 8.dp)) {
                     Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = AppTheme.colors.onSurface)
                     if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = AppTheme.colors.onSurfaceVariant)
                 }
