@@ -194,7 +194,7 @@ fun lightAppColors() = AppColors(
     onNeutralVariantContainer = Color(0xFF616161),
     neutralMuted = Color(0xFFBDBDBD),
     onNeutralMuted = Color(0xFF000000),
-    neutralMutedContainer = Color(0xFFF5F5F5),
+    neutralMutedContainer = Color(0xFFE4E4E4),
     onNeutralMutedContainer = Color(0xFF757575),
     // prayers (deeper for light bg)
     fajrColor = Color(0xFF4F46E5), onFajrColor = Color(0xFFFFFFFF),

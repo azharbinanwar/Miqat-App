@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.config.theme.ThemeMode
 import com.example.miqatapp.core.locale.LocalAppLocale
@@ -39,7 +40,7 @@ fun App() {
     ) {
         key(language.code) {
             AppTheme(themeMode = if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
-                Box(Modifier.fillMaxSize().pointerInput(Unit) { detectTapGestures(onLongPress = { override = !dark }) }) {
+                Box(Modifier.fillMaxSize().background(AppTheme.colors.background).pointerInput(Unit) { detectTapGestures(onLongPress = { override = !dark }) }) {
                     AppNavHost()
                 }
             }

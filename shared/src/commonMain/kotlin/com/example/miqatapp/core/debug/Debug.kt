@@ -8,5 +8,5 @@ object Debug {
      * the prayer flow can be watched fast — it is NOT real time. When `false`, Home uses the real clock
      * (30s tick). Keep `false` for release; flip to `true` only to test the scene/period logic.
      */
-    const val FAST_CLOCK = true
+    const val FAST_CLOCK = false
 }

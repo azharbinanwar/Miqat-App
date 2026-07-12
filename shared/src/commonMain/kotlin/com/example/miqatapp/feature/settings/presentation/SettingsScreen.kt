@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellOff
@@ -33,7 +32,6 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.core.platform.canControlDnd
-import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
@@ -44,6 +42,7 @@ import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.MiniStepper
 import com.example.miqatapp.core.components.OptionSheet
+import com.example.miqatapp.core.components.SwapPill
 import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.resources.Res
@@ -84,7 +83,6 @@ fun SettingsScreen(
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val language by SettingsStore.language.collectAsState()
     var showTheme by remember { mutableStateOf(false) }
-    var showTime by remember { mutableStateOf(false) }
     var showLanguage by remember { mutableStateOf(false) }
     // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
     val hijriOffset by SettingsStore.hijriOffset.collectAsState()
@@ -107,7 +105,7 @@ fun SettingsScreen(
                 title = stringResource(Res.string.general),
                 items = listOf(
                     AppTileItem(leadingIcon = Lucide.Palette, title = stringResource(Res.string.appearance), subtitle = theme.label(), onClick = { showTheme = true }),
-                    AppTileItem(leadingIcon = Lucide.Clock, title = stringResource(Res.string.time_format), subtitle = timeFormat.label(), onClick = { showTime = true }),
+                    AppTileItem(leadingIcon = Lucide.Clock, title = stringResource(Res.string.time_format), trailing = { SwapPill(timeFormat.label()) }, onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) }),
                     AppTileItem(leadingIcon = Lucide.Globe, title = stringResource(Res.string.language), subtitle = language.label(), onClick = { showLanguage = true }),
                     AppTileItem(
                         leadingIcon = Lucide.Calendar,
@@ -140,8 +138,7 @@ fun SettingsScreen(
         }
     }
 
-    if (showTheme) OptionSheet(stringResource(Res.string.appearance), ThemeChoice.entries, theme, { SettingsStore.setTheme(it); showTheme = false }) { showTheme = false }
-    if (showTime) OptionSheet(stringResource(Res.string.time_format), TimeFormat.entries, timeFormat, { SettingsStore.setTimeFormat(it); showTime = false }) { showTime = false }
+    if (showTheme) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); showTheme = false }, onDismiss = { showTheme = false })
     if (showLanguage) OptionSheet(
         stringResource(Res.string.language),
         Language.entries, language, { SettingsStore.setLanguage(it); showLanguage = false },

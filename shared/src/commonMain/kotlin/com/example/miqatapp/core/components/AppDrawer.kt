@@ -3,7 +3,6 @@ package com.example.miqatapp.core.components
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Arrangement
@@ -59,7 +58,6 @@ import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.House
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
-import com.composables.icons.lucide.Repeat
 import com.composables.icons.lucide.Scale
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.SquareCheck
@@ -261,28 +259,11 @@ private fun MadhabToggle() {
     NavigationDrawerItem(
         label = { Text(stringResource(Res.string.madhab)) },
         icon = { Icon(Lucide.Scale, null, modifier = Modifier.size(22.dp)) },
-        badge = { MadhabBadge(madhab.label) },
+        badge = { SwapPill(madhab.label) },
         selected = false,
         onClick = { MiqatCalculationStore.setMadhab(Madhab.entries.first { it != madhab }) },
         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding).height(52.dp),
     )
-}
-
-/** The current madhab shown as a soft accent pill with a swap hint — the row's trailing badge. */
-@Composable
-private fun MadhabBadge(label: String) {
-    val c = AppTheme.colors
-    val shape = RoundedCornerShape(50)
-    Row(
-        Modifier.clip(shape).background(c.primary.copy(alpha = 0.12f))
-            .border(1.dp, c.primary.copy(alpha = 0.40f), shape)
-            .padding(horizontal = 10.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-    ) {
-        Text(label, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.SemiBold, color = c.primary)
-        Icon(Lucide.Repeat, null, tint = c.primary.copy(alpha = 0.75f), modifier = Modifier.size(12.dp))
-    }
 }
 
 @Composable
