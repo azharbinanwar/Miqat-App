@@ -1,7 +1,6 @@
 package com.example.miqatapp.feature.home.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,17 +36,18 @@ import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.MosqueScene
-import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.tap_header_to_preview_each_prayer
+import com.example.miqatapp.feature.home.presentation.SkyState
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Collapsing prayer header with the animated moon/sun scene. Tap to switch prayer.
+ * Collapsing prayer header with the live moon/sun scene (position driven by [sky]).
  * Caller computes [fraction] (0 = expanded, 1 = collapsed) from scroll.
  */
 @Composable
 fun PrayerSceneHeader(
     prayer: Miqat,
+    period: Miqat,
+    sky: SkyState,
     fraction: Float,
     locationName: String,
     dateLabel: String,
@@ -58,7 +58,6 @@ fun PrayerSceneHeader(
     collapsedHeight: Dp = 116.dp,
     onMenuClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
-    onTap: () -> Unit = {},
 ) {
     val headerHeight = lerp(expandedHeight, collapsedHeight, fraction)
     val headerCorner = lerp(28.dp, 0.dp, fraction)
@@ -67,10 +66,9 @@ fun PrayerSceneHeader(
 
     Box(
         modifier.fillMaxWidth().height(headerHeight)
-            .clip(RoundedCornerShape(bottomStart = headerCorner, bottomEnd = headerCorner))
-            .clickable { onTap() },
+            .clip(RoundedCornerShape(bottomStart = headerCorner, bottomEnd = headerCorner)),
     ) {
-        MosqueScene(prayer = prayer, modifier = Modifier.fillMaxSize())
+        MosqueScene(sky, modifier = Modifier.fillMaxSize())
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.45f)))))
 
         Row(
@@ -95,16 +93,14 @@ fun PrayerSceneHeader(
 
         if (expandedAlpha > 0f) {
             Column(Modifier.align(Alignment.BottomStart).padding(20.dp).alpha(expandedAlpha)) {
-                Text(dateLabel, color = Color.White.copy(alpha = 0.85f), fontSize = 12.sp)
-                Spacer(Modifier.height(4.dp))
-                Text("Next · ${prayer.name}", color = Color.White.copy(alpha = 0.9f), fontSize = 14.sp)
-                Text("$nextTime  ·  $countdown", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text("NOW", color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.6.sp)
+                Spacer(Modifier.height(3.dp))
+                Text(stringResource(period.labelRes), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(10.dp))
+                Text("Next · ${prayer.name}   $nextTime · $countdown", color = Color.White.copy(alpha = 0.92f), fontSize = 13.sp)
+                Spacer(Modifier.height(3.dp))
+                Text(dateLabel, color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
             }
-            Text(
-                stringResource(Res.string.tap_header_to_preview_each_prayer),
-                color = Color.White.copy(alpha = 0.7f), fontSize = 11.sp,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp).alpha(expandedAlpha),
-            )
         }
     }
 }

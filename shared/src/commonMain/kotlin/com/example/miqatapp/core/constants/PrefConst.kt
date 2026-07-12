@@ -41,7 +41,7 @@ object PrefConst {
     const val SUNNAH_MULK_AFTER = "notif_mulk_after"
     const val SUNNAH_KAHF = "notif_kahf"
     const val SUNNAH_TAHAJJUD = "notif_tahajjud"
-    const val SUNNAH_DUHA = "notif_duha"
+    const val SUNNAH_ISHRAQ = "notif_ishraq"
     const val DHIKR_MORNING = "notif_morning_adhkar"
     const val DHIKR_EVENING = "notif_evening_adhkar"
     const val DHIKR_TASBIH_NUDGE = "notif_tasbih_nudge"

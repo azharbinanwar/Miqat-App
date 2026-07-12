@@ -85,7 +85,7 @@ object MiqatEngine {
             Miqat.Imsak to f - MiqatDefaults.IMSAK_OFFSET_MIN / 60.0,
             Miqat.Fajr to f,
             Miqat.Sunrise to sr,
-            Miqat.Duha to sr + MiqatDefaults.DUHA_OFFSET_MIN / 60.0,
+            Miqat.Ishraq to sr + MiqatDefaults.ISHRAQ_OFFSET_MIN / 60.0,
             Miqat.Zawal to dh,                                  // istiwa — Dhuhr begins right after
             Miqat.Dhuhr to dh,
             Miqat.Asr to ar,

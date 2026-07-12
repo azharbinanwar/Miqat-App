@@ -145,7 +145,7 @@ private fun MiqatGroupsShowcase() {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         listOf(
             "PRAYERS (Tracker, logging, notifications)" to Miqat.PRAYERS,
-            "SOLAR (timeline extras: Sunrise/Duha/Zawal/Sunset)" to Miqat.SOLAR,
+            "SOLAR (timeline extras: Sunrise/Ishraq/Zawal/Sunset)" to Miqat.SOLAR,
             "NIGHT (Midnight, Last third)" to Miqat.NIGHT,
             "RAMADAN (Imsak)" to Miqat.RAMADAN,
         ).forEach { (label, group) ->

@@ -28,9 +28,9 @@ object MiqatDefaults {
     const val MINUTE_ADJUSTMENT = 0
     val adjustmentRange = -30..30
 
-    /** Offsets for the derived points (minutes): Imsak before Fajr, Duha after Sunrise. */
+    /** Offsets for the derived points (minutes): Imsak before Fajr, Ishraq after Sunrise. */
     const val IMSAK_OFFSET_MIN = 10
-    const val DUHA_OFFSET_MIN = 15
+    const val ISHRAQ_OFFSET_MIN = 15
 
     /** Suggested starting locations (shown on the Locations screen); the first is the pre-GPS fallback. */
     val places = listOf(

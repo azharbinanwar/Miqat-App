@@ -67,6 +67,4 @@ sealed interface AppRoute {
     @Serializable
     data object PrayerAnimation : AppRoute
 
-    @Serializable
-    data object MosqueScene : AppRoute
 }

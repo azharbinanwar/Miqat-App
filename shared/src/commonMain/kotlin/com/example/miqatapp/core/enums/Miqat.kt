@@ -12,7 +12,7 @@ import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.duha
+import com.example.miqatapp.resources.ishraq
 import com.example.miqatapp.resources.last_third_of_the_night
 import com.example.miqatapp.resources.miqat_imsak
 import com.example.miqatapp.resources.miqat_midnight
@@ -33,7 +33,6 @@ import org.jetbrains.compose.resources.StringResource
  *
  * Not separate entries (aliases — same instant as an existing entry):
  *  - Iftar   = [Maghrib]
- *  - Ishraq  = start of [Duha] (sunrise + ~15–20 min)
  *  - Tahajjud= [LastThird]
  */
 enum class Miqat(
@@ -44,7 +43,7 @@ enum class Miqat(
     Imsak(Lucide.Moon, Res.string.miqat_imsak, Category.RAMADAN),
     Fajr(Lucide.Sunrise, Res.string.prayer_fajr, Category.PRAYER),
     Sunrise(Lucide.SunMedium, Res.string.prayer_sunrise, Category.SOLAR),
-    Duha(Lucide.SunMedium, Res.string.duha, Category.SOLAR),
+    Ishraq(Lucide.SunMedium, Res.string.ishraq, Category.SOLAR),
     Zawal(Lucide.Sun, Res.string.miqat_zawal, Category.SOLAR),
     Dhuhr(Lucide.Sun, Res.string.prayer_dhuhr, Category.PRAYER),
     Asr(Lucide.CloudSun, Res.string.prayer_asr, Category.PRAYER),
@@ -74,7 +73,7 @@ val Miqat.color: Color
     @Composable get() = AppTheme.colors.let {
         when (this) {
             Miqat.Imsak, Miqat.Fajr -> it.fajrColor
-            Miqat.Sunrise, Miqat.Duha -> it.sunriseColor
+            Miqat.Sunrise, Miqat.Ishraq -> it.sunriseColor
             Miqat.Zawal, Miqat.Dhuhr -> it.dhuhrColor
             Miqat.Asr -> it.asrColor
             Miqat.Sunset, Miqat.Maghrib -> it.maghribColor
@@ -86,7 +85,7 @@ val Miqat.onColor: Color
     @Composable get() = AppTheme.colors.let {
         when (this) {
             Miqat.Imsak, Miqat.Fajr -> it.onFajrColor
-            Miqat.Sunrise, Miqat.Duha -> it.onSunriseColor
+            Miqat.Sunrise, Miqat.Ishraq -> it.onSunriseColor
             Miqat.Zawal, Miqat.Dhuhr -> it.onDhuhrColor
             Miqat.Asr -> it.onAsrColor
             Miqat.Sunset, Miqat.Maghrib -> it.onMaghribColor

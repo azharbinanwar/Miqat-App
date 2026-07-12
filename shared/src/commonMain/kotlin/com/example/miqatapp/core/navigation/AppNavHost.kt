@@ -16,7 +16,6 @@ import com.example.miqatapp.core.components.OverlayState
 import com.example.miqatapp.feature.home.presentation.HomeAltScreen
 import com.example.miqatapp.feature.onboarding.presentation.OnboardingScreen
 import com.example.miqatapp.feature.home.presentation.HomeScreen
-import com.example.miqatapp.feature.home.presentation.MosqueSceneScreen
 import com.example.miqatapp.feature.azkar.presentation.AzkarScreen
 import com.example.miqatapp.feature.duas.presentation.DuasScreen
 import com.example.miqatapp.feature.hijri.presentation.HijriCalendarScreen
@@ -88,7 +87,6 @@ fun AppNavHost() {
                 }
                 composable<AppRoute.HomeAlt> { HomeAltScreen() }
                 composable<AppRoute.PrayerAnimation> { PrayerAnimationScreen() }
-                composable<AppRoute.MosqueScene> { MosqueSceneScreen() }
             }
         }
     }

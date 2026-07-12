@@ -45,7 +45,7 @@ import com.example.miqatapp.resources.beep
 import com.example.miqatapp.resources.behaviour
 import com.example.miqatapp.resources.daily_tasbih_nudge
 import com.example.miqatapp.resources.dhikr
-import com.example.miqatapp.resources.duha
+import com.example.miqatapp.resources.ishraq
 import com.example.miqatapp.resources.each_prayer
 import com.example.miqatapp.resources.evening_adhkar
 import com.example.miqatapp.resources.friday
@@ -112,7 +112,7 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
     var mulkAfter by remember { mutableStateOf(30) }
     var kahf by remember { mutableStateOf(true) }
     var tahajjud by remember { mutableStateOf(false) }
-    var duha by remember { mutableStateOf(false) }
+    var ishraq by remember { mutableStateOf(false) }
     // Dhikr
     var morningAdhkar by remember { mutableStateOf(true) }
     var eveningAdhkar by remember { mutableStateOf(true) }
@@ -171,7 +171,7 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
                     if (mulk) add(stepperTile(stringResource(Res.string.after_isha), mulkAfter, min, { mulkAfter = it }, 5, 120))
                     add(toggleTile(stringResource(Res.string.surah_al_kahf), kahf, { kahf = it }, stringResource(Res.string.friday)))
                     add(toggleTile(stringResource(Res.string.tahajjud), tahajjud, { tahajjud = it }, stringResource(Res.string.last_third_of_the_night)))
-                    add(toggleTile(stringResource(Res.string.duha), duha, { duha = it }, stringResource(Res.string.mid_morning)))
+                    add(toggleTile(stringResource(Res.string.ishraq), ishraq, { ishraq = it }, stringResource(Res.string.mid_morning)))
                 },
             )
 

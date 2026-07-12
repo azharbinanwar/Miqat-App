@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
@@ -47,7 +48,13 @@ import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.components.PrayerSceneHeader
 import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
+import com.example.miqatapp.core.datetime.currentDate
 import com.example.miqatapp.core.datetime.currentTime
+import com.example.miqatapp.core.debug.Debug
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.plus
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
@@ -93,13 +100,30 @@ private val CollapsedHeader = 116.dp
 
 @Composable
 fun HomeScreen() {
-    val today by MiqatTimesStore.today.collectAsState()
     val place by LocationStore.activePlace.collectAsState()
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val calc by MiqatCalculationStore.calculation.collectAsState()
-    val now by produceState(currentTime()) {
-        while (true) { value = currentTime(); delay(30_000) }
+
+    val realToday by MiqatTimesStore.today.collectAsState()
+
+    // Home clock. Debug.FAST_CLOCK ON → fake time-lapse (2 days in ~48s) to watch the scene + prayer flow.
+    // OFF → the real clock (30s tick) with the reactive times store, i.e. normal Home. See Debug.
+    val baseDate = remember { currentDate() }
+    val clock by produceState(LocalDateTime(baseDate, LocalTime(0, 0))) {
+        if (Debug.FAST_CLOCK) {
+            var m = 0
+            while (true) {
+                value = LocalDateTime(baseDate.plus(m / 1440, DateTimeUnit.DAY), LocalTime((m % 1440) / 60, (m % 1440) % 60))
+                m = (m + 5) % (2 * 1440)
+                delay(80)
+            }
+        } else {
+            while (true) { value = LocalDateTime(currentDate(), currentTime()); delay(30_000) }
+        }
     }
+    val now = clock.time
+    val fastToday = remember(clock.date) { MiqatTimesStore.timesFor(clock.date) }
+    val today = if (Debug.FAST_CLOCK) fastToday else realToday
 
     // silent GPS check — never prompts
     val geo = rememberGeoLocator()
@@ -111,8 +135,20 @@ fun HomeScreen() {
 
     val dailyTimes = remember(today) { today.filter { it.miqat in Miqat.DAILY } }
     val prayerTimes = dailyTimes.filter { it.miqat.isPrayer }
-    val currentPrayer = prayerTimes.lastOrNull { it.at.time <= now }?.miqat
+    // current fard by window: every prayer runs to the next EXCEPT Fajr, which ends at sunrise — so
+    // sunrise→Dhuhr is a real fard-free gap (null). Wraps overnight (before Fajr → yesterday's Isha).
+    val sunriseTime = today.firstOrNull { it.miqat == Miqat.Sunrise }?.at?.time
+    val startedPrayer = prayerTimes.lastOrNull { it.at.time <= now } ?: prayerTimes.lastOrNull()
+    val currentPrayer = when {
+        startedPrayer == null -> null
+        startedPrayer.miqat == Miqat.Fajr && sunriseTime != null && now >= sunriseTime -> null
+        else -> startedPrayer.miqat
+    }
     val nextMt = prayerTimes.firstOrNull { it.at.time > now } ?: prayerTimes.firstOrNull()
+
+    // live sun/moon position + the current daily period (curated markers, drives the scene status)
+    val sky = remember(now, today) { liveSkyState(now, today) }
+    val period = remember(now, today) { currentPeriod(now, today) }
 
     val tracked = remember { mutableStateMapOf<Miqat, PrayerTrackerStatus?>() }
     var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
@@ -179,6 +215,8 @@ fun HomeScreen() {
 
         PrayerSceneHeader(
             prayer = nextMt?.miqat ?: Miqat.Fajr,
+            period = period,
+            sky = sky,
             fraction = fraction,
             locationName = place.name,
             dateLabel = "Friday, 12 Dhul-Hijjah 1447",   // ponytail: Hijri label still static — wire when the Hijri store lands
@@ -187,7 +225,6 @@ fun HomeScreen() {
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,
             onMenuClick = { scope.launch { drawerState.open() } },
-            onTap = {},
         )
 
         sheetPrayer?.let { p ->
@@ -215,7 +252,35 @@ fun HomeScreen() {
                 onKeep = { moveCandidate = null },
             )
         }
+
+        // debug readout — shown only with the fast clock: confirms scene period + current/next stay in sync.
+        if (Debug.FAST_CLOCK) {
+            Text(
+                "${clock.date}  " + now.hour.toString().padStart(2, '0') + ":" + now.minute.toString().padStart(2, '0') +
+                    "   " + period.name + "   cur:" + (currentPrayer?.name ?: "—") + " next:" + (nextMt?.miqat?.name ?: "—"),
+                color = Color.White,
+                fontSize = 12.sp,
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(bottom = 14.dp)
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+            )
+        }
     }
+}
+
+// curated markers for the header's "Now" line (names the sunrise→Dhuhr gap too — Sunrise/Ishraq).
+private val PERIOD_MARKERS = listOf(Miqat.Fajr, Miqat.Sunrise, Miqat.Ishraq, Miqat.Dhuhr, Miqat.Asr, Miqat.Maghrib, Miqat.Isha)
+
+/** The daily marker we're in now. Wraps overnight to Isha (before Fajr → yesterday's), so it's never blank. */
+private fun currentPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
+    val pts = PERIOD_MARKERS
+        .mapNotNull { m -> times.firstOrNull { it.miqat == m }?.let { m to (it.at.time.hour * 60 + it.at.time.minute) } }
+        .sortedBy { it.second }
+    if (pts.isEmpty()) return Miqat.Isha
+    val n = now.hour * 60 + now.minute
+    val idx = pts.indexOfLast { it.second <= n }
+    return if (idx >= 0) pts[idx].first else pts.last().first
 }
 
 // ponytail: debug affordance — copies the full timetable + settings for offline analysis. Remove later.
