@@ -33,7 +33,6 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.core.platform.canControlDnd
 import com.example.miqatapp.core.datetime.HijriMonth
-import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
@@ -86,7 +85,7 @@ fun SettingsScreen(
     var showLanguage by remember { mutableStateOf(false) }
     // Hijri ± day offset (moon-sighting adjustment) — the calendar page is hidden, so it's tuned here
     val hijriOffset by SettingsStore.hijriOffset.collectAsState()
-    val hijri = hijriToday(hijriOffset)
+    val hijri by SettingsStore.hijriDate.collectAsState()
 
     Scaffold(
         topBar = {

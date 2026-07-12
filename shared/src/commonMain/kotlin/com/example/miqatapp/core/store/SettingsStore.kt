@@ -3,6 +3,8 @@ package com.example.miqatapp.core.store
 import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.constants.PrefConst
 import com.example.miqatapp.core.constants.defaults.SettingsDefaults
+import com.example.miqatapp.core.datetime.HijriDate
+import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.prefs.PrefsService
 import com.example.miqatapp.core.prefs.TimeFormat
@@ -35,6 +37,10 @@ object SettingsStore {
     private val _hijriOffset = MutableStateFlow(PrefsService.getInt(PrefConst.HIJRI_OFFSET, SettingsDefaults.HIJRI_OFFSET))
     val hijriOffset: StateFlow<Int> = _hijriOffset.asStateFlow()
 
+    /** Today's Hijri date with the offset already applied — read this; the offset is the store's concern. */
+    private val _hijriDate = MutableStateFlow(hijriToday(_hijriOffset.value))
+    val hijriDate: StateFlow<HijriDate> = _hijriDate.asStateFlow()
+
     fun setTheme(value: ThemeChoice) {
         PrefsService.putString(PrefConst.THEME, value.value)
         _theme.value = value
@@ -53,5 +59,6 @@ object SettingsStore {
     fun setHijriOffset(value: Int) {
         PrefsService.putInt(PrefConst.HIJRI_OFFSET, value)
         _hijriOffset.value = value
+        _hijriDate.value = hijriToday(value)
     }
 }

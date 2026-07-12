@@ -48,7 +48,9 @@ import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.components.PrayerSceneHeader
 import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
+import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.datetime.labelRes
 import com.example.miqatapp.core.datetime.currentTime
 import com.example.miqatapp.core.debug.Debug
 import kotlinx.datetime.DateTimeUnit
@@ -64,13 +66,8 @@ import com.example.miqatapp.core.location.LocationResolver
 import com.example.miqatapp.core.location.LocationMoveSheet
 import com.example.miqatapp.core.location.rememberGeoLocator
 import androidx.compose.runtime.LaunchedEffect
-import com.example.miqatapp.feature.miqat.domain.MiqatCalculation
 import com.example.miqatapp.feature.miqat.domain.MiqatTime
 import com.example.miqatapp.core.constants.Place
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
-import com.composables.icons.lucide.Copy
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import kotlinx.coroutines.delay
@@ -81,6 +78,7 @@ import com.example.miqatapp.resources.mark_prayer
 import com.example.miqatapp.resources.recite_before_sleep_after_isha
 import com.example.miqatapp.resources.surah_al_mulk
 import com.example.miqatapp.resources.this_week
+import com.example.miqatapp.resources.hijri_era
 import com.example.miqatapp.resources.today
 import com.example.miqatapp.resources.verse_of_the_day
 import com.example.miqatapp.resources.week_days
@@ -94,6 +92,7 @@ import com.example.miqatapp.core.components.AppTile
 import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.PulseDot
+import kotlin.time.Duration.Companion.milliseconds
 
 private val ExpandedHeader = 380.dp
 private val CollapsedHeader = 116.dp
@@ -115,10 +114,10 @@ fun HomeScreen() {
             while (true) {
                 value = LocalDateTime(baseDate.plus(m / 1440, DateTimeUnit.DAY), LocalTime((m % 1440) / 60, (m % 1440) % 60))
                 m = (m + 5) % (2 * 1440)
-                delay(80)
+                delay(80.milliseconds)
             }
         } else {
-            while (true) { value = LocalDateTime(currentDate(), currentTime()); delay(30_000) }
+            while (true) { value = LocalDateTime(currentDate(), currentTime()); delay(30_000.milliseconds) }
         }
     }
     val now = clock.time
@@ -149,6 +148,8 @@ fun HomeScreen() {
     // live sun/moon position + the current daily period (curated markers, drives the scene status)
     val sky = remember(now, today) { liveSkyState(now, today) }
     val period = remember(now, today) { currentPeriod(now, today) }
+    val hijri by SettingsStore.hijriDate.collectAsState()
+    val dateLabel = "${stringResource(clock.date.dayOfWeek.labelRes)}, ${hijri.day} ${HijriMonth.of(hijri.month).label()} ${hijri.year} ${stringResource(Res.string.hijri_era)}"
 
     val tracked = remember { mutableStateMapOf<Miqat, PrayerTrackerStatus?>() }
     var sheetPrayer by remember { mutableStateOf<Miqat?>(null) }
@@ -206,7 +207,6 @@ fun HomeScreen() {
                         )
                     },
                 )
-                CopyTimesButton(today, calc, place)
                 MulkReminderCard()
                 DailyVerseCard()
                 Spacer(Modifier.height(8.dp))
@@ -219,7 +219,7 @@ fun HomeScreen() {
             sky = sky,
             fraction = fraction,
             locationName = place.name,
-            dateLabel = "Friday, 12 Dhul-Hijjah 1447",   // ponytail: Hijri label still static — wire when the Hijri store lands
+            dateLabel = dateLabel,
             nextTime = nextMt?.let { timeFormat.format(it.at.time.hour * 60 + it.at.time.minute) } ?: "",
             countdown = countdown,
             expandedHeight = ExpandedHeader,
@@ -283,22 +283,6 @@ private fun currentPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
     return if (idx >= 0) pts[idx].first else pts.last().first
 }
 
-// ponytail: debug affordance — copies the full timetable + settings for offline analysis. Remove later.
-@Composable
-private fun CopyTimesButton(times: List<MiqatTime>, calc: MiqatCalculation, place: Place) {
-    val clipboard = LocalClipboardManager.current
-    TextButton(onClick = { clipboard.setText(AnnotatedString(diagnostics(times, calc, place))) }) {
-        Icon(Lucide.Copy, null, modifier = Modifier.size(16.dp))
-        Spacer(Modifier.width(6.dp))
-        Text("Copy times for analysis")
-    }
-}
-
-private fun diagnostics(times: List<MiqatTime>, calc: MiqatCalculation, place: Place) = buildString {
-    appendLine("Place: ${place.name} (${place.latitude}, ${place.longitude}) tz=${place.timeZone}")
-    appendLine("Method ${calc.method} | Madhab ${calc.madhab} | HighLat ${calc.highLatRule} | Fajr ${calc.fajrAngle} | Isha ${calc.ishaAngle}")
-    times.forEach { appendLine("${it.miqat.name.padEnd(9)} ${it.at}") }
-}
 
 @Composable
 private fun TrackControl(tracked: PrayerTrackerStatus?) {
@@ -354,7 +338,7 @@ private fun TrackingSheet(
 private fun StreakCard(today: Int, total: Int, streak: Int, best: Int, onTimePct: Int) {
     AppCard(padding = 18.dp, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(contentAlignment = Alignment.Center) {
+             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     progress = { today / total.toFloat() },
                     modifier = Modifier.size(72.dp),

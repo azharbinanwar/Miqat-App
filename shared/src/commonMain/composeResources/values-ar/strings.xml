@@ -221,6 +221,12 @@
     <string name="after_isha">بعد العشاء</string>
     <string name="surah_al_kahf">سورة الكهف</string>
     <string name="friday">الجمعة</string>
+    <string name="monday">الإثنين</string>
+    <string name="tuesday">الثلاثاء</string>
+    <string name="wednesday">الأربعاء</string>
+    <string name="thursday">الخميس</string>
+    <string name="saturday">السبت</string>
+    <string name="sunday">الأحد</string>
     <string name="tahajjud">التهجد</string>
     <string name="last_third_of_the_night">الثلث الأخير من الليل</string>
     <string name="ishraq">الإشراق</string>

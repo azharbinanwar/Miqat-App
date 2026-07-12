@@ -63,7 +63,6 @@ import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.SquareCheck
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.HijriMonth
-import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.enums.Madhab
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
@@ -223,8 +222,7 @@ private fun DrawerHeader(onLocationClick: () -> Unit) {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            val hijriOffset by SettingsStore.hijriOffset.collectAsState()
-            val hijri = hijriToday(hijriOffset)
+            val hijri by SettingsStore.hijriDate.collectAsState()
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
