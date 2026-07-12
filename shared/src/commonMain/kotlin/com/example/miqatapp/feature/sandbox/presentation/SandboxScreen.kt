@@ -45,8 +45,10 @@ import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.enums.onColor
+import com.example.miqatapp.core.datetime.format
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.stringResource
 
 /** Scratch page to eyeball every button and color in light + dark. */
@@ -56,6 +58,7 @@ fun SandboxScreen() {
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()),
         ) {
+            FormatShowcase()
             Panel("LIGHT", ThemeMode.LIGHT)
             Panel("DARK", ThemeMode.DARK)
         }
@@ -95,6 +98,33 @@ private fun Panel(title: String, mode: ThemeMode) {
             )
             SectionTitle("Colors")
             ColorPalette(if (mode == ThemeMode.DARK) darkAppColors() else lightAppColors())
+        }
+    }
+}
+
+/** Generic format(pattern) — one method, the pattern decides the output. */
+@Composable
+private fun FormatShowcase() {
+    val sample = LocalDateTime(2026, 7, 12, 17, 8, 42)   // Sun 12 Jul 2026, 17:08:42
+    val cases = listOf(
+        "mm" to "just the minute",
+        "HH" to "just the hour (24h)",
+        "HH:mm" to "time",
+        "h:mm a" to "time (12h)",
+        "dd/MM/yyyy" to "date",
+        "yyyy-MM-dd" to "date (ISO)",
+        "HH:mm:ss" to "time w/ seconds",
+        "dd/MM/yyyy HH:mm" to "date + time",
+    )
+    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        SectionTitle("Generic format(pattern)")
+        Text("sample = $sample", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground)
+        cases.forEach { (pattern, note) ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("\"$pattern\"", modifier = Modifier.fillMaxWidth(0.42f), fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onBackground)
+                Text("→ ${sample.format(pattern)}", fontSize = 13.sp, color = MaterialTheme.colorScheme.primary)
+            }
+            Text(note, fontSize = 10.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.55f))
         }
     }
 }

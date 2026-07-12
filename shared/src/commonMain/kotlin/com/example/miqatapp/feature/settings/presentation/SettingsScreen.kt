@@ -3,6 +3,7 @@ package com.example.miqatapp.feature.settings.presentation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Bell
 import com.composables.icons.lucide.BellOff
 import com.composables.icons.lucide.Calendar
+import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Globe
@@ -36,11 +38,12 @@ import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
-import com.example.miqatapp.core.prefs.TimeFormat
+import com.example.miqatapp.core.enums.TimeFormat
+import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.core.components.AppBottomSheet
 import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.MiniStepper
-import com.example.miqatapp.core.components.OptionSheet
 import com.example.miqatapp.core.components.SwapPill
 import com.example.miqatapp.core.components.LocalDrawerState
 import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
@@ -105,7 +108,7 @@ fun SettingsScreen(
                 items = listOf(
                     AppTileItem(leadingIcon = Lucide.Palette, title = stringResource(Res.string.appearance), subtitle = theme.label(), onClick = { showTheme = true }),
                     AppTileItem(leadingIcon = Lucide.Clock, title = stringResource(Res.string.time_format), trailing = { SwapPill(timeFormat.label()) }, onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) }),
-                    AppTileItem(leadingIcon = Lucide.Globe, title = stringResource(Res.string.language), subtitle = language.label(), onClick = { showLanguage = true }),
+                    AppTileItem(leadingIcon = Lucide.Globe, title = stringResource(Res.string.language), subtitle = language.label, onClick = { showLanguage = true }),
                     AppTileItem(
                         leadingIcon = Lucide.Calendar,
                         title = stringResource(Res.string.hijri_calendar),
@@ -138,8 +141,16 @@ fun SettingsScreen(
     }
 
     if (showTheme) ThemePickerSheet(theme, onSelect = { SettingsStore.setTheme(it); showTheme = false }, onDismiss = { showTheme = false })
-    if (showLanguage) OptionSheet(
-        stringResource(Res.string.language),
-        Language.entries, language, { SettingsStore.setLanguage(it); showLanguage = false },
-    ) { showLanguage = false }
+    if (showLanguage) AppBottomSheet(onDismiss = { showLanguage = false }, title = stringResource(Res.string.language)) {
+        AppTileGroup(
+            items = Language.entries.map { lang ->
+                AppTileItem(
+                    title = lang.label,
+                    selected = lang == language,
+                    trailing = { if (lang == language) Icon(Lucide.Check, null, tint = AppTheme.colors.primary, modifier = Modifier.size(20.dp)) },
+                    onClick = { SettingsStore.setLanguage(lang); showLanguage = false },
+                )
+            },
+        )
+    }
 }

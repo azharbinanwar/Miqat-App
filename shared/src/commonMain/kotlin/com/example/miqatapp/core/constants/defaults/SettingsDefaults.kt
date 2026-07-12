@@ -2,7 +2,7 @@ package com.example.miqatapp.core.constants.defaults
 
 import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.locale.Language
-import com.example.miqatapp.core.prefs.TimeFormat
+import com.example.miqatapp.core.enums.TimeFormat
 
 /**
  * Ship defaults for the general app settings — the values a new user gets before touching Settings.

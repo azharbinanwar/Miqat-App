@@ -39,6 +39,7 @@ import com.example.miqatapp.resources.prayer_times
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.launch
 import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.datetime.format
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -106,7 +107,7 @@ fun MiqatTimesScreen() {
                             leadingColor = mt.miqat.color,
                             trailing = {
                                 Text(
-                                    timeFormat.format(mt.at.time.hour * 60 + mt.at.time.minute),
+                                    mt.at.time.format(timeFormat.pattern),
                                     fontWeight = FontWeight.SemiBold,
                                     color = AppTheme.colors.onSurface,
                                 )

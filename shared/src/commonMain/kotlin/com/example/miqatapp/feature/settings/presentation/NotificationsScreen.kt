@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
@@ -73,7 +75,7 @@ import com.example.miqatapp.resources.takbir
 import com.example.miqatapp.resources.vibration
 import org.jetbrains.compose.resources.stringResource
 import com.example.miqatapp.core.components.AppTileGroup
-import com.example.miqatapp.core.components.OptionSheet
+import com.example.miqatapp.core.components.AppBottomSheet
 import com.example.miqatapp.core.components.MiniStepper
 import com.example.miqatapp.core.components.AppTileItem
 
@@ -197,7 +199,18 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
     }
 
     soundFor?.let { p ->
-        OptionSheet(stringResource(Res.string.adhan_sound), SOUND_OPTIONS.map { it to soundLabel(it) }, p.sound, { p.sound = it; soundFor = null }) { soundFor = null }
+        AppBottomSheet(onDismiss = { soundFor = null }, title = stringResource(Res.string.adhan_sound)) {
+            AppTileGroup(
+                items = SOUND_OPTIONS.map { sound ->
+                    AppTileItem(
+                        title = soundLabel(sound),
+                        selected = sound == p.sound,
+                        trailing = { if (sound == p.sound) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp)) },
+                        onClick = { p.sound = sound; soundFor = null },
+                    )
+                },
+            )
+        }
     }
 }
 

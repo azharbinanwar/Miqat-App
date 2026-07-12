@@ -52,6 +52,7 @@ import com.example.miqatapp.core.datetime.HijriMonth
 import com.example.miqatapp.core.datetime.currentDate
 import com.example.miqatapp.core.datetime.labelRes
 import com.example.miqatapp.core.datetime.currentTime
+import com.example.miqatapp.core.datetime.format
 import com.example.miqatapp.core.debug.Debug
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
@@ -186,7 +187,7 @@ fun HomeScreen() {
                         }
                         AppTileItem(
                             title = stringResource(mt.miqat.labelRes),
-                            subtitle = timeFormat.format(mt.at.time.hour * 60 + mt.at.time.minute),
+                            subtitle = mt.at.time.format(timeFormat.pattern),
                             selected = status == MiqatTimeStatus.Current,
                             leadingIcon = mt.miqat.icon,
                             leadingColor = AppTheme.colors.primary,
@@ -220,7 +221,7 @@ fun HomeScreen() {
             fraction = fraction,
             locationName = place.name,
             dateLabel = dateLabel,
-            nextTime = nextMt?.let { timeFormat.format(it.at.time.hour * 60 + it.at.time.minute) } ?: "",
+            nextTime = nextMt?.let { it.at.time.format(timeFormat.pattern) } ?: "",
             countdown = countdown,
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,

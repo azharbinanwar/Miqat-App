@@ -7,7 +7,7 @@ import com.example.miqatapp.core.datetime.HijriDate
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.prefs.PrefsService
-import com.example.miqatapp.core.prefs.TimeFormat
+import com.example.miqatapp.core.enums.TimeFormat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
