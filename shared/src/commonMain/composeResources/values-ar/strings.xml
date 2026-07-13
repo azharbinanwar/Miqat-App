@@ -303,4 +303,18 @@
     <string name="azkar">الأذكار (معاينة)</string>
 
     <string name="adjust_hijri_hint">عدّل إذا كان تاريخك الهجري المحلي يختلف عن التاريخ المحسوب.</string>
+
+    <!-- location: suggested cities + calculation-method prompts -->
+    <string name="suggested">مقترحة</string>
+    <string name="switch_method_title">تغيير طريقة الحساب؟</string>
+    <string name="switch_method_body">أنت الآن في %1$s، وهي تستخدم طريقة %2$s. هل تريد التبديل إليها للحصول على أوقات صلاة دقيقة؟</string>
+    <string name="switch_to_method">التبديل إلى طريقة %1$s</string>
+    <string name="keep_current_method">الإبقاء على الطريقة الحالية</string>
+    <string name="location_changed">تغيّر الموقع</string>
+    <string name="update_prayer_times_q">تحديث أوقات الصلاة لموقعك الجديد؟</string>
+    <string name="update">تحديث</string>
+    <string name="keep_place">الإبقاء على %1$s</string>
+    <string name="also_switch_to">التبديل أيضًا إلى %1$s</string>
+    <string name="method_official_explainer">%1$s هي طريقة الحساب الرسمية في موقعك الحالي. تستخدم المناطق المختلفة طرقًا مختلفة، لذا تتغيّر بعض أوقات الصلاة قليلًا.</string>
+    <string name="why_switch_method">لماذا تغيير الطريقة؟</string>
 </resources>

@@ -303,4 +303,18 @@
     <string name="azkar">Azkar (preview)</string>
 
     <string name="adjust_hijri_hint">Adjust if your local Hijri date differs from the calculated one.</string>
+
+    <!-- location: suggested cities + calculation-method prompts -->
+    <string name="suggested">Suggested</string>
+    <string name="switch_method_title">Switch calculation method?</string>
+    <string name="switch_method_body">You\'re now in %1$s, which uses the %2$s method. Switch to it for accurate prayer times?</string>
+    <string name="switch_to_method">Switch to %1$s method</string>
+    <string name="keep_current_method">Keep current method</string>
+    <string name="location_changed">Location changed</string>
+    <string name="update_prayer_times_q">Update prayer times for your new location?</string>
+    <string name="update">Update</string>
+    <string name="keep_place">Keep %1$s</string>
+    <string name="also_switch_to">Also switch to %1$s</string>
+    <string name="method_official_explainer">%1$s is the official calculation method where you are now. Different regions use different methods, so a few prayer times shift slightly.</string>
+    <string name="why_switch_method">Why switch method?</string>
 </resources>

@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Check
 import com.composables.icons.lucide.ChevronLeft
@@ -58,6 +57,9 @@ import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.StateView
 import com.example.miqatapp.core.components.TilePosition
+import com.example.miqatapp.core.enums.CalculationMethod
+import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
+import com.example.miqatapp.feature.settings.presentation.components.MethodSwitchSheet
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.back
 import com.example.miqatapp.resources.clear_search
@@ -67,6 +69,7 @@ import com.example.miqatapp.resources.search_city_hint_message
 import com.example.miqatapp.resources.search_city_hint_title
 import com.example.miqatapp.resources.saved
 import com.example.miqatapp.resources.search_city
+import com.example.miqatapp.resources.suggested
 import com.example.miqatapp.resources.try_a_different_search
 import com.example.miqatapp.resources.use_current_location
 import androidx.compose.runtime.rememberCoroutineScope
@@ -94,6 +97,13 @@ fun LocationScreen(onBack: () -> Unit = {}) {
     val savedRaw by LocationStore.savedPlaces.collectAsState()
     val saved = savedRaw.ifEmpty { listOf(active) } // show the active place even before anything is saved
     var showSearch by remember { mutableStateOf(false) }
+    // after a manual pick, offer the region's official method (skippable) — only when it differs from the current one
+    var methodPrompt by remember { mutableStateOf<Pair<Place, CalculationMethod>?>(null) }
+    fun selectPlace(place: Place) {
+        LocationStore.setActive(place)
+        val suggested = CalculationMethod.forCountry(place.countryCode)
+        methodPrompt = if (suggested != MiqatCalculationStore.method.value) place to suggested else null
+    }
 
     // load the 49k-row catalog once, off the main thread — so opening search is instant
     var all by remember { mutableStateOf<List<Place>>(emptyList()) }
@@ -114,7 +124,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                     PermissionStatus.Granted -> {
                         val fix = geo.current()
                         val place = fix?.let { all.nearestTo(it.latitude, it.longitude) }
-                        if (place != null) LocationStore.setActive(place) // else: no fix / catalog still loading — keep current
+                        if (place != null) selectPlace(place) // else: no fix / catalog still loading — keep current
                     }
                     else -> showDeniedSheet = true // denied/dismissed → explain + offer Settings
                 }
@@ -126,7 +136,7 @@ fun LocationScreen(onBack: () -> Unit = {}) {
 
     // full-screen search takes over when open (LazyColumn handles hundreds of rows efficiently)
     if (showSearch) {
-        CitySearchScreen(all = all, onPick = { LocationStore.setActive(it); showSearch = false }, onClose = { showSearch = false })
+        CitySearchScreen(all = all, onPick = { selectPlace(it); showSearch = false }, onClose = { showSearch = false })
         return
     }
 
@@ -136,6 +146,15 @@ fun LocationScreen(onBack: () -> Unit = {}) {
             message = stringResource(Res.string.location_permission_rationale),
             onOpenSettings = { showDeniedSheet = false; perms.openAppSettings() },
             onDismiss = { showDeniedSheet = false },
+        )
+    }
+
+    methodPrompt?.let { (place, suggested) ->
+        MethodSwitchSheet(
+            place = place,
+            method = suggested,
+            onConfirm = { MiqatCalculationStore.setMethod(suggested); methodPrompt = null },
+            onDismiss = { methodPrompt = null },
         )
     }
 
@@ -173,20 +192,20 @@ fun LocationScreen(onBack: () -> Unit = {}) {
                             if (isActive) Icon(Lucide.Check, null, tint = c.primary, modifier = Modifier.size(20.dp))
                             else Icon(Lucide.X, null, tint = c.onSurfaceVariant, modifier = Modifier.size(18.dp).clickable { LocationStore.remove(place) })
                         },
-                        onClick = { LocationStore.setActive(place) },
+                        onClick = { selectPlace(place) },
                     )
                 },
             )
             Spacer(Modifier.height(12.dp))
             AppTileGroup(
-                title = "Suggested",   // ponytail: to resources later
+                title = stringResource(Res.string.suggested),
                 items = MiqatDefaults.places.map { place ->
                     AppTileItem(
                         title = place.name,
                         subtitle = place.countryLabel,
                         leadingIcon = Lucide.MapPin,
                         selected = place.sameAs(active),
-                        onClick = { LocationStore.setActive(place) },
+                        onClick = { selectPlace(place) },
                     )
                 },
             )

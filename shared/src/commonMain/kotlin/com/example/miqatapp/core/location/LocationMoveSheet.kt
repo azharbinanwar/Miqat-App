@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
@@ -35,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Check
@@ -49,9 +49,18 @@ import com.example.miqatapp.core.components.AppButtonVariant
 import com.example.miqatapp.core.constants.Place
 import com.example.miqatapp.core.enums.CalculationMethod
 import com.example.miqatapp.core.constants.countryLabel
+import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.also_switch_to
+import com.example.miqatapp.resources.keep_place
+import com.example.miqatapp.resources.location_changed
+import com.example.miqatapp.resources.method_official_explainer
+import com.example.miqatapp.resources.update
+import com.example.miqatapp.resources.update_prayer_times_q
+import com.example.miqatapp.resources.why_switch_method
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.launch
 
-/** Shown when GPS says you've moved — the new city + an optional method switch. ponytail: strings inline. */
+/** Shown when GPS says you've moved — the new city + an optional method switch. */
 @Composable
 fun LocationMoveSheet(
     candidate: Place,
@@ -65,12 +74,12 @@ fun LocationMoveSheet(
 
     AppBottomSheet(
         onDismiss = onKeep,
-        title = "Location changed",
-        subtitle = "Update prayer times for your new location?",
+        title = stringResource(Res.string.location_changed),
+        subtitle = stringResource(Res.string.update_prayer_times_q),
         footer = {
-            AppButton("Update", onClick = { onUpdate(methodChange != null && switchMethod) }, modifier = Modifier.fillMaxWidth())
+            AppButton(stringResource(Res.string.update), onClick = { onUpdate(methodChange != null && switchMethod) }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
-            AppButton("Keep ${current.name}", onClick = onKeep, variant = AppButtonVariant.Text, modifier = Modifier.fillMaxWidth())
+            AppButton(stringResource(Res.string.keep_place, current.name), onClick = onKeep, variant = AppButtonVariant.Text, modifier = Modifier.fillMaxWidth())
         },
     ) {
         // the new city
@@ -121,26 +130,28 @@ private fun MethodOptIn(methodName: String, checked: Boolean, onToggle: () -> Un
             if (checked) Icon(Lucide.Check, null, tint = c.onPrimary, modifier = Modifier.size(13.dp))
         }
         Spacer(Modifier.width(12.dp))
+        val alsoSwitch = stringResource(Res.string.also_switch_to, methodName)
         Text(
             buildAnnotatedString {
-                append("Also switch to ")
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(methodName) }
+                append(alsoSwitch)
+                val i = alsoSwitch.indexOf(methodName)
+                if (i >= 0) addStyle(SpanStyle(fontWeight = FontWeight.Bold), i, i + methodName.length)
             },
             fontSize = 14.sp,
             color = c.onSurface,
             modifier = Modifier.weight(1f),
         )
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
             tooltip = {
                 RichTooltip {
-                    Text("$methodName is the official calculation method where you are now. Different regions use different methods, so a few prayer times shift slightly.")
+                    Text(stringResource(Res.string.method_official_explainer, methodName))
                 }
             },
             state = tooltip,
         ) {
             IconButton(onClick = { scope.launch { tooltip.show() } }) {
-                Icon(Lucide.Info, "Why switch method?", tint = c.onSurfaceVariant, modifier = Modifier.size(19.dp))
+                Icon(Lucide.Info, stringResource(Res.string.why_switch_method), tint = c.onSurfaceVariant, modifier = Modifier.size(19.dp))
             }
         }
     }
