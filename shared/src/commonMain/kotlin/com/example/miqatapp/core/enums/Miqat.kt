@@ -62,20 +62,16 @@ enum class Miqat(
     val isPrayer: Boolean get() = category == Category.PRAYER
 
     /**
-     * The obligatory prayer whose window *contains* this time — the UI nests it as a sub-row under that prayer.
-     * Only Isha's window (Isha → next Fajr) holds children (Midnight, LastThird); every other time stands alone.
-     * Imsak is NOT here — it's a dawn suhoor marker (~Fajr − 10 min), shown near Fajr in Ramadan, not under Isha.
-     * Display grouping only — it never decides which prayer is "active now".
+     * The obligatory prayer whose window contains this time; the UI nests it as a sub-row under that prayer.
+     * Only Isha's window holds children (Midnight, LastThird). Imsak is a Ramadan dawn marker, not an Isha child.
+     * Display grouping only; it never decides which prayer is active now.
      */
     val group: Miqat? get() = when (this) {
         Midnight, LastThird -> Isha
         else -> null
     }
 
-    /**
-     * Localized display name. Pass the day to apply date rules — on Friday, Dhuhr reads as Jumu'ah.
-     * With no date it returns the plain name (legends, settings, anywhere the day is irrelevant).
-     */
+    /** Localized display name. Pass the day for date rules (Friday Dhuhr reads as Jumu'ah); no date gives the plain name. */
     @Composable
     fun label(date: LocalDate? = null): String =
         if (this == Dhuhr && date?.dayOfWeek == DayOfWeek.FRIDAY) stringResource(Res.string.prayer_jumuah)
@@ -84,6 +80,10 @@ enum class Miqat(
     companion object {
         /** The five daily prayers (Tracker, notifications, logging). */
         val PRAYERS = entries.filter { it.category == Category.PRAYER }
+
+        /** Jumu'ah is Friday Dhuhr. Its own label for config screens (focus, reminders) that list it separately. */
+        @Composable
+        fun jumuahLabel(): String = stringResource(Res.string.prayer_jumuah)
         /** The classic six-row list (5 prayers + Sunrise) that prayer-times screens traditionally show. */
         val DAILY = listOf(Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)
         val SOLAR = entries.filter { it.category == Category.SOLAR }

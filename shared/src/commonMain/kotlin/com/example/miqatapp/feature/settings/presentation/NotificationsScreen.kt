@@ -32,7 +32,7 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.enums.ReminderPrayer
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.a_gentle_reminder_to_count
 import com.example.miqatapp.resources.adhan_sound
@@ -80,7 +80,7 @@ import com.example.miqatapp.core.components.MiniStepper
 import com.example.miqatapp.core.components.AppTileItem
 
 /** Per-prayer alert state (mock, UI-first). Enabling reveals its settings — no separate expand control. */
-private class PrayerAlert(val rp: ReminderPrayer) {
+private class PrayerAlert(val miqat: Miqat) {
     var enabled by mutableStateOf(false)
     var sound by mutableStateOf("Full adhan")
     var vibrate by mutableStateOf(true)
@@ -102,7 +102,7 @@ private val SOUND_OPTIONS = listOf("Full adhan", "Takbir", "Beep", "Silent")
 fun NotificationsScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
     var allAlerts by remember { mutableStateOf(true) }
-    val prayers = remember { ReminderPrayer.daily.map { PrayerAlert(it) } }
+    val prayers = remember { Miqat.PRAYERS.map { PrayerAlert(it) } }
     var soundFor by remember { mutableStateOf<PrayerAlert?>(null) }
 
     // Jumu'ah
@@ -143,7 +143,7 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
                 AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     items = buildList {
-                        add(AppTileItem(title = stringResource(p.rp.labelRes), leadingIcon = p.rp.icon, trailing = { Switch(checked = p.enabled, onCheckedChange = { p.enabled = it }) }))
+                        add(AppTileItem(title = stringResource(p.miqat.labelRes), leadingIcon = p.miqat.icon, trailing = { Switch(checked = p.enabled, onCheckedChange = { p.enabled = it }) }))
                         if (p.enabled) {
                             add(AppTileItem(title = stringResource(Res.string.adhan_sound), trailing = { Text(soundLabel(p.sound), fontWeight = FontWeight.Bold, color = c.primary) }, onClick = { soundFor = p }))
                             add(toggleTile(stringResource(Res.string.vibration), p.vibrate, { p.vibrate = it }))

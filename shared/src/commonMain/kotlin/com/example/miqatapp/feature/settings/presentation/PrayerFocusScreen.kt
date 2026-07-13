@@ -17,10 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +27,13 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.locale.tr
-import com.example.miqatapp.core.enums.ReminderPrayer
+import com.example.miqatapp.core.enums.Miqat
+import com.example.miqatapp.core.constants.defaults.FocusDefaults
+import com.example.miqatapp.core.datetime.format
+import com.example.miqatapp.core.store.PrayerFocusStore
+import com.example.miqatapp.core.store.SettingsStore
+import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
+import kotlinx.datetime.LocalTime
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.back
 import com.example.miqatapp.resources.silence_phone_around_each_prayer_set_separately
@@ -42,28 +46,25 @@ import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.MiniStepper
 
-/** Per-prayer auto-silence config (mock, UI-first). */
-private class FocusState(startAfter: Int, duration: Int) {
-    var enabled by mutableStateOf(false)
-    var startAfter by mutableStateOf(startAfter) // minutes after the prayer time before going silent
-    var duration by mutableStateOf(duration)     // minutes to stay silent, then restore
+/** "Silent 4:40 to 5:10 (30 min)" from today's [prayer] time + the offsets. ponytail: strings inline. */
+private fun silentWindow(prayer: LocalTime, after: Int, duration: Int, pattern: String): String {
+    val start = LocalTime.fromSecondOfDay((prayer.toSecondOfDay() + after * 60) % 86400)
+    val end = LocalTime.fromSecondOfDay((prayer.toSecondOfDay() + (after + duration) * 60) % 86400)
+    return "Silent ${start.format(pattern)} to ${end.format(pattern)} ($duration min)"
 }
 
 /**
- * Prayer Focus — a Settings module (Android only). Auto-silences the phone around each prayer, then
- * restores it. Driven by [ReminderPrayer] (icon + label + per-prayer max), so Jumu'ah is included with
- * its longer range. ponytail: mock; real DND control + scheduling wires up later.
+ * Prayer Focus (Android only). Auto-silences the phone around each prayer, then restores it. Rows are the
+ * five daily prayers plus Jumu'ah; labels/icons come from Miqat, default windows from FocusDefaults.
+ * ponytail: mock; real DND control + scheduling wires up later.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrayerFocusScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
-    val states = remember {
-        ReminderPrayer.entries.associateWith {
-            val startAfter = if (it == ReminderPrayer.Fajr || it == ReminderPrayer.Maghrib) 0 else 5
-            FocusState(startAfter, duration = if (it.fridayOnly) 60 else 20)
-        }
-    }
+    val timeFormat by SettingsStore.timeFormat.collectAsState()
+    val today by MiqatTimesStore.today.collectAsState()
+    val configs by PrayerFocusStore.configs.collectAsState()
 
     Scaffold(
         topBar = {
@@ -80,15 +81,23 @@ fun PrayerFocusScreen(onBack: () -> Unit = {}) {
                 fontSize = 13.sp, color = c.onSurfaceVariant, modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
             )
             Spacer(Modifier.height(12.dp))
-            ReminderPrayer.entries.forEach { rp ->
-                val s = states.getValue(rp)
+            FocusDefaults.rows.forEach { row ->
+                val cfg = configs.getValue(row.key)
+                val label = if (row.friday) Miqat.jumuahLabel() else row.miqat.label()
+                val prayerTime = today.firstOrNull { it.miqat == row.miqat }?.at?.time
+                val title = if (prayerTime != null) "$label · ${prayerTime.format(timeFormat.pattern)}" else label
                 AppTileGroup(
                     modifier = Modifier.fillMaxWidth().animateContentSize(),
                     items = buildList {
-                        add(AppTileItem(title = stringResource(rp.labelRes), leadingIcon = rp.icon, trailing = { Switch(checked = s.enabled, onCheckedChange = { s.enabled = it }) }))
-                        if (s.enabled) {
-                            add(AppTileItem(title = stringResource(Res.string.start_after), trailing = { MiniStepper(s.startAfter, min, { s.startAfter = it }, min = 0, max = 30) }))
-                            add(AppTileItem(title = stringResource(Res.string.silence_for), trailing = { MiniStepper(s.duration, min, { s.duration = it }, min = 5, max = rp.maxFocusMin) }))
+                        add(AppTileItem(
+                            title = title,
+                            subtitle = if (cfg.enabled && prayerTime != null) silentWindow(prayerTime, cfg.startAfter, cfg.duration, timeFormat.pattern) else null,
+                            leadingIcon = row.miqat.icon,
+                            trailing = { Switch(checked = cfg.enabled, onCheckedChange = { PrayerFocusStore.setEnabled(row.key, it) }) },
+                        ))
+                        if (cfg.enabled) {
+                            add(AppTileItem(title = stringResource(Res.string.start_after), trailing = { MiniStepper(cfg.startAfter, min, { PrayerFocusStore.setStartAfter(row.key, it) }, min = 0, max = row.default.max) }))
+                            add(AppTileItem(title = stringResource(Res.string.silence_for), trailing = { MiniStepper(cfg.duration, min, { PrayerFocusStore.setDuration(row.key, it) }, min = 5, max = row.default.max) }))
                         }
                     },
                 )

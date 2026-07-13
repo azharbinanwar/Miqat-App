@@ -27,10 +27,7 @@ import com.example.miqatapp.resources.switch_method_title
 import com.example.miqatapp.resources.switch_to_method
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Offered after a manual location pick when the new country's official [method] differs from the current one.
- * The location is already active — this only proposes the method; dismiss/skip keeps the current one.
- */
+/** After a manual location pick, offers the new country's [method]. Location is already set; skip keeps the current method. */
 @Composable
 fun MethodSwitchSheet(
     place: Place,
@@ -50,12 +47,12 @@ fun MethodSwitchSheet(
         },
     ) {
         val body = stringResource(Res.string.switch_method_body, placeText, method.label)
-        // bold only the dynamic values (place + method), never the connective words — keeps it correct in RTL
+        // bold only the dynamic values, so RTL word order stays correct
         Text(boldParts(body, listOf(placeText, method.label), c.onSurface), fontSize = 14.sp, color = c.onSurfaceVariant)
     }
 }
 
-/** Emphasize each of [parts] wherever it appears in [text] — a localizable stand-in for Flutter's rich TextSpans. */
+/** Bold each of [parts] wherever it appears in [text]. */
 private fun boldParts(text: String, parts: List<String>, color: Color): AnnotatedString = buildAnnotatedString {
     append(text)
     for (p in parts) {
