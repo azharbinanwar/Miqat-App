@@ -3,8 +3,20 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- Notifications: prayer reminders / Prayer Focus. Runtime-requested on Android 13+ (API 33). -->
+    <!-- Notifications: prayer reminders + the Prayer Focus service notification. Runtime-requested on Android 13+. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Prayer Focus: needed to set the ringer to Silent (the Vibrate mode needs nothing). Granted in Settings. -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Prayer Focus: let the user exempt the app from battery optimization so it keeps working when closed. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Prayer Focus: foreground service keeps the process alive across swipe-from-recents. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Prayer Focus: exact alarm wakes ~1 min before each slot to start the service. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Prayer Focus: re-arm the prayer alarms after a reboot. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".MiqatApplication"
@@ -23,6 +35,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Prayer Focus: alarm wakes before a slot and starts the service. -->
+        <receiver android:name="com.example.miqatapp.core.focus.FocusAlarmReceiver" android:exported="false" />
+        <!-- Prayer Focus: the notification's action buttons (unmute / extend / mode). -->
+        <receiver android:name="com.example.miqatapp.core.focus.FocusActionReceiver" android:exported="false" />
+        <!-- Prayer Focus: nightly re-arm. -->
+        <receiver android:name="com.example.miqatapp.core.focus.RescheduleReceiver" android:exported="false" />
+        <!-- Prayer Focus: re-arm after reboot or an app update (both wipe scheduled alarms). System-sent. -->
+        <receiver android:name="com.example.miqatapp.core.focus.BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Prayer Focus: mutes the phone for a window and restores it. -->
+        <service
+            android:name="com.example.miqatapp.core.focus.PhoneSilenceService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="prayer_focus_silence" />
+        </service>
     </application>
 
 </manifest>

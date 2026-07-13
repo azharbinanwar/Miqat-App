@@ -53,6 +53,11 @@ object PrefConst {
     // ── Prayer Focus (auto-silence) ──────────────────────────
     /** Per-prayer focus field, e.g. focus_maghrib_enabled / _start_after / _duration. */
     fun focus(prayer: String, field: String) = "focus_${prayer.lowercase()}_$field"
+    const val FOCUS_SAVED_RINGER = "focus_saved_ringer"   // ringer mode saved before muting, to put back after
+    const val FOCUS_SILENCE_END = "focus_silence_end"     // epoch millis (string) of the active mute window's end
+    const val FOCUS_SILENCE_MODE = "focus_silence_mode"   // active window's mode (Silent | Vibrate), for catch-up
+    const val FOCUS_SILENCE_LABEL = "focus_silence_label" // active window's prayer name, for extend/mode restart
+    const val FOCUS_TEST_SLOTS = "focus_test_slots"       // saved one-shot test slots (JSON), survive reboot
 
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus
@@ -74,5 +79,6 @@ object PrefConst {
         const val JAMAAT_AFTER = "jamaat_after"
         const val START_AFTER = "start_after"
         const val DURATION = "duration"
+        const val SILENCE_MODE = "silence_mode"
     }
 }

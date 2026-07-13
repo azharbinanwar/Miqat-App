@@ -166,6 +166,22 @@
     <string name="silence_phone_around_each_prayer_set_separately">Silence your phone around each prayer, then restore it automatically. Set each prayer separately.</string>
     <string name="start_after">Start after</string>
     <string name="silence_for">Silence for</string>
+    <string name="silence_silent">Silent</string>
+    <string name="silence_vibrate">Vibrate</string>
+    <string name="silence_mode">Silence mode</string>
+    <string name="notif_focus_title">Time for %1$s · %2$s</string>
+    <string name="notif_focus_body">Silent until %1$s, be present in your prayer</string>
+    <string name="focus_unmute">Unmute now</string>
+    <string name="focus_extend">+5 min</string>
+    <string name="focus_allow_background">Allow background running</string>
+    <string name="focus_allow_background_sub">Tap to allow. If you've already allowed it, ignore this.</string>
+    <string name="focus_needs_attention">Needs attention</string>
+    <string name="focus_notif_needed">Turn on notifications</string>
+    <string name="focus_notif_sub">So you can see and control the silence</string>
+    <string name="focus_dnd_needed">Allow Do Not Disturb access</string>
+    <string name="focus_dnd_sub">Needed for Silent mode</string>
+    <string name="focus_notif_denied_title">Notifications are off</string>
+    <string name="focus_notif_denied_msg">Enable notifications in Settings so Prayer Focus can show the silence status.</string>
 
     <!-- Settings -->
     <string name="menu">Menu</string>
