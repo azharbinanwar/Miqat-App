@@ -1,4 +1,4 @@
-package com.example.miqatapp.feature.settings.presentation.components
+package com.example.miqatapp.feature.focus.presentation.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

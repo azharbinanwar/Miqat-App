@@ -25,7 +25,7 @@ import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.settings.presentation.LocationScreen
 import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
 import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
-import com.example.miqatapp.feature.settings.presentation.PrayerFocusScreen
+import com.example.miqatapp.feature.focus.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihRun
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
