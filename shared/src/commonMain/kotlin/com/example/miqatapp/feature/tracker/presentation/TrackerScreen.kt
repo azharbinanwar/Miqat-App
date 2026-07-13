@@ -45,7 +45,7 @@ import com.example.miqatapp.resources.on_time
 import com.example.miqatapp.resources.prayer_tracker
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.datetime.Now
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -67,7 +67,7 @@ private val trackablePrayers = Miqat.PRAYERS
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrackerScreen() {
-    val today = remember { currentDate() }
+    val today = remember { Now.date() }
     var visible by remember { mutableStateOf(today) }
     var selected by remember { mutableStateOf(today) }
     val tracked = remember { mutableStateMapOf<Pair<LocalDate, Miqat>, PrayerTrackerStatus>() }

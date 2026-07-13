@@ -47,7 +47,7 @@ import com.example.miqatapp.feature.miqat.presentation.components.MonthCalendar
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.prayer_times
 import kotlinx.coroutines.launch
-import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.core.datetime.format
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -61,7 +61,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun MiqatTimesScreen() {
     val today =
-        remember { currentDate() }
+        remember { Now.date() }
     var visible by remember { mutableStateOf(today) } // any day of the visible month
     var selected by remember { mutableStateOf(today) }
     var showSehriInfo by remember { mutableStateOf(false) }

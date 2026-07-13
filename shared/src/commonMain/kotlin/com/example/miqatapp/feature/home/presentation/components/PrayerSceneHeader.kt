@@ -109,7 +109,7 @@ fun PrayerSceneHeader(
                 Spacer(Modifier.height(3.dp))
                 Text(stringResource(period.labelRes), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
-                Text("Next · ${prayer.name}   $nextTime · $countdown", color = Color.White.copy(alpha = 0.92f), fontSize = 13.sp)
+                Text("${prayer.name}   $nextTime · $countdown", color = Color.White.copy(alpha = 0.92f), fontSize = 13.sp)
                 if (sehri != null || iftar != null) {
                     Spacer(Modifier.height(10.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {

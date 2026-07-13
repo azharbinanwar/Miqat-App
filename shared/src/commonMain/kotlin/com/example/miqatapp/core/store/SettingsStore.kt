@@ -4,14 +4,25 @@ import com.example.miqatapp.config.theme.ThemeChoice
 import com.example.miqatapp.core.constants.PrefConst
 import com.example.miqatapp.core.constants.defaults.SettingsDefaults
 import com.example.miqatapp.core.datetime.HijriDate
-import com.example.miqatapp.core.datetime.hijriToday
+import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.prefs.PrefsService
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.TimeFormat
+import com.example.miqatapp.core.datetime.toHijri
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 
 /**
  * General app settings — theme, language, clock format, Hijri offset. Same shape as the other stores:
@@ -44,9 +55,14 @@ object SettingsStore {
     private val _hijriOffset = MutableStateFlow(PrefsService.getInt(PrefConst.HIJRI_OFFSET, SettingsDefaults.HIJRI_OFFSET))
     val hijriOffset: StateFlow<Int> = _hijriOffset.asStateFlow()
 
-    /** Today's Hijri date with the offset already applied — read this; the offset is the store's concern. */
-    private val _hijriDate = MutableStateFlow(hijriToday(_hijriOffset.value))
-    val hijriDate: StateFlow<HijriDate> = _hijriDate.asStateFlow()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /** Today's Hijri date with the offset applied; follows Now, so it rolls with the clock. */
+    val hijriDate: StateFlow<HijriDate> = combine(
+        Now.now.map { it.date }.distinctUntilChanged(),
+        _hijriOffset,
+    ) { date, off -> toHijri(date.plus(off, DateTimeUnit.DAY)) }
+        .stateIn(scope, SharingStarted.Eagerly, Now.hijri(_hijriOffset.value))
 
     fun setTheme(value: ThemeChoice) {
         PrefsService.putString(PrefConst.THEME, value.value)
@@ -71,6 +87,5 @@ object SettingsStore {
     fun setHijriOffset(value: Int) {
         PrefsService.putInt(PrefConst.HIJRI_OFFSET, value)
         _hijriOffset.value = value
-        _hijriDate.value = hijriToday(value)
     }
 }

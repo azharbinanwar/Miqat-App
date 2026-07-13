@@ -49,18 +49,14 @@ import com.example.miqatapp.feature.home.presentation.components.PrayerSceneHead
 import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.datetime.HijriMonth
-import com.example.miqatapp.core.datetime.currentDate
 import com.example.miqatapp.core.datetime.labelRes
-import com.example.miqatapp.core.datetime.currentTime
 import com.example.miqatapp.core.datetime.format
 import com.example.miqatapp.core.debug.Debug
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.plus
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.core.components.SehriInfoSheet
+import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
 import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.core.enums.CalculationMethod
@@ -71,8 +67,6 @@ import androidx.compose.runtime.LaunchedEffect
 import com.example.miqatapp.feature.miqat.domain.MiqatTime
 import com.example.miqatapp.core.constants.Place
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.produceState
-import kotlinx.coroutines.delay
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.clear
 import com.example.miqatapp.resources.day_streak
@@ -94,7 +88,6 @@ import com.example.miqatapp.core.components.AppTile
 import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
 import com.example.miqatapp.core.components.PulseDot
-import kotlin.time.Duration.Companion.milliseconds
 
 private val ExpandedHeader = 380.dp
 private val CollapsedHeader = 116.dp
@@ -105,26 +98,10 @@ fun HomeScreen() {
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val calc by MiqatCalculationStore.calculation.collectAsState()
 
-    val realToday by MiqatTimesStore.today.collectAsState()
-
-    // Home clock. Debug.FAST_CLOCK ON → fake time-lapse (2 days in ~48s) to watch the scene + prayer flow.
-    // OFF → the real clock (30s tick) with the reactive times store, i.e. normal Home. See Debug.
-    val baseDate = remember { currentDate() }
-    val clock by produceState(LocalDateTime(baseDate, LocalTime(0, 0))) {
-        if (Debug.FAST_CLOCK) {
-            var m = 0
-            while (true) {
-                value = LocalDateTime(baseDate.plus(m / 1440, DateTimeUnit.DAY), LocalTime((m % 1440) / 60, (m % 1440) % 60))
-                m = (m + 5) % (2 * 1440)
-                delay(80.milliseconds)
-            }
-        } else {
-            while (true) { value = LocalDateTime(currentDate(), currentTime()); delay(30_000.milliseconds) }
-        }
-    }
+    // One clock drives the screen: real, or a pushed/fast debug clock (see Now). The times store follows its date.
+    val clock by Now.now.collectAsState()
     val now = clock.time
-    val fastToday = remember(clock.date) { MiqatTimesStore.timesFor(clock.date) }
-    val today = if (Debug.FAST_CLOCK) fastToday else realToday
+    val today by MiqatTimesStore.today.collectAsState()
 
     // silent GPS check — never prompts
     val geo = rememberGeoLocator()
@@ -165,12 +142,11 @@ fun HomeScreen() {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
 
-    // minutes until the next prayer, wrapping past midnight to tomorrow's first
+    // live ticking countdown to the next prayer, wrapping past midnight
     val countdown = nextMt?.let {
-        val n = now.hour * 60 + now.minute
-        val t = it.at.time.hour * 60 + it.at.time.minute
-        val mins = if (t > n) t - n else t + 24 * 60 - n
-        "in ${mins / 60}h ${mins % 60}m"
+        val secs = ((it.at.time.toSecondOfDay() - now.toSecondOfDay()) + 24 * 3600) % (24 * 3600)
+        val h = secs / 3600; val m = (secs % 3600) / 60; val s = secs % 60
+        if (h > 0) "in ${h}h ${m}m ${s}s" else "in ${m}m ${s}s"
     } ?: ""
 
     // Ramadan: Sehri (Fajr or Imsak, per user pref) + Iftar (Maghrib) on the scene. Debug.FORCE_RAMADAN previews off-season.

@@ -7,6 +7,7 @@ import platform.Foundation.NSCalendarUnitDay
 import platform.Foundation.NSCalendarUnitHour
 import platform.Foundation.NSCalendarUnitMinute
 import platform.Foundation.NSCalendarUnitMonth
+import platform.Foundation.NSCalendarUnitSecond
 import platform.Foundation.NSCalendarUnitYear
 import platform.Foundation.NSDate
 
@@ -20,8 +21,8 @@ actual fun currentDate(): LocalDate {
 
 actual fun currentTime(): LocalTime {
     val comps = NSCalendar.currentCalendar.components(
-        NSCalendarUnitHour or NSCalendarUnitMinute,
+        NSCalendarUnitHour or NSCalendarUnitMinute or NSCalendarUnitSecond,
         NSDate(),
     )
-    return LocalTime(comps.hour.toInt(), comps.minute.toInt())
+    return LocalTime(comps.hour.toInt(), comps.minute.toInt(), comps.second.toInt())
 }

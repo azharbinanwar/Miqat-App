@@ -84,7 +84,7 @@ import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Palette
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.datetime.currentDate
+import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.components.AppBottomSheet
 import com.example.miqatapp.core.components.AppButton
@@ -221,7 +221,7 @@ fun TasbihScreen(
         val target = queue[index].defaultCount
         if (target > 0 && count + 1 >= target) {              // target reached (0 = unlimited → never auto-completes)
             round++
-            history.add(0, TasbihSession(queue[index].title, target, currentDate()))
+            history.add(0, TasbihSession(queue[index].title, target, Now.date()))
             if (vibrate) haptics.performHapticFeedback(HapticFeedbackType.LongPress) // heavier on a completed dhikr
             if (index < queue.lastIndex) { index++; count = 0 } // auto-advance to the next dhikr in the set
             else { // whole set finished → success

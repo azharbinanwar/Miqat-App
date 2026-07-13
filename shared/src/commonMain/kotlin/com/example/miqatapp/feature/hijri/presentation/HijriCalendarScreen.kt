@@ -29,8 +29,7 @@ import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.HijriMonth
-import com.example.miqatapp.core.datetime.currentDate
-import com.example.miqatapp.core.datetime.hijriToday
+import com.example.miqatapp.core.datetime.Now
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.constants.PrefConst
 import com.example.miqatapp.core.prefs.PrefsService
@@ -57,8 +56,8 @@ import org.jetbrains.compose.resources.stringResource
 fun HijriCalendarScreen(onBack: () -> Unit = {}) {
     val c = AppTheme.colors
     var offset by remember { mutableStateOf(PrefsService.getInt(PrefConst.HIJRI_OFFSET, 0)) }
-    val hijri = hijriToday(offset)
-    val gregorian = currentDate()
+    val hijri = Now.hijri(offset)
+    val gregorian = Now.date()
 
     Scaffold(
         topBar = {

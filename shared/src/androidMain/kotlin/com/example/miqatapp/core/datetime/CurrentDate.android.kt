@@ -11,5 +11,5 @@ actual fun currentDate(): LocalDate {
 
 actual fun currentTime(): LocalTime {
     val c = Calendar.getInstance()
-    return LocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE))
+    return LocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND))
 }
