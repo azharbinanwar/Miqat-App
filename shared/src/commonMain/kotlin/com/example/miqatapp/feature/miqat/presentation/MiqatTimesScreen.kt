@@ -32,7 +32,6 @@ import com.composables.icons.lucide.Menu
 import com.composables.icons.lucide.Settings
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.datetime.toHijri
-import com.example.miqatapp.core.debug.Debug
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.color
 import com.example.miqatapp.core.store.SettingsStore
@@ -71,7 +70,7 @@ fun MiqatTimesScreen() {
     val timeFormat by SettingsStore.timeFormat.collectAsState()
     val times = remember(selected, place, calc) { MiqatTimesStore.timesFor(selected) }
     // Imsak (and any Ramadan-only marker) shows only during Ramadan. Debug.FORCE_RAMADAN previews it off-season.
-    val ramadan = remember(selected) { Debug.FORCE_RAMADAN || toHijri(selected).month == 9 }
+    val ramadan = remember(selected) { toHijri(selected).month == 9 }
     val shown = remember(times, ramadan) { times.filter { it.miqat.category != Miqat.Category.RAMADAN || ramadan } }
 
     val drawerState = LocalDrawerState.current

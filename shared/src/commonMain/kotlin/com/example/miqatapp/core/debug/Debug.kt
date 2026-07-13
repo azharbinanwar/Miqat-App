@@ -13,16 +13,10 @@ object Debug {
     const val FAST_CLOCK = false
 
     /**
-     * Preview the Ramadan UI (Sehri/Iftar labels on the Home scene + Imsak row in the times list) outside
-     * of actual Ramadan. When `true`, the app behaves as if the Hijri month is Ramadan. Keep `false` for release.
-     */
-    const val FORCE_RAMADAN = false
-
-    /**
      * Time machine for testing seasons without waiting a year. Set a date (e.g. LocalDate(2026, 12, 21) for the
      * winter solstice, or six months out) and Home treats it as today, so you see that day's sun/moon scene and
      * prayer times for the currently-set location. Combine with FAST_CLOCK to run the day fast. null = real today.
      */
-    val DATE_OVERRIDE: LocalDate = LocalDate(2027, 2, 16)
-//    val DATE_OVERRIDE: LocalDate? = null
+//    val DATE_OVERRIDE: LocalDate = LocalDate(2027, 2, 16)
+    val DATE_OVERRIDE: LocalDate? = null
 }
