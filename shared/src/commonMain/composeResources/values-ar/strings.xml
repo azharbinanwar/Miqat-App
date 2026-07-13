@@ -306,6 +306,12 @@
 
     <!-- location: suggested cities + calculation-method prompts -->
     <string name="suggested">مقترحة</string>
+    <string name="sehri">السحور</string>
+    <string name="iftar">الإفطار</string>
+    <string name="sehri_info_title">السحور والإمساك والإفطار</string>
+    <string name="sehri_info_body">ينتهي السحور عند الفجر، فيجوز الأكل حتى طلوع الفجر الصادق. الإمساك وقت احتياطي قبل الفجر بنحو عشر دقائق للتوقف مبكرًا احتياطًا. الإفطار عند المغرب حين تفطر.</string>
+    <string name="sehri_info_regions">تتفق المذاهب الأربعة على أن الحد الحقيقي هو الفجر، فيتوقف معظم المسلمين عنده. والالتزام بالإمساك عادة إقليمية أكثر، منتشرة في جنوب آسيا وتركيا وإندونيسيا، بينما يأكل أهل الخليج ومعظم العالم العربي حتى الفجر. وكلاهما صحيح، اختر ما تتبعه.</string>
+    <string name="sehri_ends_at">ينتهي السحور عند</string>
     <string name="switch_method_title">تغيير طريقة الحساب؟</string>
     <string name="switch_method_body">أنت الآن في %1$s، وهي تستخدم طريقة %2$s. هل تريد التبديل إليها للحصول على أوقات صلاة دقيقة؟</string>
     <string name="switch_to_method">التبديل إلى طريقة %1$s</string>

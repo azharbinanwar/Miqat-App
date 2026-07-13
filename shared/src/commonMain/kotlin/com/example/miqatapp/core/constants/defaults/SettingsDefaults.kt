@@ -1,6 +1,7 @@
 package com.example.miqatapp.core.constants.defaults
 
 import com.example.miqatapp.config.theme.ThemeChoice
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.enums.TimeFormat
 
@@ -13,4 +14,5 @@ object SettingsDefaults {
     val language = Language.English          // fromCode(null) resolves here
     val timeFormat = TimeFormat.default      // 12-hour
     const val HIJRI_OFFSET = 0
+    val sehriReference = Miqat.Imsak         // cautious default; user can switch to Fajr in Ramadan
 }

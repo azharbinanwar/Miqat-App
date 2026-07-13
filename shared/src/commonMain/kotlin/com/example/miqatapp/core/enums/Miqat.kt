@@ -24,7 +24,11 @@ import com.example.miqatapp.resources.prayer_fajr
 import com.example.miqatapp.resources.prayer_isha
 import com.example.miqatapp.resources.prayer_maghrib
 import com.example.miqatapp.resources.prayer_sunrise
+import com.example.miqatapp.resources.prayer_jumuah
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Every time point the app can show ("miqat" = appointed time). Replaces the old Prayer enum.
@@ -56,6 +60,26 @@ enum class Miqat(
     enum class Category { PRAYER, SOLAR, NIGHT, RAMADAN }
 
     val isPrayer: Boolean get() = category == Category.PRAYER
+
+    /**
+     * The obligatory prayer whose window *contains* this time — the UI nests it as a sub-row under that prayer.
+     * Only Isha's window (Isha → next Fajr) holds children (Midnight, LastThird); every other time stands alone.
+     * Imsak is NOT here — it's a dawn suhoor marker (~Fajr − 10 min), shown near Fajr in Ramadan, not under Isha.
+     * Display grouping only — it never decides which prayer is "active now".
+     */
+    val group: Miqat? get() = when (this) {
+        Midnight, LastThird -> Isha
+        else -> null
+    }
+
+    /**
+     * Localized display name. Pass the day to apply date rules — on Friday, Dhuhr reads as Jumu'ah.
+     * With no date it returns the plain name (legends, settings, anywhere the day is irrelevant).
+     */
+    @Composable
+    fun label(date: LocalDate? = null): String =
+        if (this == Dhuhr && date?.dayOfWeek == DayOfWeek.FRIDAY) stringResource(Res.string.prayer_jumuah)
+        else stringResource(labelRes)
 
     companion object {
         /** The five daily prayers (Tracker, notifications, logging). */

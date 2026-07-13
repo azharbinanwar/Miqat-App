@@ -7,6 +7,7 @@ import com.example.miqatapp.core.datetime.HijriDate
 import com.example.miqatapp.core.datetime.hijriToday
 import com.example.miqatapp.core.locale.Language
 import com.example.miqatapp.core.prefs.PrefsService
+import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.TimeFormat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +35,12 @@ object SettingsStore {
     )
     val timeFormat: StateFlow<TimeFormat> = _timeFormat.asStateFlow()
 
+    /** Which time the Ramadan "Sehri" label follows — Fajr (the ruling) or Imsak (the precaution). */
+    private val _sehriReference = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.SEHRI_REFERENCE)?.let { name -> Miqat.entries.firstOrNull { it.name == name } } ?: SettingsDefaults.sehriReference,
+    )
+    val sehriReference: StateFlow<Miqat> = _sehriReference.asStateFlow()
+
     private val _hijriOffset = MutableStateFlow(PrefsService.getInt(PrefConst.HIJRI_OFFSET, SettingsDefaults.HIJRI_OFFSET))
     val hijriOffset: StateFlow<Int> = _hijriOffset.asStateFlow()
 
@@ -54,6 +61,11 @@ object SettingsStore {
     fun setTimeFormat(value: TimeFormat) {
         PrefsService.putString(PrefConst.TIME_FORMAT, value.value)
         _timeFormat.value = value
+    }
+
+    fun setSehriReference(value: Miqat) {
+        PrefsService.putString(PrefConst.SEHRI_REFERENCE, value.name)
+        _sehriReference.value = value
     }
 
     fun setHijriOffset(value: Int) {

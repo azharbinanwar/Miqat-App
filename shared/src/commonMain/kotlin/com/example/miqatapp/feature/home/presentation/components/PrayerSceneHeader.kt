@@ -1,6 +1,7 @@
 package com.example.miqatapp.feature.home.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,12 +32,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.composables.icons.lucide.Bell
+import com.composables.icons.lucide.Info
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
+import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.Sunset
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.feature.home.presentation.MosqueScene
+import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.iftar
+import com.example.miqatapp.resources.sehri
 import com.example.miqatapp.feature.home.presentation.SkyState
 import org.jetbrains.compose.resources.stringResource
 
@@ -53,6 +62,9 @@ fun PrayerSceneHeader(
     dateLabel: String,
     nextTime: String,
     countdown: String,
+    sehri: String? = null,   // Ramadan: Sehri time (Fajr or Imsak per pref). null = not Ramadan
+    iftar: String? = null,   // Ramadan: Maghrib time (open fast)
+    onInfo: (() -> Unit)? = null,   // tap the chips → Sehri / Imsak / Iftar explainer + switch
     modifier: Modifier = Modifier,
     expandedHeight: Dp = 380.dp,
     collapsedHeight: Dp = 116.dp,
@@ -98,9 +110,37 @@ fun PrayerSceneHeader(
                 Text(stringResource(period.labelRes), color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
                 Text("Next · ${prayer.name}   $nextTime · $countdown", color = Color.White.copy(alpha = 0.92f), fontSize = 13.sp)
-                Spacer(Modifier.height(3.dp))
+                if (sehri != null || iftar != null) {
+                    Spacer(Modifier.height(10.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (sehri != null) RamadanChip(Lucide.Moon, stringResource(Res.string.sehri), sehri)
+                        if (sehri != null && iftar != null) Spacer(Modifier.width(8.dp))
+                        if (iftar != null) RamadanChip(Lucide.Sunset, stringResource(Res.string.iftar), iftar)
+                        if (onInfo != null) {
+                            Spacer(Modifier.width(6.dp))
+                            Icon(
+                                Lucide.Info, "About Sehri", tint = Color.White.copy(alpha = 0.85f),
+                                modifier = Modifier.size(20.dp).clip(CircleShape).clickable { onInfo() },
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(6.dp))
                 Text(dateLabel, color = Color.White.copy(alpha = 0.6f), fontSize = 12.sp)
             }
         }
+    }
+}
+
+/** Small translucent pill for a Ramadan time (Sehri / Iftar) over the scene. */
+@Composable
+private fun RamadanChip(icon: ImageVector, label: String, time: String) {
+    Row(
+        Modifier.clip(RoundedCornerShape(8.dp)).background(Color.White.copy(alpha = 0.16f)).padding(horizontal = 10.dp, vertical = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(icon, null, tint = Color.White, modifier = Modifier.size(14.dp))
+        Spacer(Modifier.width(5.dp))
+        Text("$label  $time", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
     }
 }

@@ -14,6 +14,7 @@ object PrefConst {
     const val LANGUAGE = "language"           // en | ar | null = system
     const val TIME_FORMAT = "time_format"     // 12 | 24
     const val HIJRI_OFFSET = "hijri_offset"   // -2..+2
+    const val SEHRI_REFERENCE = "sehri_reference" // Fajr | Imsak — which time the Ramadan "Sehri" label uses
 
     // ── Prayer calculation ───────────────────────────────────
     const val CALC_METHOD = "calc_method"

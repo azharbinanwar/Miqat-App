@@ -31,7 +31,7 @@
     <string name="you_are_facing_qibla">You are facing the Qibla</string>
     <string name="compass_accuracy_low_wave_phone_in_figure_eight">Low accuracy — wave your phone in a figure 8</string>
     <string name="compass_unavailable">Compass unavailable</string>
-    <string name="device_has_no_compass_sensor">Your device has no compass sensor, so the Qibla direction can\'t be shown</string>
+    <string name="device_has_no_compass_sensor">Your device has no compass sensor, so the Qibla direction can't be shown</string>
     <string name="location_needed_for_qibla">Location is needed to find the Qibla</string>
     <string name="recalibrate_compass">Recalibrate</string>
 
@@ -81,7 +81,7 @@
     <string name="tasbih_cat_tasbihat">Tasbihat</string>
     <string name="tasbih_cat_durood">Durood &amp; Salawat</string>
     <string name="tasbih_cat_names">Names of Allah</string>
-    <string name="tasbih_cat_quranic">Qur\'anic</string>
+    <string name="tasbih_cat_quranic">Qur'anic</string>
     <string name="tasbih_n_azkar">%1$d azkar</string>
     <string name="tasbih_show_less">Show less</string>
     <string name="tasbih_see_all">See all (%1$d)</string>
@@ -127,14 +127,14 @@
     <string name="your_madhab">Your Madhab</string>
     <string name="affects_asr_calculation">Affects the Asr prayer time calculation.</string>
     <string name="madhab_hanafi">Hanafi</string>
-    <string name="madhab_shafi">Shafi\'i</string>
+    <string name="madhab_shafi">Shafi'i</string>
     <string name="shadow_length_2x">Shadow length 2× object</string>
     <string name="shadow_length_1x">Shadow length 1× object</string>
     <string name="asr_time">Asr time</string>
     <string name="smart_reminders">Smart reminders</string>
     <string name="gentle_nudge_before_every_prayer">A gentle nudge before every prayer.</string>
     <string name="onboarding_before_at_time_alerts">Before-time and at-time alerts</string>
-    <string name="onboarding_jumuah_mulk_kahf">Jumu\'ah · Surah Mulk · Kahf</string>
+    <string name="onboarding_jumuah_mulk_kahf">Jumu'ah · Surah Mulk · Kahf</string>
     <string name="onboarding_jamaat_reminders">Jamaat reminders</string>
     <string name="set_your_location">Set your location</string>
     <string name="so_times_and_qibla_are_exact">So times and Qibla are exact.</string>
@@ -152,7 +152,7 @@
     <string name="prayer_asr">Asr</string>
     <string name="prayer_maghrib">Maghrib</string>
     <string name="prayer_isha">Isha</string>
-    <string name="prayer_jumuah">Jumu\'ah</string>
+    <string name="prayer_jumuah">Jumu'ah</string>
 
     <!-- Miqat time points (non-prayer) -->
     <string name="miqat_imsak">Imsak</string>
@@ -215,7 +215,7 @@
     <string name="at_prayer_time">At prayer time</string>
     <string name="jamaat_reminder">Jamaat reminder</string>
     <string name="jamaat_after_start">Jamaat after start</string>
-    <string name="friday_jumuah">Friday · Jumu\'ah</string>
+    <string name="friday_jumuah">Friday · Jumu'ah</string>
     <string name="remind_if_missed">Remind if missed</string>
     <string name="sunnah_reminders">Sunnah reminders</string>
     <string name="after_isha">After Isha</string>
@@ -266,10 +266,10 @@
     <string name="jumada_al_awwal">Jumada al-Awwal</string>
     <string name="jumada_al_thani">Jumada al-Thani</string>
     <string name="rajab">Rajab</string>
-    <string name="shaban">Sha\'ban</string>
+    <string name="shaban">Sha'ban</string>
     <string name="ramadan">Ramadan</string>
     <string name="shawwal">Shawwal</string>
-    <string name="dhu_al_qadah">Dhu al-Qa\'dah</string>
+    <string name="dhu_al_qadah">Dhu al-Qa'dah</string>
     <string name="dhu_al_hijjah">Dhu al-Hijjah</string>
     <string name="date_adjustment">Date adjustment</string>
     <string name="days">days</string>
@@ -296,7 +296,7 @@
     <string name="completed">Completed</string>
     <string name="use_beads">Use beads</string>
     <string name="all">All</string>
-    <string name="dua">Du\'a</string>
+    <string name="dua">Du'a</string>
     <string name="zikr">Zikr</string>
     <string name="new_collection">New collection</string>
     <string name="names_of_allah">99 Names of Allah</string>
@@ -306,8 +306,14 @@
 
     <!-- location: suggested cities + calculation-method prompts -->
     <string name="suggested">Suggested</string>
+    <string name="sehri">Sehri</string>
+    <string name="iftar">Iftar</string>
+    <string name="sehri_info_title">Sehri, Imsak &amp; Iftar</string>
+    <string name="sehri_info_body">Sehri (the pre-dawn meal) ends at Fajr, so you can eat right up to true dawn. Imsak is a precaution about 10 minutes before Fajr, to stop early and be safe. Iftar is at Maghrib, when you break your fast.</string>
+    <string name="sehri_info_regions">All four schools hold the true cutoff is Fajr, so most Muslims stop then. Following Imsak is more a regional custom, common in South Asia, Turkey and Indonesia, while the Gulf and much of the Arab world eat until Fajr. Both are valid, so pick what you follow.</string>
+    <string name="sehri_ends_at">Sehri ends at</string>
     <string name="switch_method_title">Switch calculation method?</string>
-    <string name="switch_method_body">You\'re now in %1$s, which uses the %2$s method. Switch to it for accurate prayer times?</string>
+    <string name="switch_method_body">You're now in %1$s, which uses the %2$s method. Switch to it for accurate prayer times?</string>
     <string name="switch_to_method">Switch to %1$s method</string>
     <string name="keep_current_method">Keep current method</string>
     <string name="location_changed">Location changed</string>

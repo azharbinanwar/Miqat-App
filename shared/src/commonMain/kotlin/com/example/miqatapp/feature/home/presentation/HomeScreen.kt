@@ -60,6 +60,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 import com.example.miqatapp.core.store.LocationStore
 import com.example.miqatapp.core.store.SettingsStore
+import com.example.miqatapp.core.components.SehriInfoSheet
 import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
 import com.example.miqatapp.feature.miqat.store.MiqatCalculationStore
 import com.example.miqatapp.core.enums.CalculationMethod
@@ -172,6 +173,13 @@ fun HomeScreen() {
         "in ${mins / 60}h ${mins % 60}m"
     } ?: ""
 
+    // Ramadan: Sehri (Fajr or Imsak, per user pref) + Iftar (Maghrib) on the scene. Debug.FORCE_RAMADAN previews off-season.
+    val sehriRef by SettingsStore.sehriReference.collectAsState()
+    val ramadan = Debug.FORCE_RAMADAN || hijri.month == 9
+    val sehri = if (ramadan) today.firstOrNull { it.miqat == sehriRef }?.at?.time?.format(timeFormat.pattern) else null
+    val iftar = if (ramadan) today.firstOrNull { it.miqat == Miqat.Maghrib }?.at?.time?.format(timeFormat.pattern) else null
+    var showSehriInfo by remember { mutableStateOf(false) }
+
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().verticalScroll(scroll)) {
             Spacer(Modifier.height(ExpandedHeader))
@@ -186,7 +194,7 @@ fun HomeScreen() {
                             else -> null
                         }
                         AppTileItem(
-                            title = stringResource(mt.miqat.labelRes),
+                            title = mt.miqat.label(clock.date),
                             subtitle = mt.at.time.format(timeFormat.pattern),
                             selected = status == MiqatTimeStatus.Current,
                             leadingIcon = mt.miqat.icon,
@@ -221,12 +229,17 @@ fun HomeScreen() {
             fraction = fraction,
             locationName = place.name,
             dateLabel = dateLabel,
-            nextTime = nextMt?.let { it.at.time.format(timeFormat.pattern) } ?: "",
+            nextTime = nextMt?.at?.time?.format(timeFormat.pattern) ?: "",
             countdown = countdown,
+            sehri = sehri,
+            iftar = iftar,
+            onInfo = { showSehriInfo = true },
             expandedHeight = ExpandedHeader,
             collapsedHeight = CollapsedHeader,
             onMenuClick = { scope.launch { drawerState.open() } },
         )
+
+        if (showSehriInfo) SehriInfoSheet(onDismiss = { showSehriInfo = false })
 
         sheetPrayer?.let { p ->
             TrackingSheet(

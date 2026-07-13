@@ -9,4 +9,10 @@ object Debug {
      * (30s tick). Keep `false` for release; flip to `true` only to test the scene/period logic.
      */
     const val FAST_CLOCK = false
+
+    /**
+     * Preview the Ramadan UI (Sehri/Iftar labels on the Home scene + Imsak row in the times list) outside
+     * of actual Ramadan. When `true`, the app behaves as if the Hijri month is Ramadan. Keep `false` for release.
+     */
+    const val FORCE_RAMADAN = true
 }
