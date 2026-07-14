@@ -38,8 +38,15 @@
 
         <!-- Prayer Focus: alarm wakes before a slot and starts the service. -->
         <receiver android:name="com.example.miqatapp.core.focus.FocusAlarmReceiver" android:exported="false" />
-        <!-- Prayer Focus: the notification's action buttons (unmute / extend / mode). -->
+        <!-- Prayer Focus: the notification's action buttons (+5 / prayed / unmute) and the end "restore" alarm. -->
         <receiver android:name="com.example.miqatapp.core.focus.FocusActionReceiver" android:exported="false" />
+        <!-- Prayer Focus: re-arm when the clock or timezone changes (armed alarms target stale instants). System-sent. -->
+        <receiver android:name="com.example.miqatapp.core.focus.TimeChangeReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <!-- Prayer Focus: nightly re-arm. -->
         <receiver android:name="com.example.miqatapp.core.focus.RescheduleReceiver" android:exported="false" />
         <!-- Prayer Focus: re-arm after reboot or an app update (both wipe scheduled alarms). System-sent. -->

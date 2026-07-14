@@ -17,6 +17,7 @@ import com.example.miqatapp.core.prefs.PrefsService
 import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.focus_extend
+import com.example.miqatapp.resources.focus_prayed
 import com.example.miqatapp.resources.focus_unmute
 import com.example.miqatapp.resources.notif_focus_body
 import com.example.miqatapp.resources.notif_focus_title
@@ -50,6 +51,9 @@ class PhoneSilenceService : Service() {
         PrefsService.putString(PrefConst.FOCUS_SILENCE_END, end.toString()) // so catch-up can heal a killed service
         PrefsService.putString(PrefConst.FOCUS_SILENCE_MODE, mode)
         PrefsService.putString(PrefConst.FOCUS_SILENCE_LABEL, label)
+        // Double alarm: even if the OEM freezes this service, the OS wakes us at `end` and restores.
+        // Extend/toggle restart the service through here, so the alarm is always re-armed to the latest end.
+        PhoneSilencer.armEndAlarm(end)
         goForeground(start, end, label, mode)
         job?.cancel()
         job = scope.launch {
@@ -57,9 +61,8 @@ class PhoneSilenceService : Service() {
             log("mute -> ${if (Ringer.mute(mode)) "SILENT" else "VIBRATE"}")
             delay((end - System.currentTimeMillis()).coerceAtLeast(0))
             if (Ringer.restore()) log("restore ringer")
-            PrefsService.remove(PrefConst.FOCUS_SILENCE_END)
-            PrefsService.remove(PrefConst.FOCUS_SILENCE_MODE)
-            PrefsService.remove(PrefConst.FOCUS_SILENCE_LABEL)
+            PhoneSilencer.clearWindowPrefs()
+            PhoneSilencer.cancelEndAlarm() // job done in-process; the safety net isn't needed anymore
             stopSelf()
         }
         return START_REDELIVER_INTENT
@@ -83,25 +86,24 @@ class PhoneSilenceService : Service() {
             this, code, Intent(this, FocusActionReceiver::class.java).setAction(a),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-        // The mode button offers the OTHER mode (tap to switch to it).
-        val other = if (mode == SilenceMode.Silent.name) SilenceMode.Vibrate else SilenceMode.Silent
-        var title = ""; var body = ""; var unmute = ""; var extend = ""; var modeBtn = ""
+        var title = ""; var body = ""; var unmute = ""; var extend = ""; var prayed = ""
         runBlocking { // resolving a few bundled strings; fast enough for startForeground
             title = getString(Res.string.notif_focus_title, prayerName(label), fmt(start, pattern))
             body = getString(Res.string.notif_focus_body, fmt(end, pattern))
             unmute = getString(Res.string.focus_unmute)
             extend = getString(Res.string.focus_extend)
-            modeBtn = getString(other.labelRes)
+            prayed = getString(Res.string.focus_prayed)
         }
         val iconId = resources.getIdentifier("ic_notification", "drawable", packageName)
+        // Button order = add order (left to right): +5 min | Prayed | Unmute — Unmute rightmost, under the thumb.
         val notif = NotificationCompat.Builder(this, CHANNEL)
             .setContentTitle(title)
             .setContentText(body)
             .setSmallIcon(if (iconId != 0) iconId else android.R.drawable.ic_lock_silent_mode)
             .setOngoing(true)
-            .addAction(0, unmute, action(FocusActionReceiver.ACTION_UNMUTE, 1))
             .addAction(0, extend, action(FocusActionReceiver.ACTION_EXTEND, 2))
-            .addAction(0, modeBtn, action(FocusActionReceiver.ACTION_MODE, 3))
+            .addAction(0, prayed, action(FocusActionReceiver.ACTION_PRAYED, 4))
+            .addAction(0, unmute, action(FocusActionReceiver.ACTION_UNMUTE, 1))
             .build()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(NOTIF_ID, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)

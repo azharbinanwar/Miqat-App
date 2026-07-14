@@ -173,6 +173,7 @@
     <string name="notif_focus_body">صامت حتى %1$s، كن حاضراً في صلاتك</string>
     <string name="focus_unmute">إلغاء الكتم</string>
     <string name="focus_extend">+5 دقائق</string>
+    <string name="focus_prayed">صلّيت</string>
     <string name="focus_allow_background">تشغيل في الخلفية</string>
     <string name="focus_allow_background_sub">اضغط للسماح. إذا كنت قد سمحت به مسبقاً، تجاهل هذا.</string>
     <string name="focus_needs_attention">يحتاج انتباه</string>
@@ -234,6 +235,8 @@
     <string name="friday_jumuah">الجمعة · صلاة الجمعة</string>
     <string name="remind_if_missed">التذكير عند الفوات</string>
     <string name="sunnah_reminders">تذكيرات السنن</string>
+    <string name="surahs">السور</string>
+    <string name="nafil_prayers">النوافل</string>
     <string name="after_isha">بعد العشاء</string>
     <string name="surah_al_kahf">سورة الكهف</string>
     <string name="friday">الجمعة</string>

@@ -23,7 +23,8 @@ object Ringer {
             PrefsService.putInt(PrefConst.FOCUS_SAVED_RINGER, am.ringerMode)
         }
         val silent = mode == SilenceMode.Silent.name && hasDndAccess()
-        am.ringerMode = if (silent) AudioManager.RINGER_MODE_SILENT else AudioManager.RINGER_MODE_VIBRATE
+        val target = if (silent) AudioManager.RINGER_MODE_SILENT else AudioManager.RINGER_MODE_VIBRATE
+        if (am.ringerMode != target) am.ringerMode = target // already there (extend/heal restart) -> no blip
         return silent
     }
 

@@ -18,7 +18,7 @@ class FocusAlarmReceiver : BroadcastReceiver() {
     }
 }
 
-// The notification's action buttons.
+// The notification's action buttons + the end-alarm safety net.
 class FocusActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         AppCtx.context = context.applicationContext
@@ -26,6 +26,11 @@ class FocusActionReceiver : BroadcastReceiver() {
             ACTION_UNMUTE -> PhoneSilencer.unmuteNow()
             ACTION_EXTEND -> PhoneSilencer.extend()
             ACTION_MODE -> PhoneSilencer.toggleMode()
+            // TODO(streak): also mark the prayer as completed once prayer tracking exists.
+            ACTION_PRAYED -> PhoneSilencer.unmuteNow()
+            // End alarm ("double alarm"): fires at the window end. If the service already restored,
+            // this finds nothing saved and exits. If the OEM froze/killed the service, this restores.
+            ACTION_RESTORE -> PhoneSilencer.restoreIfStuck()
         }
     }
 
@@ -33,6 +38,16 @@ class FocusActionReceiver : BroadcastReceiver() {
         const val ACTION_UNMUTE = "com.example.miqatapp.focus.UNMUTE"
         const val ACTION_EXTEND = "com.example.miqatapp.focus.EXTEND"
         const val ACTION_MODE = "com.example.miqatapp.focus.MODE"
+        const val ACTION_PRAYED = "com.example.miqatapp.focus.PRAYED"
+        const val ACTION_RESTORE = "com.example.miqatapp.focus.RESTORE"
+    }
+}
+
+// The wall clock or timezone changed under our feet; every armed alarm targets a stale instant. Re-arm.
+class TimeChangeReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        AppCtx.context = context.applicationContext
+        PhoneSilencer.rescheduleAll()
     }
 }
 

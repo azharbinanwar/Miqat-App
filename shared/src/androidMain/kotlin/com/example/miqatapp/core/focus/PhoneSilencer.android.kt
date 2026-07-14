@@ -22,6 +22,7 @@ actual object PhoneSilencer {
     private const val LEAD = 20_000L // start the service ~20s before the slot so it's up in time to mute
     private const val REAL_MAX = 32  // cancel range for the real per-prayer alarms (codes 0 until this)
     private const val DAILY_CODE = 40 // outside REAL_MAX: the once-a-day re-arm alarm
+    private const val END_CODE = 41   // the "double alarm": fires at the active window's end to guarantee restore
     private const val TEST_BASE = 100 // saved test-slot alarms use codes TEST_BASE until TEST_BASE + TEST_MAX
     private const val TEST_MAX = 64
 
@@ -53,11 +54,35 @@ actual object PhoneSilencer {
         val at = maxOf(System.currentTimeMillis(), start - LEAD)
         val pi = alarmPi(ctx, code, start, end, label, mode)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi)
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi) // no exact-alarm permission: inexact is the only legal fallback
         } else {
             am.setAlarmClock(AlarmManager.AlarmClockInfo(at, launchPi(ctx)), pi)
         }
     }
+
+    // The safety net: a one-shot alarm at the window's end that wakes the app and runs restoreIfStuck().
+    // Same request code + FLAG_UPDATE_CURRENT means re-arming (extend) replaces the previous alarm.
+    internal fun armEndAlarm(endMillis: Long) {
+        val ctx = AppCtx.context
+        val am = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pi = endAlarmPi(ctx)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, endMillis, pi)
+        } else {
+            am.setAlarmClock(AlarmManager.AlarmClockInfo(endMillis, launchPi(ctx)), pi)
+        }
+    }
+
+    internal fun cancelEndAlarm() {
+        val ctx = AppCtx.context
+        (ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager).cancel(endAlarmPi(ctx))
+    }
+
+    private fun endAlarmPi(ctx: Context): PendingIntent = PendingIntent.getBroadcast(
+        ctx, END_CODE,
+        Intent(ctx, FocusActionReceiver::class.java).setAction(FocusActionReceiver.ACTION_RESTORE),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
 
     private fun alarmPi(ctx: Context, code: Int, start: Long, end: Long, label: String, mode: String): PendingIntent =
         PendingIntent.getBroadcast(
@@ -91,23 +116,33 @@ actual object PhoneSilencer {
     }
 
     actual fun restoreIfStuck() {
-        if (!Ringer.hasSaved()) return // nothing muted by us
+        if (!Ringer.hasSaved()) return // nothing muted by us (service finished cleanly) -> nothing to do
         val end = PrefsService.getStringOrNull(PrefConst.FOCUS_SILENCE_END)?.toLongOrNull() ?: 0L
         if (System.currentTimeMillis() >= end) {
-            Ringer.restore() // window over but the service died before restoring -> put the ringer back now
-            PrefsService.remove(PrefConst.FOCUS_SILENCE_END)
+            // Window over but the service died before restoring -> put the ringer back now and clean up fully.
+            // Never (re)starts anything here, so nothing can loop after the window has passed.
+            Ringer.restore()
+            clearWindowPrefs()
+            cancelEndAlarm()
+            val ctx = AppCtx.context
+            ctx.stopService(Intent(ctx, PhoneSilenceService::class.java))
         } else {
-            silence(System.currentTimeMillis(), end, "prayer", savedMode()) // still mid-window -> restart to finish
+            silence(System.currentTimeMillis(), end, savedLabel(), savedMode()) // still mid-window -> restart to finish
         }
     }
 
     actual fun unmuteNow() {
         Ringer.restore(forceNormal = true)
+        clearWindowPrefs()
+        cancelEndAlarm()
+        val ctx = AppCtx.context
+        ctx.stopService(Intent(ctx, PhoneSilenceService::class.java))
+    }
+
+    internal fun clearWindowPrefs() {
         PrefsService.remove(PrefConst.FOCUS_SILENCE_END)
         PrefsService.remove(PrefConst.FOCUS_SILENCE_MODE)
         PrefsService.remove(PrefConst.FOCUS_SILENCE_LABEL)
-        val ctx = AppCtx.context
-        ctx.stopService(Intent(ctx, PhoneSilenceService::class.java))
     }
 
     // Both restart the running service with new params (silence() cancels the old job and starts a fresh one).

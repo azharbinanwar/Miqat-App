@@ -173,6 +173,7 @@
     <string name="notif_focus_body">Silent until %1$s, be present in your prayer</string>
     <string name="focus_unmute">Unmute now</string>
     <string name="focus_extend">+5 min</string>
+    <string name="focus_prayed">Prayed</string>
     <string name="focus_allow_background">Allow background running</string>
     <string name="focus_allow_background_sub">Tap to allow. If you've already allowed it, ignore this.</string>
     <string name="focus_needs_attention">Needs attention</string>
@@ -234,6 +235,8 @@
     <string name="friday_jumuah">Friday · Jumu'ah</string>
     <string name="remind_if_missed">Remind if missed</string>
     <string name="sunnah_reminders">Sunnah reminders</string>
+    <string name="surahs">Surahs</string>
+    <string name="nafil_prayers">Nafil prayers</string>
     <string name="after_isha">After Isha</string>
     <string name="surah_al_kahf">Surah Al-Kahf</string>
     <string name="friday">Friday</string>
