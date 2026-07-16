@@ -20,7 +20,7 @@ data class PrayerAlertConfig(
     val jamaatAfter: Int,
 )
 
-data class JumuahConfig(val enabled: Boolean, val remindBefore: Int, val jamaatAfter: Int, val remindIfMissed: Boolean)
+data class JumuahConfig(val enabled: Boolean, val remindBefore: Int, val jamaatAfter: Int)
 data class MulkConfig(val enabled: Boolean, val afterIsha: Int)
 data class KahfConfig(val enabled: Boolean, val hour: Int, val minute: Int)
 data class DhikrConfig(val morningEnabled: Boolean, val afterFajr: Int, val eveningEnabled: Boolean, val afterAsr: Int)
@@ -51,7 +51,6 @@ object NotificationStore {
             enabled = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), N.Jumuah.enabled),
             remindBefore = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), N.Jumuah.remindBefore),
             jamaatAfter = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), N.Jumuah.jamaatAfter),
-            remindIfMissed = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_IF_MISSED), N.Jumuah.remindIfMissed),
         ),
         mulk = MulkConfig(
             enabled = PrefsService.getBoolean(PrefConst.SURAH_MULK, N.Mulk.enabled),
@@ -100,7 +99,6 @@ object NotificationStore {
     fun setJumuahEnabled(v: Boolean) { PrefsService.putBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), v); update { it.copy(jumuah = it.jumuah.copy(enabled = v)) } }
     fun setJumuahRemindBefore(v: Int) { PrefsService.putInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), v); update { it.copy(jumuah = it.jumuah.copy(remindBefore = v)) } }
     fun setJumuahJamaatAfter(v: Int) { PrefsService.putInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), v); update { it.copy(jumuah = it.jumuah.copy(jamaatAfter = v)) } }
-    fun setJumuahMissed(v: Boolean) { PrefsService.putBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_IF_MISSED), v); update { it.copy(jumuah = it.jumuah.copy(remindIfMissed = v)) } }
 
     // ── Surahs ───────────────────────────────────────────────
     fun setMulkEnabled(v: Boolean) { PrefsService.putBoolean(PrefConst.SURAH_MULK, v); update { it.copy(mulk = it.mulk.copy(enabled = v)) } }

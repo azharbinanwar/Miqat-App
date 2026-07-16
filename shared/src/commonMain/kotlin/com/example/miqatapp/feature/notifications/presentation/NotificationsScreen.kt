@@ -1,7 +1,10 @@
 package com.example.miqatapp.feature.notifications.presentation
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +50,9 @@ import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.TimeFormat
 import com.example.miqatapp.core.locale.tr
 import com.example.miqatapp.core.store.SettingsStore
-import com.example.miqatapp.feature.notifications.presentation.components.NotifDhikr
+import com.example.miqatapp.feature.notifications.presentation.components.NotificationDhikr
+import com.example.miqatapp.feature.notifications.presentation.components.NotificationTestScreen
+import com.example.miqatapp.feature.notifications.presentation.components.NotificationsNeedsAttention
 import com.example.miqatapp.feature.notifications.store.NotificationStore
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.adhan_sound
@@ -68,7 +73,6 @@ import com.example.miqatapp.resources.minutes_short
 import com.example.miqatapp.resources.notifications
 import com.example.miqatapp.resources.prayer_jumuah
 import com.example.miqatapp.resources.remind_before
-import com.example.miqatapp.resources.remind_if_missed
 import com.example.miqatapp.resources.reminder_time
 import com.example.miqatapp.resources.save
 import com.example.miqatapp.resources.silent
@@ -94,6 +98,9 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
     // UI-only: which prayer's sound sheet is open, and whether the Kahf time picker is open.
     var soundFor by remember { mutableStateOf<String?>(null) }
     var kahfPicker by remember { mutableStateOf(false) }
+    var taps by remember { mutableStateOf(0) }        // 7 taps on "All alerts" opens the dev test screen
+    var showTest by remember { mutableStateOf(false) }
+    if (showTest) { NotificationTestScreen(onBack = { showTest = false }); return }
 
     Scaffold(
         topBar = {
@@ -107,7 +114,12 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
         Column(
             Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(16.dp),
         ) {
-            AppTileGroup(items = listOf(toggleTile(stringResource(Res.string.all_alerts), s.allAlerts, NotificationStore::setAllAlerts, stringResource(Res.string.master_switch_for_every_reminder))))
+            NotificationsNeedsAttention() // red tile at top until notifications are granted
+
+            // Wrapped in a no-ripple gesture: 7 taps on the row opens the dev test sheet. The switch still works.
+            Box(Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { taps++; if (taps >= 7) showTest = true }) {
+                AppTileGroup(items = listOf(toggleTile(stringResource(Res.string.all_alerts), s.allAlerts, NotificationStore::setAllAlerts, stringResource(Res.string.master_switch_for_every_reminder))))
+            }
 
             // One group per prayer: toggle, then its settings on enable.
             Miqat.PRAYERS.forEach { p ->
@@ -136,7 +148,6 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
                     if (j.enabled) {
                         add(stepperTile(stringResource(Res.string.remind_before), j.remindBefore, min, NotificationStore::setJumuahRemindBefore, N.Jumuah.remindBeforeMin, N.Jumuah.remindBeforeMax, N.Jumuah.step))
                         add(stepperTile(stringResource(Res.string.jamaat_after_start), j.jamaatAfter, min, NotificationStore::setJumuahJamaatAfter, N.Jumuah.jamaatAfterMin, N.Jumuah.jamaatAfterMax, N.Jumuah.step))
-                        add(toggleTile(stringResource(Res.string.remind_if_missed), j.remindIfMissed, NotificationStore::setJumuahMissed))
                     }
                 },
             )
@@ -159,7 +170,7 @@ fun NotificationsScreen(onBack: () -> Unit = {}) {
                 },
             )
 
-            NotifDhikr()
+            NotificationDhikr()
 
             AppTileGroup(items = listOf(toggleTile(stringResource(Res.string.tahajjud), s.nafil.tahajjud, NotificationStore::setTahajjud, stringResource(Res.string.last_third_of_the_night))))
             AppTileGroup(items = listOf(toggleTile(stringResource(Res.string.ishraq), s.nafil.ishraq, NotificationStore::setIshraq, stringResource(Res.string.mid_morning))))

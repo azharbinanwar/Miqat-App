@@ -59,6 +59,25 @@
             </intent-filter>
         </receiver>
 
+        <!-- Notifications: posts a prayer/dhikr/surah reminder when its alarm fires. -->
+        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationReceiver" android:exported="false" />
+        <!-- Notifications: silent nightly wake to roll the reminder window forward. -->
+        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationRebuildReceiver" android:exported="false" />
+        <!-- Notifications: re-arm when the clock or timezone changes. System-sent. -->
+        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationTimeReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <!-- Notifications: re-arm after reboot or app update (both wipe scheduled alarms). System-sent. -->
+        <receiver android:name="com.example.miqatapp.feature.notifications.scheduler.NotificationBootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Prayer Focus: mutes the phone for a window and restores it. -->
         <service
             android:name="com.example.miqatapp.core.focus.PhoneSilenceService"

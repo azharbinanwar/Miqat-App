@@ -224,19 +224,18 @@
 
     <!-- Notifications -->
     <string name="all_alerts">جميع التنبيهات</string>
+    <string name="notif_needs_attention">يتطلب انتباهك</string>
+    <string name="notif_permission_needed">تفعيل الإشعارات</string>
+    <string name="notif_permission_sub">اسمح بالإشعارات لتصلك تذكيرات الصلاة</string>
+    <string name="notif_permission_denied_title">الإشعارات محظورة</string>
+    <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق ميقات من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
-    <string name="each_prayer">كل صلاة</string>
     <string name="adhan_sound">صوت الأذان</string>
     <string name="vibration">الاهتزاز</string>
     <string name="remind_before">التذكير قبل</string>
     <string name="at_prayer_time">عند وقت الصلاة</string>
     <string name="jamaat_reminder">تذكير الجماعة</string>
     <string name="jamaat_after_start">الجماعة بعد البدء</string>
-    <string name="friday_jumuah">الجمعة · صلاة الجمعة</string>
-    <string name="remind_if_missed">التذكير عند الفوات</string>
-    <string name="sunnah_reminders">تذكيرات السنن</string>
-    <string name="surahs">السور</string>
-    <string name="nafil_prayers">النوافل</string>
     <string name="after_isha">بعد العشاء</string>
     <string name="surah_al_kahf">سورة الكهف</string>
     <string name="friday">الجمعة</string>
@@ -256,13 +255,6 @@
     <string name="after_fajr">بعد الفجر</string>
     <string name="evening_adhkar">أذكار المساء</string>
     <string name="after_asr">بعد العصر</string>
-    <string name="daily_tasbih_nudge">تذكير التسبيح اليومي</string>
-    <string name="a_gentle_reminder_to_count">تذكير لطيف للعد</string>
-    <string name="behaviour">السلوك</string>
-    <string name="respect_do_not_disturb">احترام وضع عدم الإزعاج</string>
-    <string name="allow_snooze">السماح بالغفوة</string>
-    <string name="i_prayed_quick_action">إجراء سريع \"لقد صلّيت\"</string>
-    <string name="log_a_prayer_from_the_notification">سجّل صلاة من الإشعار</string>
     <string name="full_adhan">أذان كامل</string>
     <string name="takbir">تكبير</string>
     <string name="beep">صفير</string>

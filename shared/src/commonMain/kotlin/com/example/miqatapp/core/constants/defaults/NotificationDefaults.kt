@@ -34,7 +34,6 @@ object NotificationDefaults {
         const val jamaatAfter = 20           // minutes after start for jamaat
         const val jamaatAfterMin = 5         // lowest jamaat offset
         const val jamaatAfterMax = 60        // highest jamaat offset
-        const val remindIfMissed = true      // ping again if not marked prayed
         const val step = 5                   // stepper jump per tap (minutes)
     }
 
@@ -73,4 +72,12 @@ object NotificationDefaults {
 
     /** Available adhan sounds (canonical codes, labels resolve in the UI). */
     val sounds = listOf("Full adhan", "Takbir", "Beep", "Silent")
+
+    /** Scheduler knobs (engine, not user settings). Change to test. */
+    object Scheduler {
+        const val budget = 55           // slots to book; iOS caps at 64, leave 1 buffer
+        const val horizonDays = 30      // how far ahead to expand events
+        const val dailyRebuildHour = 0
+        const val dailyRebuildMinute = 5
+    }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.compose.resources.stringResource
 
 // Dhikr as two self-contained groups: morning after Fajr, evening after Asr. Each expands to its offset.
 @Composable
-fun NotifDhikr() {
+fun NotificationDhikr() {
     val min = stringResource(Res.string.minutes_short)
     val d by NotificationStore.settings.collectAsState()
     val dhikr = d.dhikr

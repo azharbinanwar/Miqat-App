@@ -5,11 +5,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.example.miqatapp.core.constants.AppConst
 
-@Database(entities = [PrayerLogEntity::class], version = 1)
+// exportSchema off while we use destructive migration in dev; turn on when real Migrations ship.
+@Database(entities = [PrayerLogEntity::class, ScheduledNotificationEntity::class], version = AppConst.DB_VERSION, exportSchema = false)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun prayerLogDao(): PrayerLogDao
+    abstract fun scheduledNotificationDao(): ScheduledNotificationDao
 }
 
 /** The Room compiler (KSP) generates the actual implementation per platform. */
@@ -22,4 +25,6 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
 fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase =
     builder
         .setDriver(BundledSQLiteDriver())
+        // ponytail: no persisted data shipped yet, so wipe on schema bump. Add real Migrations before that changes.
+        .fallbackToDestructiveMigration(dropAllTables = true)
         .build()

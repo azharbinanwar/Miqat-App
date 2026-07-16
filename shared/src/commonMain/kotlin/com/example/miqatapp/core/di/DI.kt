@@ -11,7 +11,7 @@ val appModule = module {
     // feature registrations go here as they need DI — the pure engine and the stores don't
 }
 
-val appModules = listOf(appModule)
+val appModules = listOf(appModule, databaseModule, platformDatabaseModule())
 
 /** Start Koin once per platform entry point. */
 fun initKoin() {

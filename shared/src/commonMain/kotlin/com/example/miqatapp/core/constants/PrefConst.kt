@@ -54,6 +54,7 @@ object PrefConst {
     const val DHIKR_EVENING = "notif_evening_adhkar"
     const val DHIKR_EVENING_AFTER = "notif_evening_adhkar_after"
     const val DHIKR_TASBIH_NUDGE = "notif_tasbih_nudge" // ponytail: kept, tasbih nudge revisited later
+    const val NOTIF_TEST_SLOTS = "notif_test_slots"     // dev-only one-shot test notifications (JSON)
 
     // ── Prayer Focus (auto-silence) ──────────────────────────
     /** Per-prayer focus field, e.g. focus_maghrib_enabled / _start_after / _duration. */
@@ -82,7 +83,6 @@ object PrefConst {
         const val AT_TIME = "at_time"
         const val JAMAAT = "jamaat"
         const val JAMAAT_AFTER = "jamaat_after"
-        const val REMIND_IF_MISSED = "remind_if_missed" // Jumu'ah only
         const val START_AFTER = "start_after"
         const val DURATION = "duration"
         const val SILENCE_MODE = "silence_mode"

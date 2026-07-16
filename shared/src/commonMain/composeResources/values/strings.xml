@@ -224,19 +224,18 @@
 
     <!-- Notifications -->
     <string name="all_alerts">All alerts</string>
+    <string name="notif_needs_attention">Needs attention</string>
+    <string name="notif_permission_needed">Turn on notifications</string>
+    <string name="notif_permission_sub">Allow notifications to get prayer reminders</string>
+    <string name="notif_permission_denied_title">Notifications blocked</string>
+    <string name="notif_permission_denied_msg">Enable notifications for Miqat in Settings to receive reminders.</string>
     <string name="master_switch_for_every_reminder">Master switch for every reminder</string>
-    <string name="each_prayer">Each prayer</string>
     <string name="adhan_sound">Adhan sound</string>
     <string name="vibration">Vibration</string>
     <string name="remind_before">Remind before</string>
     <string name="at_prayer_time">At prayer time</string>
     <string name="jamaat_reminder">Jamaat reminder</string>
     <string name="jamaat_after_start">Jamaat after start</string>
-    <string name="friday_jumuah">Friday · Jumu'ah</string>
-    <string name="remind_if_missed">Remind if missed</string>
-    <string name="sunnah_reminders">Sunnah reminders</string>
-    <string name="surahs">Surahs</string>
-    <string name="nafil_prayers">Nafil prayers</string>
     <string name="after_isha">After Isha</string>
     <string name="surah_al_kahf">Surah Al-Kahf</string>
     <string name="friday">Friday</string>
@@ -256,13 +255,6 @@
     <string name="after_fajr">After Fajr</string>
     <string name="evening_adhkar">Evening adhkar</string>
     <string name="after_asr">After Asr</string>
-    <string name="daily_tasbih_nudge">Daily tasbih nudge</string>
-    <string name="a_gentle_reminder_to_count">A gentle reminder to count</string>
-    <string name="behaviour">Behaviour</string>
-    <string name="respect_do_not_disturb">Respect Do Not Disturb</string>
-    <string name="allow_snooze">Allow snooze</string>
-    <string name="i_prayed_quick_action">\"I prayed\" quick action</string>
-    <string name="log_a_prayer_from_the_notification">Log a prayer from the notification</string>
     <string name="full_adhan">Full adhan</string>
     <string name="takbir">Takbir</string>
     <string name="beep">Beep</string>
