@@ -33,7 +33,7 @@ object PrefConst {
 
     // ── Notifications ────────────────────────────────────────
     const val ALL_ALERTS = "notif_all_alerts"
-    /** Per-prayer alert field, e.g. notif_fajr_enabled / _sound / _vibrate / _remind_before / _at_time / _jamaat / _jamaat_after.
+    /** Per-prayer alert field, e.g. notif_fajr_enabled / _remind_before / _at_time / _jamaat / _jamaat_after.
      *  The prayer segment comes from Miqat (name, or Miqat.jumuahKey for Jumu'ah). */
     fun alert(prayer: String, field: String) = "notif_${prayer.lowercase()}_$field"
 
@@ -77,8 +77,7 @@ object PrefConst {
     // common field names for the per-prayer helpers
     object Field {
         const val ENABLED = "enabled"
-        const val SOUND = "sound"
-        const val VIBRATE = "vibrate"
+        const val REMIND_BEFORE_ON = "remind_before_on"
         const val REMIND_BEFORE = "remind_before"
         const val AT_TIME = "at_time"
         const val JAMAAT = "jamaat"

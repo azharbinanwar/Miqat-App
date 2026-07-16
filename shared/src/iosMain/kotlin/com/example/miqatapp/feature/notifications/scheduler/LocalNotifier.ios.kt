@@ -1,8 +1,6 @@
 package com.example.miqatapp.feature.notifications.scheduler
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.getString
 import platform.Foundation.NSCalendar
 import platform.Foundation.NSCalendarUnitDay
 import platform.Foundation.NSCalendarUnitHour
@@ -19,9 +17,10 @@ import platform.UserNotifications.UNUserNotificationCenter
 
 @OptIn(ExperimentalForeignApi::class)
 actual object LocalNotifier {
-    actual fun schedule(event: NotificationEvent) {
+    actual fun schedule(event: NotificationEvent, title: String, body: String) {
         val content = UNMutableNotificationContent()
-        content.setTitle(runBlocking { getString(labelRes(event.target)) }) // bundled string, resolves fast
+        content.setTitle(title)
+        if (body.isNotEmpty()) content.setBody(body)
         val date = NSDate.dateWithTimeIntervalSince1970(event.fireAtMillis / 1000.0)
         val units = NSCalendarUnitYear or NSCalendarUnitMonth or NSCalendarUnitDay or
             NSCalendarUnitHour or NSCalendarUnitMinute or NSCalendarUnitSecond

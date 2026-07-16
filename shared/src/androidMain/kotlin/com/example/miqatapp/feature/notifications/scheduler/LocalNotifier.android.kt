@@ -21,10 +21,10 @@ actual object LocalNotifier {
     private const val DAILY_CODE = 300  // the silent nightly rebuild alarm
     private val FLAGS = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
-    actual fun schedule(event: NotificationEvent) {
+    actual fun schedule(event: NotificationEvent, title: String, body: String) {
         val ctx = AppCtx.context
         android.util.Log.i("MiqatNotif", "armed slot ${event.slotId} ${event.eventKey} in ${(event.fireAtMillis - System.currentTimeMillis()) / 1000}s") // dev
-        setAlarmClockCompat(ctx, am(ctx), event.fireAtMillis, PendingIntent.getBroadcast(ctx, BASE + event.slotId, NotificationReceiver.intent(ctx, event), FLAGS))
+        setAlarmClockCompat(ctx, am(ctx), event.fireAtMillis, PendingIntent.getBroadcast(ctx, BASE + event.slotId, NotificationReceiver.intent(ctx, event, title, body), FLAGS))
     }
 
     actual fun cancelAll() {

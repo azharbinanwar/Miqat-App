@@ -12,15 +12,14 @@ import kotlinx.coroutines.flow.asStateFlow
 /** One prayer's saved alert. Keyed by the lowercased prayer name (Jumu'ah uses the key "jumuah"). */
 data class PrayerAlertConfig(
     val enabled: Boolean,
-    val sound: String,
-    val vibrate: Boolean,
+    val remindBeforeOn: Boolean,
     val remindBefore: Int,
     val atTime: Boolean,
     val jamaat: Boolean,
     val jamaatAfter: Int,
 )
 
-data class JumuahConfig(val enabled: Boolean, val remindBefore: Int, val jamaatAfter: Int)
+data class JumuahConfig(val enabled: Boolean, val remindBeforeOn: Boolean, val remindBefore: Int, val jamaat: Boolean, val jamaatAfter: Int)
 data class MulkConfig(val enabled: Boolean, val afterIsha: Int)
 data class KahfConfig(val enabled: Boolean, val hour: Int, val minute: Int)
 data class DhikrConfig(val morningEnabled: Boolean, val afterFajr: Int, val eveningEnabled: Boolean, val afterAsr: Int)
@@ -49,7 +48,9 @@ object NotificationStore {
         prayers = Miqat.PRAYERS.associate { it.key to loadPrayer(it.key) },
         jumuah = JumuahConfig(
             enabled = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), N.Jumuah.enabled),
+            remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE_ON), N.Jumuah.remindBeforeOn),
             remindBefore = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), N.Jumuah.remindBefore),
+            jamaat = PrefsService.getBoolean(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT), N.Jumuah.jamaat),
             jamaatAfter = PrefsService.getInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), N.Jumuah.jamaatAfter),
         ),
         mulk = MulkConfig(
@@ -75,8 +76,7 @@ object NotificationStore {
 
     private fun loadPrayer(key: String) = PrayerAlertConfig(
         enabled = PrefsService.getBoolean(PrefConst.alert(key, Field.ENABLED), N.Prayer.enabled),
-        sound = PrefsService.getString(PrefConst.alert(key, Field.SOUND), N.Prayer.sound),
-        vibrate = PrefsService.getBoolean(PrefConst.alert(key, Field.VIBRATE), N.Prayer.vibrate),
+        remindBeforeOn = PrefsService.getBoolean(PrefConst.alert(key, Field.REMIND_BEFORE_ON), N.Prayer.remindBeforeOn),
         remindBefore = PrefsService.getInt(PrefConst.alert(key, Field.REMIND_BEFORE), N.Prayer.remindBefore),
         atTime = PrefsService.getBoolean(PrefConst.alert(key, Field.AT_TIME), N.Prayer.atTime),
         jamaat = PrefsService.getBoolean(PrefConst.alert(key, Field.JAMAAT), N.Prayer.jamaat),
@@ -88,8 +88,7 @@ object NotificationStore {
 
     // ── per prayer ───────────────────────────────────────────
     fun setPrayerEnabled(key: String, v: Boolean) = putPrayerBool(key, Field.ENABLED, v) { it.copy(enabled = v) }
-    fun setPrayerSound(key: String, v: String) { PrefsService.putString(PrefConst.alert(key, Field.SOUND), v); updatePrayer(key) { it.copy(sound = v) } }
-    fun setPrayerVibrate(key: String, v: Boolean) = putPrayerBool(key, Field.VIBRATE, v) { it.copy(vibrate = v) }
+    fun setPrayerRemindBeforeOn(key: String, v: Boolean) = putPrayerBool(key, Field.REMIND_BEFORE_ON, v) { it.copy(remindBeforeOn = v) }
     fun setPrayerRemindBefore(key: String, v: Int) = putPrayerInt(key, Field.REMIND_BEFORE, v) { it.copy(remindBefore = v) }
     fun setPrayerAtTime(key: String, v: Boolean) = putPrayerBool(key, Field.AT_TIME, v) { it.copy(atTime = v) }
     fun setPrayerJamaat(key: String, v: Boolean) = putPrayerBool(key, Field.JAMAAT, v) { it.copy(jamaat = v) }
@@ -97,7 +96,9 @@ object NotificationStore {
 
     // ── Jumu'ah (prayer-shaped, keyed "jumuah") ──────────────
     fun setJumuahEnabled(v: Boolean) { PrefsService.putBoolean(PrefConst.alert(Miqat.jumuahKey, Field.ENABLED), v); update { it.copy(jumuah = it.jumuah.copy(enabled = v)) } }
+    fun setJumuahRemindBeforeOn(v: Boolean) { PrefsService.putBoolean(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE_ON), v); update { it.copy(jumuah = it.jumuah.copy(remindBeforeOn = v)) } }
     fun setJumuahRemindBefore(v: Int) { PrefsService.putInt(PrefConst.alert(Miqat.jumuahKey, Field.REMIND_BEFORE), v); update { it.copy(jumuah = it.jumuah.copy(remindBefore = v)) } }
+    fun setJumuahJamaat(v: Boolean) { PrefsService.putBoolean(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT), v); update { it.copy(jumuah = it.jumuah.copy(jamaat = v)) } }
     fun setJumuahJamaatAfter(v: Int) { PrefsService.putInt(PrefConst.alert(Miqat.jumuahKey, Field.JAMAAT_AFTER), v); update { it.copy(jumuah = it.jumuah.copy(jamaatAfter = v)) } }
 
     // ── Surahs ───────────────────────────────────────────────

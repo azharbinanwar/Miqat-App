@@ -15,7 +15,4 @@ data class ScheduledNotificationEntity(
     val target: String,              // Miqat.key | Miqat.jumuahKey | mulk|kahf|morning_adhkar|evening_adhkar|tahajjud|ishraq
     val kind: String,                // NotificationType name: AT_TIME|REMIND_BEFORE|JAMAAT|REMINDER
     val fireAtMillis: Long,          // epoch millis when it fires
-    val vibrate: Boolean = true,     // snapshot at schedule time (Android acts on it; iOS ignores)
-    val sound: String? = null,       // canonical sound code (bell|takbir|adhan_short); null = silent
-    val soundPath: String? = null,   // per-platform file path — filled when playback is wired
 )

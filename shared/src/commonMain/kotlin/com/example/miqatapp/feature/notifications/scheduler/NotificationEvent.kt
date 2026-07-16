@@ -9,8 +9,6 @@ data class NotificationEvent(
     val target: String,
     val kind: NotificationType,
     val fireAtMillis: Long,
-    val vibrate: Boolean,
-    val sound: String?,
     val slotId: Int = -1,
 )
 
@@ -30,6 +28,4 @@ fun NotificationEvent.toEntity() = ScheduledNotificationEntity(
     target = target,
     kind = kind.name,
     fireAtMillis = fireAtMillis,
-    vibrate = vibrate,
-    sound = sound,
 )

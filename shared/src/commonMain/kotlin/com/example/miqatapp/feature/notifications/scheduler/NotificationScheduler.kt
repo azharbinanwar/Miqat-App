@@ -60,7 +60,7 @@ object NotificationScheduler {
     private suspend fun rebuild() = mutex.withLock {
         val events = computeDesired().mapIndexed { i, e -> e.copy(slotId = i) }
         LocalNotifier.cancelAll()
-        events.forEach { LocalNotifier.schedule(it) }
+        events.forEach { e -> val c = notificationCopy(e); LocalNotifier.schedule(e, c.title, c.body) }
         repo.replaceAll(events.map { it.toEntity() })
     }
 
@@ -71,12 +71,13 @@ object NotificationScheduler {
         val today = currentDate()
         val now = LocalDateTime(today, currentTime()).toInstant(tz).toEpochMilliseconds()
         NotificationTestStore.prunePast(now)
-        val real = (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
+        // Master gate: when All alerts is off, no real alerts are scheduled (test slots still fire — dev tool).
+        val real = if (!settings.allAlerts) emptyList() else (0 until NotificationDefaults.Scheduler.horizonDays).flatMap { d ->
             val date = today.plus(d, DateTimeUnit.DAY)
             eventsFor(date, MiqatTimesStore.timesFor(date), settings, tz)
         }
         val test = NotificationTestStore.items.value.map {
-            NotificationEvent("test:${it.id}", "test", NotificationType.REMINDER, it.fireAtMillis, vibrate = true, sound = null)
+            NotificationEvent("test:${it.id}", "test", NotificationType.REMINDER, it.fireAtMillis)
         }
         return (real + test).filter { it.fireAtMillis > now }.sortedBy { it.fireAtMillis }.take(NotificationDefaults.Scheduler.budget)
     }
@@ -92,15 +93,15 @@ object NotificationScheduler {
             val cfg = s.prayers[p.key] ?: return@forEach
             if (!cfg.enabled) return@forEach
             val base = at(p) ?: return@forEach
-            if (cfg.remindBefore > 0) add(ev(p.key, NotificationType.REMIND_BEFORE, base - cfg.remindBefore.mins(), ds, cfg.vibrate, cfg.sound))
-            if (cfg.atTime) add(ev(p.key, NotificationType.AT_TIME, base, ds, cfg.vibrate, cfg.sound))
-            if (cfg.jamaat) add(ev(p.key, NotificationType.JAMAAT, base + cfg.jamaatAfter.mins(), ds, cfg.vibrate, cfg.sound))
+            if (cfg.remindBeforeOn && cfg.remindBefore > 0) add(ev(p.key, NotificationType.REMIND_BEFORE, base - cfg.remindBefore.mins(), ds))
+            if (cfg.atTime) add(ev(p.key, NotificationType.AT_TIME, base, ds))
+            if (cfg.jamaat) add(ev(p.key, NotificationType.JAMAAT, base + cfg.jamaatAfter.mins(), ds))
         }
         // Jumu'ah (Friday Dhuhr)
         if (friday && s.jumuah.enabled) at(Miqat.Dhuhr)?.let { d ->
             val j = s.jumuah
-            if (j.remindBefore > 0) add(ev(Miqat.jumuahKey, NotificationType.REMIND_BEFORE, d - j.remindBefore.mins(), ds))
-            add(ev(Miqat.jumuahKey, NotificationType.JAMAAT, d + j.jamaatAfter.mins(), ds))
+            if (j.remindBeforeOn && j.remindBefore > 0) add(ev(Miqat.jumuahKey, NotificationType.REMIND_BEFORE, d - j.remindBefore.mins(), ds))
+            if (j.jamaat) add(ev(Miqat.jumuahKey, NotificationType.JAMAAT, d + j.jamaatAfter.mins(), ds))
         }
         // Surahs
         if (s.mulk.enabled) at(Miqat.Isha)?.let { add(ev(NotificationTarget.MULK, NotificationType.REMINDER, it + s.mulk.afterIsha.mins(), ds)) }
@@ -116,8 +117,8 @@ object NotificationScheduler {
         if (s.nafil.ishraq) at(Miqat.Ishraq)?.let { add(ev(NotificationTarget.ISHRAQ, NotificationType.REMINDER, it, ds)) }
     }
 
-    private fun ev(target: String, kind: NotificationType, fireAt: Long, date: String, vibrate: Boolean = true, sound: String? = null) =
-        NotificationEvent("$target:$kind:$date", target, kind, fireAt, vibrate, sound)
+    private fun ev(target: String, kind: NotificationType, fireAt: Long, date: String) =
+        NotificationEvent("$target:$kind:$date", target, kind, fireAt)
 
     private fun Int.mins() = this.minutes.inWholeMilliseconds
 }

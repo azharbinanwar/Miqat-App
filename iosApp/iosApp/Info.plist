@@ -6,5 +6,13 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Miqat uses your location to calculate accurate prayer times and the Qibla direction.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.miqat.notif.refresh</string>
+	</array>
 </dict>
 </plist>

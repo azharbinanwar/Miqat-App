@@ -230,9 +230,8 @@
     <string name="notif_permission_denied_title">الإشعارات محظورة</string>
     <string name="notif_permission_denied_msg">فعّل الإشعارات لتطبيق ميقات من الإعدادات لتصلك التذكيرات.</string>
     <string name="master_switch_for_every_reminder">مفتاح رئيسي لكل تذكير</string>
-    <string name="adhan_sound">صوت الأذان</string>
-    <string name="vibration">الاهتزاز</string>
     <string name="remind_before">التذكير قبل</string>
+    <string name="minutes_before">الدقائق قبل الوقت</string>
     <string name="at_prayer_time">عند وقت الصلاة</string>
     <string name="jamaat_reminder">تذكير الجماعة</string>
     <string name="jamaat_after_start">الجماعة بعد البدء</string>
@@ -255,10 +254,6 @@
     <string name="after_fajr">بعد الفجر</string>
     <string name="evening_adhkar">أذكار المساء</string>
     <string name="after_asr">بعد العصر</string>
-    <string name="full_adhan">أذان كامل</string>
-    <string name="takbir">تكبير</string>
-    <string name="beep">صفير</string>
-    <string name="silent">صامت</string>
 
     <string-array name="week_days">
         <item>ن</item>
@@ -335,4 +330,26 @@
     <string name="also_switch_to">التبديل أيضًا إلى %1$s</string>
     <string name="method_official_explainer">%1$s هي طريقة الحساب الرسمية في موقعك الحالي. تستخدم المناطق المختلفة طرقًا مختلفة، لذا تتغيّر بعض أوقات الصلاة قليلًا.</string>
     <string name="why_switch_method">لماذا تغيير الطريقة؟</string>
+
+    <!-- Notification messages (title + body per kind). %1$s=prayer, %2$d=minutes, at-body %1$s=time -->
+    <string name="notif_prayer_at_title">حان وقت %1$s</string>
+    <string name="notif_prayer_at_body">خذ لحظة وأقبل على الله · %1$s</string>
+    <string name="notif_prayer_before_title">%1$s على الأبواب</string>
+    <string name="notif_prayer_before_body">هيّئ قلبك للوقوف بين يدي الله</string>
+    <string name="notif_prayer_jamaat_title">حان وقت التوجّه إلى المسجد</string>
+    <string name="notif_prayer_jamaat_body">صلِّ مع الجماعة ونل الأجر الأعظم</string>
+    <string name="notif_jumuah_before_title">اقتربت صلاة الجمعة</string>
+    <string name="notif_jumuah_before_body">توجّه إلى المسجد لصلاة الجمعة</string>
+    <string name="notif_jumuah_jamaat_title">حان وقت صلاة الجمعة</string>
+    <string name="notif_jumuah_jamaat_body">صلِّ مع الجماعة</string>
+    <string name="notif_mulk_body">اقرأها الليلة، حفظٌ حتى الصباح</string>
+    <string name="notif_kahf_body">نورٌ بين الجمعتين</string>
+    <string name="notif_morning_body">ابدأ يومك بذكر الله</string>
+    <string name="notif_evening_body">اختم يومك قريبًا من الله</string>
+    <string name="notif_tahajjud_body">قم لصلاة الليل، فهو يسمعك</string>
+    <string name="notif_ishraq_body">صلِّ بعد الشروق لأجرٍ عظيم</string>
+    <string name="notif_verse_sub">آية يومية تتدبرها</string>
+    <!-- Fire-time preview labels shown under each alert -->
+    <string name="notif_at_before">قبل</string>
+    <string name="notif_at_jamaah">الجماعة</string>
 </resources>
