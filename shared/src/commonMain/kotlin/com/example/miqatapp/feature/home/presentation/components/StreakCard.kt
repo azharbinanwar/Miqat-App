@@ -32,7 +32,7 @@ import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.core.components.AppCard
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
-import com.example.miqatapp.core.store.PrayerTrackingStore
+import com.example.miqatapp.feature.tracker.store.PrayerTrackingStore
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.day_streak
 import com.example.miqatapp.resources.this_week

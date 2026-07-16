@@ -61,6 +61,9 @@ enum class Miqat(
 
     val isPrayer: Boolean get() = category == Category.PRAYER
 
+    /** Stable lowercase key for prefs/config (fajr, dhuhr, …). Single source for every prayer key; see [jumuahKey]. */
+    val key: String get() = name.lowercase()
+
     /**
      * The obligatory prayer whose window contains this time; the UI nests it as a sub-row under that prayer.
      * Only Isha's window holds children (Midnight, LastThird). Imsak is a Ramadan dawn marker, not an Isha child.
@@ -77,13 +80,16 @@ enum class Miqat(
         if (this == Dhuhr && date?.dayOfWeek == DayOfWeek.FRIDAY) stringResource(Res.string.prayer_jumuah)
         else stringResource(labelRes)
 
+    /** The label forced to Jumu'ah, no date needed. Call on Dhuhr where it's listed as its own row (focus, reminders). */
+    val jumuahLabel: String
+        @Composable get() = stringResource(Res.string.prayer_jumuah)
+
     companion object {
         /** The five daily prayers (Tracker, notifications, logging). */
         val PRAYERS = entries.filter { it.category == Category.PRAYER }
 
-        /** Jumu'ah is Friday Dhuhr. Its own label for config screens (focus, reminders) that list it separately. */
-        @Composable
-        fun jumuahLabel(): String = stringResource(Res.string.prayer_jumuah)
+        /** Jumu'ah's stable key for prefs/config. Not a Miqat entry, so its key lives here beside the daily prayers. */
+        val jumuahKey: String get() = "jumuah"
         /** The classic six-row list (5 prayers + Sunrise) that prayer-times screens traditionally show. */
         val DAILY = listOf(Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)
         val SOLAR = entries.filter { it.category == Category.SOLAR }

@@ -36,7 +36,7 @@ fun FocusPrayerList() {
     val min = stringResource(Res.string.minutes_short)
     FocusDefaults.rows.forEach { row ->
         val cfg = configs.getValue(row.key)
-        val label = if (row.friday) Miqat.jumuahLabel() else row.miqat.label()
+        val label = if (row.friday) row.miqat.jumuahLabel else row.miqat.label()
         val prayerTime = today.firstOrNull { it.miqat == row.miqat }?.at?.time
         val title = if (prayerTime != null) "$label · ${prayerTime.format(timeFormat.pattern)}" else label
         AppTileGroup(

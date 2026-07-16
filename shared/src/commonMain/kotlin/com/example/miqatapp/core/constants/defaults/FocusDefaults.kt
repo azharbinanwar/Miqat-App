@@ -13,8 +13,8 @@ data class FocusRow(val key: String, val miqat: Miqat, val friday: Boolean, val 
  * Only the numbers live here; labels and icons come from Miqat.
  */
 object FocusDefaults {
-    val rows: List<FocusRow> = Miqat.PRAYERS.map { FocusRow(it.name.lowercase(), it, friday = false, slotFor(it)) } +
-        FocusRow("jumuah", Miqat.Dhuhr, friday = true, FocusSlot(after = 45, duration = 60, max = 180))
+    val rows: List<FocusRow> = Miqat.PRAYERS.map { FocusRow(it.key, it, friday = false, slotFor(it)) } +
+        FocusRow(Miqat.jumuahKey, Miqat.Dhuhr, friday = true, FocusSlot(after = 45, duration = 60, max = 180))
 
     private fun slotFor(prayer: Miqat): FocusSlot = when (prayer) {
         Miqat.Fajr -> FocusSlot(after = 30, duration = 30, max = 120)

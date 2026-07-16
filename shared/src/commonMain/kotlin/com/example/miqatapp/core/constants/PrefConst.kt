@@ -33,22 +33,27 @@ object PrefConst {
 
     // ── Notifications ────────────────────────────────────────
     const val ALL_ALERTS = "notif_all_alerts"
-    /** Per-prayer alert field, e.g. notif_fajr_enabled / _sound / _vibrate / _remind_before / _at_time / _jamaat / _jamaat_after. */
+    /** Per-prayer alert field, e.g. notif_fajr_enabled / _sound / _vibrate / _remind_before / _at_time / _jamaat / _jamaat_after.
+     *  The prayer segment comes from Miqat (name, or Miqat.jumuahKey for Jumu'ah). */
     fun alert(prayer: String, field: String) = "notif_${prayer.lowercase()}_$field"
-    const val JUMUAH_BEFORE = "notif_jumuah_before"
-    const val JUMUAH_JAMAAT = "notif_jumuah_jamaat"
-    const val JUMUAH_MISSED = "notif_jumuah_missed"
-    const val SUNNAH_MULK = "notif_mulk"
-    const val SUNNAH_MULK_AFTER = "notif_mulk_after"
-    const val SUNNAH_KAHF = "notif_kahf"
-    const val SUNNAH_TAHAJJUD = "notif_tahajjud"
-    const val SUNNAH_ISHRAQ = "notif_ishraq"
+
+    // Surahs
+    const val SURAH_MULK = "notif_mulk"
+    const val SURAH_MULK_AFTER = "notif_mulk_after"
+    const val SURAH_KAHF = "notif_kahf"
+    const val SURAH_KAHF_HOUR = "notif_kahf_hour"
+    const val SURAH_KAHF_MINUTE = "notif_kahf_minute"
+
+    // Nafil
+    const val NAFIL_TAHAJJUD = "notif_tahajjud"
+    const val NAFIL_ISHRAQ = "notif_ishraq"
+
+    // Dhikr
     const val DHIKR_MORNING = "notif_morning_adhkar"
+    const val DHIKR_MORNING_AFTER = "notif_morning_adhkar_after"
     const val DHIKR_EVENING = "notif_evening_adhkar"
-    const val DHIKR_TASBIH_NUDGE = "notif_tasbih_nudge"
-    const val BEHAVIOUR_RESPECT_DND = "notif_respect_dnd"
-    const val BEHAVIOUR_SNOOZE = "notif_snooze"
-    const val BEHAVIOUR_I_PRAYED = "notif_i_prayed"
+    const val DHIKR_EVENING_AFTER = "notif_evening_adhkar_after"
+    const val DHIKR_TASBIH_NUDGE = "notif_tasbih_nudge" // ponytail: kept, tasbih nudge revisited later
 
     // ── Prayer Focus (auto-silence) ──────────────────────────
     /** Per-prayer focus field, e.g. focus_maghrib_enabled / _start_after / _duration. */
@@ -77,6 +82,7 @@ object PrefConst {
         const val AT_TIME = "at_time"
         const val JAMAAT = "jamaat"
         const val JAMAAT_AFTER = "jamaat_after"
+        const val REMIND_IF_MISSED = "remind_if_missed" // Jumu'ah only
         const val START_AFTER = "start_after"
         const val DURATION = "duration"
         const val SILENCE_MODE = "silence_mode"

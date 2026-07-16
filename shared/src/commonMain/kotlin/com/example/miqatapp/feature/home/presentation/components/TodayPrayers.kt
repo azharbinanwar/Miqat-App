@@ -38,7 +38,7 @@ import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.MiqatTimeStatus
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
 import com.example.miqatapp.core.enums.color
-import com.example.miqatapp.core.store.PrayerTrackingStore
+import com.example.miqatapp.feature.tracker.store.PrayerTrackingStore
 import com.example.miqatapp.core.store.SettingsStore
 import com.example.miqatapp.feature.miqat.store.MiqatTimesStore
 import com.example.miqatapp.resources.Res

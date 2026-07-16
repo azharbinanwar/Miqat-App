@@ -23,7 +23,7 @@ import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.miqat.presentation.MiqatTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.settings.presentation.LocationScreen
-import com.example.miqatapp.feature.settings.presentation.NotificationsScreen
+import com.example.miqatapp.feature.notifications.presentation.NotificationsScreen
 import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
 import com.example.miqatapp.feature.focus.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen

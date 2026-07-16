@@ -1,4 +1,4 @@
-package com.example.miqatapp.core.store
+package com.example.miqatapp.feature.tracker.store
 
 import com.example.miqatapp.core.enums.Miqat
 import com.example.miqatapp.core.enums.PrayerTrackerStatus
