@@ -169,7 +169,7 @@
     <string name="silence_silent">Silent</string>
     <string name="silence_vibrate">Vibrate</string>
     <string name="silence_mode">Silence mode</string>
-    <string name="notif_focus_title">Time for %1$s · %2$s</string>
+    <string name="notif_focus_title">Time for %1$s</string>
     <string name="notif_focus_body">Silent until %1$s, be present in your prayer</string>
     <string name="focus_unmute">Unmute now</string>
     <string name="focus_extend">+5 min</string>
@@ -332,19 +332,19 @@
     <string name="why_switch_method">Why switch method?</string>
 
     <!-- Notification messages (title + body per kind). %1$s=prayer, %2$d=minutes, at-body %1$s=time -->
-    <string name="notif_prayer_at_title">It\'s time for %1$s</string>
+    <string name="notif_prayer_at_title">It's time for %1$s</string>
     <string name="notif_prayer_at_body">Take a moment, turn to Allah · %1$s</string>
     <string name="notif_prayer_before_title">%1$s is almost here</string>
     <string name="notif_prayer_before_body">Prepare your heart to stand before Allah</string>
-    <string name="notif_prayer_jamaat_title">Time to head to the masjid</string>
+    <string name="notif_prayer_jamaat_title">Time for %1$s jamaat</string>
     <string name="notif_prayer_jamaat_body">Join the jamaat and earn more reward</string>
-    <string name="notif_jumuah_before_title">It\'s almost Jumu\'ah</string>
+    <string name="notif_jumuah_before_title">It's almost Jumu'ah</string>
     <string name="notif_jumuah_before_body">Head to the masjid for Friday prayer</string>
-    <string name="notif_jumuah_jamaat_title">Time for Jumu\'ah</string>
+    <string name="notif_jumuah_jamaat_title">Time for Jumu'ah</string>
     <string name="notif_jumuah_jamaat_body">Join the jamaat</string>
     <string name="notif_mulk_body">Recite tonight for protection till morning</string>
     <string name="notif_kahf_body">Light between the two Fridays</string>
-    <string name="notif_morning_body">Begin your day in Allah\'s remembrance</string>
+    <string name="notif_morning_body">Begin your day in Allah's remembrance</string>
     <string name="notif_evening_body">End your day close to Allah</string>
     <string name="notif_tahajjud_body">Rise for the night prayer, He is listening</string>
     <string name="notif_ishraq_body">Pray after sunrise for great reward</string>
@@ -352,4 +352,14 @@
     <!-- Fire-time preview labels shown under each alert -->
     <string name="notif_at_before">Before</string>
     <string name="notif_at_jamaah">Jamaat</string>
+    <!-- Android notification channels (categories users can tune in system settings) -->
+    <string name="notification_channel_group">Reminders</string>
+    <string name="notification_channel_prayer">Prayer reminders</string>
+    <string name="notification_channel_quran">Quran reminders</string>
+    <string name="notification_channel_dhikr">Dhikr reminders</string>
+    <string name="notification_channel_nafil">Nafil reminders</string>
+    <string name="notification_channel_verse">Daily verse</string>
+    <string name="notifications_prayers">Prayers</string>
+    <string name="notifications_quran">Quran</string>
+    <string name="notifications_nafil">Nafil</string>
 </resources>

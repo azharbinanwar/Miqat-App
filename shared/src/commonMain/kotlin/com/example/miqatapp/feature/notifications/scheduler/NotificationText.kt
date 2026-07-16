@@ -64,7 +64,7 @@ suspend fun notificationCopy(e: NotificationEvent): NotificationCopy {
             else NotificationCopy(getString(Res.string.notif_prayer_before_title, name), getString(Res.string.notif_prayer_before_body))
         NotificationType.JAMAAT ->
             if (jumuah) NotificationCopy(getString(Res.string.notif_jumuah_jamaat_title), getString(Res.string.notif_jumuah_jamaat_body))
-            else NotificationCopy(getString(Res.string.notif_prayer_jamaat_title), getString(Res.string.notif_prayer_jamaat_body))
+            else NotificationCopy(getString(Res.string.notif_prayer_jamaat_title, name), getString(Res.string.notif_prayer_jamaat_body))
         NotificationType.REMINDER -> NotificationCopy(name, getString(bodyRes(e.target)))
     }
 }

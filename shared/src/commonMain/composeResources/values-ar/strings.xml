@@ -169,7 +169,7 @@
     <string name="silence_silent">صامت</string>
     <string name="silence_vibrate">اهتزاز</string>
     <string name="silence_mode">وضع الكتم</string>
-    <string name="notif_focus_title">حان وقت %1$s · %2$s</string>
+    <string name="notif_focus_title">حان وقت %1$s</string>
     <string name="notif_focus_body">صامت حتى %1$s، كن حاضراً في صلاتك</string>
     <string name="focus_unmute">إلغاء الكتم</string>
     <string name="focus_extend">+5 دقائق</string>
@@ -336,7 +336,7 @@
     <string name="notif_prayer_at_body">خذ لحظة وأقبل على الله · %1$s</string>
     <string name="notif_prayer_before_title">%1$s على الأبواب</string>
     <string name="notif_prayer_before_body">هيّئ قلبك للوقوف بين يدي الله</string>
-    <string name="notif_prayer_jamaat_title">حان وقت التوجّه إلى المسجد</string>
+    <string name="notif_prayer_jamaat_title">حان وقت جماعة %1$s</string>
     <string name="notif_prayer_jamaat_body">صلِّ مع الجماعة ونل الأجر الأعظم</string>
     <string name="notif_jumuah_before_title">اقتربت صلاة الجمعة</string>
     <string name="notif_jumuah_before_body">توجّه إلى المسجد لصلاة الجمعة</string>
@@ -352,4 +352,14 @@
     <!-- Fire-time preview labels shown under each alert -->
     <string name="notif_at_before">قبل</string>
     <string name="notif_at_jamaah">الجماعة</string>
+    <!-- Android notification channels (categories users can tune in system settings) -->
+    <string name="notification_channel_group">التذكيرات</string>
+    <string name="notification_channel_prayer">تذكيرات الصلاة</string>
+    <string name="notification_channel_quran">تذكيرات القرآن</string>
+    <string name="notification_channel_dhikr">تذكيرات الأذكار</string>
+    <string name="notification_channel_nafil">تذكيرات النوافل</string>
+    <string name="notification_channel_verse">آية اليوم</string>
+    <string name="notifications_prayers">الصلوات</string>
+    <string name="notifications_quran">القرآن</string>
+    <string name="notifications_nafil">النوافل</string>
 </resources>

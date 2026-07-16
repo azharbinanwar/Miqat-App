@@ -88,7 +88,7 @@ class PhoneSilenceService : Service() {
         )
         var title = ""; var body = ""; var unmute = ""; var extend = ""; var prayed = ""
         runBlocking { // resolving a few bundled strings; fast enough for startForeground
-            title = getString(Res.string.notif_focus_title, prayerName(label), fmt(start, pattern))
+            title = getString(Res.string.notif_focus_title, prayerName(label))
             body = getString(Res.string.notif_focus_body, fmt(end, pattern))
             unmute = getString(Res.string.focus_unmute)
             extend = getString(Res.string.focus_extend)
