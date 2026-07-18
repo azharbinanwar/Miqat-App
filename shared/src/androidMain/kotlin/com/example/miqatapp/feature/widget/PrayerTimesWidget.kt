@@ -13,7 +13,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.fillMaxSize
-import com.example.miqatapp.core.enums.WidgetColor
 
 // Prayer Times widget — one row. Day · Hijri, current prayer big (left), next + countdown (right).
 // Current/next step through the day's slots (Miqat.SLOTS). Shares the card's colour + opacity.
@@ -21,12 +20,13 @@ class PrayerTimesWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val rv = loadSnapshot()?.let { prayerTimesRemoteViews(context, it, live = true, WidgetConfig.opacity(), WidgetConfig.color()) }
+        val style = WidgetConfig.claim(styleId(context, id))
+        val rv = loadSnapshot()?.let { prayerTimesRemoteViews(context, it, live = true, style) }
         provideContent { if (rv != null) AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
-        val rv = prayerTimesRemoteViews(context, sampleSnapshot(), live = false, opacity = 1f, color = WidgetColor.default)
+        val rv = prayerTimesRemoteViews(context, sampleSnapshot(), live = false, WidgetStyle())
         provideContent { AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
     }
 }
@@ -35,14 +35,15 @@ class PrayerTimesWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget get() = PrayerTimesWidget()
 }
 
-private fun prayerTimesRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boolean, opacity: Float, color: WidgetColor): RemoteViews {
+internal fun prayerTimesRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boolean, style: WidgetStyle): RemoteViews {
     val now = System.currentTimeMillis()
     val head = headState(snap, now) // current/next step through Miqat.SLOTS
+    val color = style.color
     val on = color.on.toArgb()
     val rv = RemoteViews(ctx.packageName, viewId(ctx, "prayer_times_widget", "layout"))
 
     rv.setImageViewBitmap(viewId(ctx, "bg"), gradientBitmap(ctx, 360, 150, color.fill.toArgb(), color.fillEnd.toArgb()))
-    rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (opacity.coerceIn(0f, 1f) * 255).toInt())
+    rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (style.alpha * 255).toInt())
     rv.setInt(viewId(ctx, "watermark"), "setColorFilter", on)
     for (v in listOf("hijri", "curname", "nextlabel", "nextname", "nexttime", "chrono", "chronoStatic")) rv.setTextColor(viewId(ctx, v), on)
 

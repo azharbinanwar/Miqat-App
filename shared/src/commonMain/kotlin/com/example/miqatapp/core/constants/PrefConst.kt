@@ -66,8 +66,7 @@ object PrefConst {
     const val FOCUS_TEST_SLOTS = "focus_test_slots"       // saved one-shot test slots (JSON), survive reboot
 
     // ── Widget ───────────────────────────────────────────────
-    const val WIDGET_CARD_OPACITY = "widget_card_opacity" // 0..100, background opacity
-    const val WIDGET_CARD_COLOR = "widget_card_color"     // WidgetColor key: emerald | ink | …
+    const val WIDGET_STYLE = "widget_style_" // per-instance style JSON, suffixed with appWidgetId
 
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus

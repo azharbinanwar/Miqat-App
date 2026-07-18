@@ -45,7 +45,6 @@ actual object WidgetRefresher {
         PrayerBarWidget().updateAll(ctx)
         PrayerNextWidget().updateAll(ctx)
         PrayerTileWidget().updateAll(ctx)
-        PrayerChipWidget().updateAll(ctx)
         PrayerIconWidget().updateAll(ctx)
     }
 
@@ -64,7 +63,6 @@ actual object WidgetRefresher {
             mgr.setWidgetPreviews<PrayerBarWidgetReceiver>()
             mgr.setWidgetPreviews<PrayerNextWidgetReceiver>()
             mgr.setWidgetPreviews<PrayerTileWidgetReceiver>()
-            mgr.setWidgetPreviews<PrayerChipWidgetReceiver>()
             mgr.setWidgetPreviews<PrayerIconWidgetReceiver>()
         }.isSuccess
         if (ok) prefs.edit().putBoolean("previews_pushed", true).apply()

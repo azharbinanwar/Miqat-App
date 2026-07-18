@@ -5,6 +5,5 @@
     <string name="widget_bar_name">شريط الصلاة</string>
     <string name="widget_next_name">الصلاة الحالية</string>
     <string name="widget_tile_name">بطاقة الوقت</string>
-    <string name="widget_chip_name">أيقونة الصلاة</string>
     <string name="widget_icon_name">أيقونة الوقت</string>
 </resources>

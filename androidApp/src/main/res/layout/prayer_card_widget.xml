@@ -50,7 +50,7 @@
                         android:textColor="#CBD8CF" android:textSize="14sp" android:includeFontPadding="false" />
                     <TextView android:id="@+id/chronoStatic"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="in 2h 14m" android:textColor="#CBD8CF" android:textSize="14sp" android:includeFontPadding="false" android:visibility="gone" />
+                        android:text="in 2:14" android:textColor="#CBD8CF" android:textSize="14sp" android:includeFontPadding="false" android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
             <FrameLayout android:id="@+id/badgebox"

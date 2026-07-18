@@ -6,6 +6,5 @@
     <string name="widget_bar_name">Prayer Bar</string>
     <string name="widget_next_name">Current Prayer</string>
     <string name="widget_tile_name">Prayer Tile</string>
-    <string name="widget_chip_name">Prayer Chip</string>
     <string name="widget_icon_name">Prayer Icon</string>
 </resources>

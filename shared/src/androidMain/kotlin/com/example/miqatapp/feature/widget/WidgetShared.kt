@@ -9,6 +9,8 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.widget.RemoteViews
 import androidx.compose.ui.graphics.toArgb
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.composables.icons.lucide.CloudSun
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Sun
@@ -87,16 +89,20 @@ fun headState(snap: WidgetSnapshot, now: Long): WState {
     return WState(current, next, ((now - current.atMillis).toFloat() / span).coerceIn(0f, 1f))
 }
 
-// "2h 11m" / "43m" — matches the design's countdown format.
+// "1:33" / "0:43" — colon format, matching the live Chronometer's countdown.
 fun countdown(deltaMs: Long): String {
     val d = if (deltaMs < 0) 0 else deltaMs
     val h = (d / 3_600_000).toInt()
     val m = ((d % 3_600_000) / 60_000).toInt()
-    return if (h > 0) "${h}h ${m}m" else "${m}m"
+    return "$h:${m.toString().padStart(2, '0')}"
 }
 
 // Static countdown text: "in 2h 14m" while counting, "now" once reached — never negative.
 fun countdownLabel(deltaMs: Long): String = if (deltaMs <= 0) "now" else "in ${countdown(deltaMs)}"
+
+// The appWidgetId behind a GlanceId — the key into per-instance WidgetConfig.
+fun styleId(ctx: Context, glanceId: GlanceId): Int =
+    runCatching { GlanceAppWidgetManager(ctx).getAppWidgetId(glanceId) }.getOrDefault(0)
 
 // Resolve a res id by name (widgets live in androidMain but resources in the app module — no R here).
 fun viewId(ctx: Context, name: String, type: String = "id") = ctx.resources.getIdentifier(name, type, ctx.packageName)
@@ -116,16 +122,6 @@ fun gradientBitmap(ctx: Context, wDp: Int, hDp: Int, top: Int, bottom: Int): Bit
     val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
     Canvas(bmp).drawRect(0f, 0f, w.toFloat(), h.toFloat(), Paint().apply {
         shader = LinearGradient(0f, 0f, w.toFloat(), h.toFloat(), top, bottom, Shader.TileMode.CLAMP)
-    })
-    return bmp
-}
-
-// A filled circle with the colour's diagonal gradient — the round "app-icon" badge for the 1×1 icon widget.
-fun circleGradientBitmap(ctx: Context, sizeDp: Int, top: Int, bottom: Int): Bitmap {
-    val d = (sizeDp * ctx.resources.displayMetrics.density).toInt().coerceAtLeast(1)
-    val bmp = Bitmap.createBitmap(d, d, Bitmap.Config.ARGB_8888)
-    Canvas(bmp).drawCircle(d / 2f, d / 2f, d / 2f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        shader = LinearGradient(0f, 0f, d.toFloat(), d.toFloat(), top, bottom, Shader.TileMode.CLAMP)
     })
     return bmp
 }

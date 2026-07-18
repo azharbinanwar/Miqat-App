@@ -368,4 +368,13 @@
     <string name="background_opacity">شفافية الخلفية</string>
     <string name="add_to_home_screen">أضف إلى الشاشة الرئيسية</string>
     <string name="card_color">لون البطاقة</string>
+    <string name="widget_times">أوقات الصلاة</string>
+    <string name="widget_bar">شريط الصلاة</string>
+    <string name="widget_card">بطاقة الصلاة</string>
+    <string name="widget_minimal">الصلاة المصغّرة</string>
+    <string name="widget_current">الصلاة الحالية</string>
+    <string name="widget_tile">بطاقة الوقت</string>
+    <string name="widget_icon">أيقونة الوقت</string>
+    <string name="widget_add">إضافة للرئيسية</string>
+    <string name="widget_customize">تخصيص</string>
 </resources>

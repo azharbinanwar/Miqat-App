@@ -22,6 +22,6 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_marginTop="6dp" android:text="Next · Asr · 4:41" android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="1" />
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" />
+            android:layout_marginTop="12dp" android:text="in 2:14" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" />
     </LinearLayout>
 </FrameLayout>

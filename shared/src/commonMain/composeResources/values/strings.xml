@@ -368,4 +368,13 @@
     <string name="background_opacity">Background opacity</string>
     <string name="add_to_home_screen">Add to home screen</string>
     <string name="card_color">Card color</string>
+    <string name="widget_times">Prayer Times</string>
+    <string name="widget_bar">Prayer Bar</string>
+    <string name="widget_card">Prayer Card</string>
+    <string name="widget_minimal">Prayer Minimal</string>
+    <string name="widget_current">Current Prayer</string>
+    <string name="widget_tile">Prayer Tile</string>
+    <string name="widget_icon">Prayer Icon</string>
+    <string name="widget_add">Add to home</string>
+    <string name="widget_customize">Customize</string>
 </resources>

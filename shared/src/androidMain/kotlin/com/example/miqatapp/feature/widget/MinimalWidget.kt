@@ -13,19 +13,19 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.layout.fillMaxSize
-import com.example.miqatapp.core.enums.WidgetColor
 
 // Minimal widget (2×2). Native RemoteViews, current prayer + live countdown. Shares the card's colour + opacity.
 class MinimalWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val rv = loadSnapshot()?.let { minimalRemoteViews(context, it, live = true, WidgetConfig.opacity(), WidgetConfig.color()) }
+        val style = WidgetConfig.claim(styleId(context, id))
+        val rv = loadSnapshot()?.let { minimalRemoteViews(context, it, live = true, style) }
         provideContent { if (rv != null) AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
     }
 
     override suspend fun providePreview(context: Context, widgetCategory: Int) {
-        val rv = minimalRemoteViews(context, sampleSnapshot(), live = false, opacity = 1f, color = WidgetColor.default)
+        val rv = minimalRemoteViews(context, sampleSnapshot(), live = false, WidgetStyle())
         provideContent { AndroidRemoteViews(rv, GlanceModifier.fillMaxSize()) }
     }
 }
@@ -34,14 +34,15 @@ class MinimalWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget get() = MinimalWidget()
 }
 
-private fun minimalRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boolean, opacity: Float, color: WidgetColor): RemoteViews {
+internal fun minimalRemoteViews(ctx: Context, snap: WidgetSnapshot, live: Boolean, style: WidgetStyle): RemoteViews {
     val now = System.currentTimeMillis()
     val head = headState(snap, now) // current/next step through Miqat.SLOTS
+    val color = style.color
     val on = color.on.toArgb()
     val rv = RemoteViews(ctx.packageName, viewId(ctx, "minimal_widget", "layout"))
 
     rv.setImageViewBitmap(viewId(ctx, "bg"), gradientBitmap(ctx, 220, 220, color.fill.toArgb(), color.fillEnd.toArgb()))
-    rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (opacity.coerceIn(0f, 1f) * 255).toInt())
+    rv.setInt(viewId(ctx, "bg"), "setImageAlpha", (style.alpha * 255).toInt())
     rv.setInt(viewId(ctx, "watermark"), "setColorFilter", on)
     for (v in listOf("label", "name", "next", "chrono", "chronoStatic")) rv.setTextColor(viewId(ctx, v), on)
 

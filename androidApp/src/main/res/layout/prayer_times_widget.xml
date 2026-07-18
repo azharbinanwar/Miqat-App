@@ -43,7 +43,7 @@
                 <Chronometer android:id="@+id/chrono" android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" />
                 <TextView android:id="@+id/chronoStatic" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" android:visibility="gone" />
+                    android:text="in 2:14" android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

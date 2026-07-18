@@ -36,7 +36,7 @@
                 android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:includeFontPadding="false" />
             <TextView android:id="@+id/chronoStatic"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:includeFontPadding="false" android:visibility="gone" />
+                android:text="in 2:14" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:includeFontPadding="false" android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

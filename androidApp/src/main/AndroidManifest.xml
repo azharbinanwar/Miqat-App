@@ -38,9 +38,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Widget: our in-app editor, shown when the Prayer Card is dropped from the widget gallery. -->
+        <!-- Widget: the customize sheet, shown over the home screen when a widget is dropped. Translucent so the
+             bottom sheet floats over the dimmed home screen. -->
         <activity android:name=".PrayerCardConfigActivity" android:exported="true"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -126,11 +127,6 @@
         <receiver android:name="com.example.miqatapp.feature.widget.PrayerIconWidgetReceiver" android:exported="true" android:label="@string/widget_icon_name">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_icon_widget_info" />
-        </receiver>
-        <!-- Widget: chip 1×1 app-icon (design 19i). -->
-        <receiver android:name="com.example.miqatapp.feature.widget.PrayerChipWidgetReceiver" android:exported="true" android:label="@string/widget_chip_name">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_chip_widget_info" />
         </receiver>
         <!-- Widget: fires at each prayer transition + every ~15 min to redraw the countdown. -->
         <receiver android:name="com.example.miqatapp.feature.widget.WidgetAlarmReceiver" android:exported="false" />

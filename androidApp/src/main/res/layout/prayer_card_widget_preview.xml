@@ -31,7 +31,7 @@
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                     android:layout_marginTop="2dp" android:text="Dhuhr" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold" android:maxLines="1" />
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp" android:text="Next · Asr · in 2h 14m" android:textColor="#CBD8CF" android:textSize="12sp" android:maxLines="1" />
+                    android:layout_marginTop="4dp" android:text="Next · Asr · in 2:14" android:textColor="#CBD8CF" android:textSize="12sp" android:maxLines="1" />
             </LinearLayout>
             <FrameLayout
                 android:layout_width="44dp" android:layout_height="44dp"
