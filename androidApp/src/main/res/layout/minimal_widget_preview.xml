@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Minimal widget picker preview — mirrors the real 2×2: emerald card, faint mark, current + next + countdown. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_times_preview_bg">
+
+    <ImageView
+        android:layout_width="110dp" android:layout_height="110dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-24dp" android:layout_marginBottom="-24dp"
+        android:src="@drawable/miqat_watermark" android:tint="#FFFFFF"
+        android:alpha="0.07" android:scaleType="fitXY" android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center_vertical" android:padding="16dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="NOW" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="7dp" android:text="Dhuhr" android:textColor="#FFFFFF" android:textSize="31sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:text="Next · Asr · 4:41" android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="1" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Preview-only copy of prayer_times_widget for the picker (renders cramped there): slightly smaller,
+     mirrors the real two-column centred layout. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_times_preview_bg">
+
+    <ImageView
+        android:layout_width="140dp" android:layout_height="140dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-32dp" android:layout_marginBottom="-32dp"
+        android:src="@drawable/miqat_watermark" android:tint="#FFFFFF"
+        android:alpha="0.06" android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="horizontal" android:gravity="center_vertical" android:baselineAligned="false"
+        android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="8dp" android:paddingBottom="8dp">
+
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Friday · 3 Safar" android:textColor="#FFFFFF" android:textSize="10sp" android:maxLines="1" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" android:text="Dhuhr" android:textColor="#FFFFFF" android:textSize="30sp" android:textStyle="bold" android:maxLines="1" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="end">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="NEXT" android:textColor="#FFFFFF" android:textSize="9sp" android:textStyle="bold" android:letterSpacing="0.1" android:gravity="end" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="1dp" android:text="Asr" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="end" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" android:text="4:41 PM · in 2h 14m" android:textColor="#FFFFFF" android:textSize="11sp" android:gravity="end" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

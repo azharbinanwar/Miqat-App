@@ -32,6 +32,9 @@ sealed interface AppRoute {
     data object Settings : AppRoute
 
     @Serializable
+    data object Widgets : AppRoute
+
+    @Serializable
     data object Notifications : AppRoute
 
     @Serializable

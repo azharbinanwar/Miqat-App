@@ -38,6 +38,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Widget: our in-app editor, shown when the Prayer Card is dropped from the widget gallery. -->
+        <activity android:name=".PrayerCardConfigActivity" android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Prayer Focus: alarm wakes before a slot and starts the service. -->
         <receiver android:name="com.example.miqatapp.core.focus.FocusAlarmReceiver" android:exported="false" />
         <!-- Prayer Focus: the notification's action buttons (+5 / prayed / unmute) and the end "restore" alarm. -->
@@ -77,6 +85,55 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <!-- Widget: minimal 2×2 (design 2c). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.MinimalWidgetReceiver" android:exported="true" android:label="@string/widget_minimal_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/minimal_widget_info" />
+        </receiver>
+        <!-- Widget: dark prayer card (design 8b) — current prayer + 5 times. -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerCardWidgetReceiver" android:exported="true" android:label="@string/widget_card_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_card_widget_info" />
+        </receiver>
+        <!-- Widget: prayer times (current + next + slot strip), 1–2 rows. -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerTimesWidgetReceiver" android:exported="true" android:label="@string/widget_times_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_times_widget_info" />
+        </receiver>
+        <!-- Widget: bar 4×1 (design 23e). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerBarWidgetReceiver" android:exported="true" android:label="@string/widget_bar_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_bar_widget_info" />
+        </receiver>
+        <!-- Widget: current prayer 2×2 (design 19d). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerNextWidgetReceiver" android:exported="true" android:label="@string/widget_next_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_next_widget_info" />
+        </receiver>
+        <!-- Widget: tile 2×2, Miqat icon (design 19f). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerTileWidgetReceiver" android:exported="true" android:label="@string/widget_tile_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_tile_widget_info" />
+        </receiver>
+        <!-- Widget: icon 1×1 round app-icon badge, time-first (design 19f). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerIconWidgetReceiver" android:exported="true" android:label="@string/widget_icon_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_icon_widget_info" />
+        </receiver>
+        <!-- Widget: chip 1×1 app-icon (design 19i). -->
+        <receiver android:name="com.example.miqatapp.feature.widget.PrayerChipWidgetReceiver" android:exported="true" android:label="@string/widget_chip_name">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/prayer_chip_widget_info" />
+        </receiver>
+        <!-- Widget: fires at each prayer transition + every ~15 min to redraw the countdown. -->
+        <receiver android:name="com.example.miqatapp.feature.widget.WidgetAlarmReceiver" android:exported="false" />
 
         <!-- Prayer Focus: mutes the phone for a window and restores it. -->
         <service

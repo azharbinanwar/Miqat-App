@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prayer Times widget — one row, two columns vertically centred. Left: Day·Hijri + current prayer (big).
+     Right: next prayer + countdown. Colours/text filled in code; sample defaults here for the picker preview. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/bg"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_gradient_bg" android:contentDescription="@null" />
+
+    <!-- App mark, faint, bled off the bottom-right corner (same as the Prayer Card). -->
+    <ImageView android:id="@+id/watermark"
+        android:layout_width="150dp" android:layout_height="150dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-34dp" android:layout_marginBottom="-34dp"
+        android:src="@drawable/miqat_watermark" android:tint="#FFFFFF"
+        android:alpha="0.06" android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="horizontal" android:gravity="center_vertical" android:baselineAligned="false"
+        android:paddingStart="18dp" android:paddingEnd="18dp" android:paddingTop="10dp" android:paddingBottom="10dp">
+
+        <!-- Left: day · hijri + current prayer -->
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView android:id="@+id/hijri" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Friday · 3 Safar" android:textColor="#FFFFFF" android:textSize="11sp" android:maxLines="1" />
+            <TextView android:id="@+id/curname" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" android:text="Dhuhr" android:textColor="#FFFFFF" android:textSize="34sp" android:textStyle="bold" android:maxLines="1" />
+        </LinearLayout>
+
+        <!-- Right: next prayer + countdown -->
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="end">
+            <TextView android:id="@+id/nextlabel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="NEXT" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.1" android:gravity="end" />
+            <TextView android:id="@+id/nextname" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="1dp" android:text="Asr" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" android:maxLines="1" android:gravity="end" />
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="end|center_vertical" android:layout_marginTop="2dp">
+                <TextView android:id="@+id/nexttime" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="4:41 PM · " android:textColor="#FFFFFF" android:textSize="12sp" android:maxLines="1" />
+                <Chronometer android:id="@+id/chrono" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" />
+                <TextView android:id="@+id/chronoStatic" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="12sp" android:includeFontPadding="false" android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -116,6 +116,7 @@
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
+    <string name="now">Now</string>
     <string name="never_miss_a_prayer">Never miss a prayer</string>
     <string name="accurate_times_with_live_countdown">Accurate times for your location, with a live countdown to the next prayer.</string>
     <string name="find_the_qibla_and_track">Find the Qibla and track</string>
@@ -362,4 +363,9 @@
     <string name="notifications_prayers">Prayers</string>
     <string name="notifications_quran">Quran</string>
     <string name="notifications_nafil">Nafil</string>
+    <string name="widgets">Widgets</string>
+    <string name="prayer_card">Prayer card</string>
+    <string name="background_opacity">Background opacity</string>
+    <string name="add_to_home_screen">Add to home screen</string>
+    <string name="card_color">Card color</string>
 </resources>

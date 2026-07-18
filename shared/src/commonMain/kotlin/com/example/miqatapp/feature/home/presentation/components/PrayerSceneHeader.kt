@@ -176,12 +176,9 @@ fun PrayerSceneHeader(
     if (showSehriInfo) SehriInfoSheet(onDismiss = { showSehriInfo = false })
 }
 
-// markers for the "Now" line (names the sunrise→Dhuhr gap too: Sunrise/Ishraq)
-private val PERIOD_MARKERS = listOf(Miqat.Fajr, Miqat.Sunrise, Miqat.Ishraq, Miqat.Dhuhr, Miqat.Asr, Miqat.Maghrib, Miqat.Isha)
-
 /** The daily marker we're in now. Wraps overnight to Isha, so it's never blank. */
 private fun currentPeriod(now: LocalTime, times: List<MiqatTime>): Miqat {
-    val pts = PERIOD_MARKERS
+    val pts = Miqat.PERIODS
         .mapNotNull { m -> times.firstOrNull { it.miqat == m }?.let { m to (it.at.time.hour * 60 + it.at.time.minute) } }
         .sortedBy { it.second }
     if (pts.isEmpty()) return Miqat.Isha

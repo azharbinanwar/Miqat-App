@@ -65,6 +65,10 @@ object PrefConst {
     const val FOCUS_SILENCE_LABEL = "focus_silence_label" // active window's prayer name, for extend/mode restart
     const val FOCUS_TEST_SLOTS = "focus_test_slots"       // saved one-shot test slots (JSON), survive reboot
 
+    // ── Widget ───────────────────────────────────────────────
+    const val WIDGET_CARD_OPACITY = "widget_card_opacity" // 0..100, background opacity
+    const val WIDGET_CARD_COLOR = "widget_card_color"     // WidgetColor key: emerald | ink | …
+
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus
     const val TASBIH_SIZE = "tasbih_size"

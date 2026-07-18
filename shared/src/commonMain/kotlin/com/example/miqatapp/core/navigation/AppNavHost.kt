@@ -27,6 +27,8 @@ import com.example.miqatapp.feature.notifications.presentation.NotificationsScre
 import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
 import com.example.miqatapp.feature.focus.presentation.PrayerFocusScreen
 import com.example.miqatapp.feature.settings.presentation.SettingsScreen
+import com.example.miqatapp.feature.settings.presentation.WidgetSettingsScreen
+import com.example.miqatapp.feature.widget.pinPrayerCardWidget
 import com.example.miqatapp.feature.tasbih.presentation.TasbihRun
 import com.example.miqatapp.feature.tasbih.presentation.TasbihScreen
 import com.example.miqatapp.feature.tasbih.presentation.TasbihHistoryScreen
@@ -63,8 +65,10 @@ fun AppNavHost() {
                         onPrayerFocus = { navController.navigate(AppRoute.PrayerFocus) },
                         onPrayerCalc = { navController.navigate(AppRoute.MiqatCalculation) },
                         onLocation = { navController.navigate(AppRoute.Location) },
+                        onWidgets = { navController.navigate(AppRoute.Widgets) },
                     )
                 }
+                composable<AppRoute.Widgets> { WidgetSettingsScreen(onBack = { navController.popBackStack() }, onPrimary = { pinPrayerCardWidget() }) }
                 composable<AppRoute.Notifications> { NotificationsScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.PrayerFocus> { PrayerFocusScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.MiqatCalculation> { MiqatCalculationScreen(onBack = { navController.popBackStack() }) }

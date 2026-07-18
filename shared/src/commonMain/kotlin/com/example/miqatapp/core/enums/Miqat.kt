@@ -10,6 +10,7 @@ import com.composables.icons.lucide.Sun
 import com.composables.icons.lucide.SunMedium
 import com.composables.icons.lucide.Sunrise
 import com.composables.icons.lucide.Sunset
+import com.example.miqatapp.config.theme.AppColors
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.ishraq
@@ -92,24 +93,30 @@ enum class Miqat(
         val jumuahKey: String get() = "jumuah"
         /** The classic six-row list (5 prayers + Sunrise) that prayer-times screens traditionally show. */
         val DAILY = listOf(Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)
+        /** Markers for the live "now" line — names the sunrise→Dhuhr gap too (Sunrise/Ishraq). */
+        val PERIODS = listOf(Fajr, Sunrise, Ishraq, Dhuhr, Asr, Maghrib, Isha)
+        /** Every real daytime window, in order — the sequence a prayer-times widget steps through (no zero-length
+         *  night markers). Skips Imsak, Midnight, LastThird. */
+        val SLOTS = listOf(Fajr, Sunrise, Ishraq, Zawal, Dhuhr, Asr, Sunset, Maghrib, Isha)
         val SOLAR = entries.filter { it.category == Category.SOLAR }
         val NIGHT = entries.filter { it.category == Category.NIGHT }
         val RAMADAN = entries.filter { it.category == Category.RAMADAN }
     }
 }
 
+/** Theme color for this time point (nearest prayer's color). Non-composable so background code (widgets) can read it. */
+fun Miqat.colorOf(c: AppColors): Color = when (this) {
+    Miqat.Imsak, Miqat.Fajr -> c.fajrColor
+    Miqat.Sunrise, Miqat.Ishraq -> c.sunriseColor
+    Miqat.Zawal, Miqat.Dhuhr -> c.dhuhrColor
+    Miqat.Asr -> c.asrColor
+    Miqat.Sunset, Miqat.Maghrib -> c.maghribColor
+    Miqat.Isha, Miqat.Midnight, Miqat.LastThird -> c.ishaColor
+}
+
 /** Theme color; new time points borrow the nearest prayer's color. */
 val Miqat.color: Color
-    @Composable get() = AppTheme.colors.let {
-        when (this) {
-            Miqat.Imsak, Miqat.Fajr -> it.fajrColor
-            Miqat.Sunrise, Miqat.Ishraq -> it.sunriseColor
-            Miqat.Zawal, Miqat.Dhuhr -> it.dhuhrColor
-            Miqat.Asr -> it.asrColor
-            Miqat.Sunset, Miqat.Maghrib -> it.maghribColor
-            Miqat.Isha, Miqat.Midnight, Miqat.LastThird -> it.ishaColor
-        }
-    }
+    @Composable get() = colorOf(AppTheme.colors)
 
 val Miqat.onColor: Color
     @Composable get() = AppTheme.colors.let {

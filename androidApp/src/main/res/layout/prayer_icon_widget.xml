@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Prayer Icon (design 19f, time-first) — 1×1 app-icon badge. Round gradient badge with current prayer name
+     (small, above) + its end time (big). Colour/opacity from WidgetConfig. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="3dp">
+
+    <ImageView android:id="@+id/bg" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitCenter" android:src="@drawable/widget_gradient_bg" android:contentDescription="@null" />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center" android:padding="8dp">
+        <TextView android:id="@+id/name" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="ASR" android:textColor="#FFFFFF" android:textSize="10sp" android:textStyle="bold" android:letterSpacing="0.06" android:maxLines="1" />
+        <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="1dp" android:text="3:58" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold" android:maxLines="1" />
+    </LinearLayout>
+</FrameLayout>

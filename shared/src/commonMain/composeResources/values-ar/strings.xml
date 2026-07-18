@@ -116,6 +116,7 @@
     <string name="get_started">ابدأ</string>
     <string name="skip">تخطّي</string>
     <string name="next">التالي</string>
+    <string name="now">الآن</string>
     <string name="never_miss_a_prayer">لا تفوّت أي صلاة</string>
     <string name="accurate_times_with_live_countdown">مواقيت دقيقة لموقعك، مع عدّ تنازلي مباشر للصلاة القادمة.</string>
     <string name="find_the_qibla_and_track">اعرف القبلة وتابع صلاتك</string>
@@ -362,4 +363,9 @@
     <string name="notifications_prayers">الصلوات</string>
     <string name="notifications_quran">القرآن</string>
     <string name="notifications_nafil">النوافل</string>
+    <string name="widgets">الأدوات</string>
+    <string name="prayer_card">بطاقة الصلاة</string>
+    <string name="background_opacity">شفافية الخلفية</string>
+    <string name="add_to_home_screen">أضف إلى الشاشة الرئيسية</string>
+    <string name="card_color">لون البطاقة</string>
 </resources>

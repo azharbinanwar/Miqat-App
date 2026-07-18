@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">MiqatApp</string>
+    <string name="widget_minimal_name">Prayer Minimal</string>
+    <string name="widget_card_name">Prayer Card</string>
+    <string name="widget_times_name">Prayer Times</string>
+    <string name="widget_bar_name">Prayer Bar</string>
+    <string name="widget_next_name">Current Prayer</string>
+    <string name="widget_tile_name">Prayer Tile</string>
+    <string name="widget_chip_name">Prayer Chip</string>
+    <string name="widget_icon_name">Prayer Icon</string>
 </resources>

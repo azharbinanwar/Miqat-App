@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Minimal widget (2×2), native RemoteViews. Current prayer + live countdown. Colour/opacity from WidgetConfig. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/bg"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:scaleType="fitXY" android:src="@drawable/widget_gradient_bg" android:contentDescription="@null" />
+
+    <ImageView android:id="@+id/watermark"
+        android:layout_width="120dp" android:layout_height="120dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-26dp" android:layout_marginBottom="-26dp"
+        android:src="@drawable/miqat_watermark" android:tint="#FFFFFF"
+        android:alpha="0.07" android:scaleType="fitXY" android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center_vertical"
+        android:padding="18dp">
+
+        <TextView android:id="@+id/label"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="NOW" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:letterSpacing="0.08" />
+        <TextView android:id="@+id/name"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="7dp" android:text="Dhuhr" android:textColor="#FFFFFF" android:textSize="33sp" android:textStyle="bold" android:maxLines="1" />
+        <TextView android:id="@+id/next"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:text="Next · Asr · 4:41" android:textColor="#FFFFFF" android:textSize="13sp" android:maxLines="1" />
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+            <Chronometer android:id="@+id/chrono"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:includeFontPadding="false" />
+            <TextView android:id="@+id/chronoStatic"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="in 2h 14m" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:includeFontPadding="false" android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

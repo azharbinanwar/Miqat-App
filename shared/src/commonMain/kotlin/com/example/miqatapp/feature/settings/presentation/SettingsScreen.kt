@@ -29,6 +29,7 @@ import com.composables.icons.lucide.Clock
 import com.composables.icons.lucide.Compass
 import com.composables.icons.lucide.Globe
 import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.LayoutGrid
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.MapPin
 import com.composables.icons.lucide.Menu
@@ -63,9 +64,11 @@ import com.example.miqatapp.resources.menu
 import com.example.miqatapp.resources.notifications
 import com.example.miqatapp.resources.prayer_and_alerts
 import com.example.miqatapp.resources.prayer_calculation
+import com.example.miqatapp.resources.prayer_card
 import com.example.miqatapp.resources.prayer_focus
 import com.example.miqatapp.resources.settings
 import com.example.miqatapp.resources.time_format
+import com.example.miqatapp.resources.widgets
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -76,6 +79,7 @@ fun SettingsScreen(
     onPrayerCalc: () -> Unit = {},
     onNotifications: () -> Unit = {},
     onPrayerFocus: () -> Unit = {},
+    onWidgets: () -> Unit = {},
 ) {
     val drawerState = LocalDrawerState.current
     val scope = rememberCoroutineScope()
@@ -109,6 +113,7 @@ fun SettingsScreen(
                     AppTileItem(leadingIcon = Lucide.Palette, title = stringResource(Res.string.appearance), subtitle = theme.label(), onClick = { showTheme = true }),
                     AppTileItem(leadingIcon = Lucide.Clock, title = stringResource(Res.string.time_format), trailing = { SwapPill(timeFormat.label()) }, onClick = { SettingsStore.setTimeFormat(TimeFormat.entries.first { it != timeFormat }) }),
                     AppTileItem(leadingIcon = Lucide.Globe, title = stringResource(Res.string.language), subtitle = language.label, onClick = { showLanguage = true }),
+                    AppTileItem(leadingIcon = Lucide.LayoutGrid, title = stringResource(Res.string.widgets), subtitle = stringResource(Res.string.prayer_card), onClick = onWidgets),
                     AppTileItem(
                         leadingIcon = Lucide.Calendar,
                         title = stringResource(Res.string.hijri_calendar),
