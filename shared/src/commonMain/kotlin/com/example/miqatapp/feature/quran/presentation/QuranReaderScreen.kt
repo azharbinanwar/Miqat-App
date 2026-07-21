@@ -24,11 +24,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,35 +52,25 @@ import com.example.miqatapp.feature.quran.toArabicIndic
 import com.example.miqatapp.feature.quran.toSurahKey
 import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_surah_name
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.Font
+import kotlin.time.Duration.Companion.milliseconds
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
-    val scope = rememberCoroutineScope()
     val ayahs = remember { mutableStateListOf<Ayah>() }
-    // start paging from the target ayah (surah/juz jump); forward-only for now
-    var offset by remember { mutableIntStateOf((startId - 1).coerceAtLeast(0)) }
-    var loading by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
-    fun loadMore() {
-        if (loading || offset >= QuranRepository.TOTAL_AYAHS) return
-        loading = true
-        scope.launch {
-            ayahs.addAll(QuranRepository.page(offset))
-            offset += QuranRepository.PAGE_SIZE
-            loading = false
-        }
-    }
+    // load the whole Quran once; LazyColumn only renders what's on screen, so this stays cheap
+    LaunchedEffect(Unit) { if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all()) }
 
-    LaunchedEffect(Unit) { loadMore() }
-    val nearEnd by remember { derivedStateOf { (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) >= listState.layoutInfo.totalItemsCount - 3 } }
-    LaunchedEffect(nearEnd, ayahs.size) { if (nearEnd) loadMore() }
+    // ponytail: temporary — keep the calligraphy on screen at least 2s just to preview it; drop this later
+    var minSplash by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { delay(500.milliseconds); minSplash = true }
 
-    if (ayahs.isEmpty()) {
+    if (ayahs.isEmpty() || !minSplash) {
         QuranCalligraphy()
         return
     }
@@ -92,6 +80,12 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
     val script by QuranStore.font.collectAsState()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
+
+    // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
+    LaunchedEffect(rukus) {
+        val target = rukus.indexOfFirst { it.last().id >= startId }.coerceAtLeast(0)
+        if (target > 0) listState.scrollToItem(target)
+    }
 
     var selected by remember { mutableStateOf<AyahRef?>(null) }
     var expanded by remember(selected) { mutableStateOf(false) }

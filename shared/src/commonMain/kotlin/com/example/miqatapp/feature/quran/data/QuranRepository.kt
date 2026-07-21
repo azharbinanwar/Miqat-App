@@ -3,14 +3,15 @@ package com.example.miqatapp.feature.quran.data
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.miqatapp.resources.Res
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 // Reads quran.db and returns raw verses/surahs. Layout (headers, basmalah, grouping) is the UI's job.
 object QuranRepository {
 
     const val TOTAL_AYAHS = 6236
-    const val PAGE_SIZE = 100
 
     private const val DB_NAME = "quran.db"
     private const val DB_ASSET = "files/quran/quran.db"
@@ -27,9 +28,9 @@ object QuranRepository {
         BundledSQLiteDriver().open(path).also { conn = it }
     }
 
-    /** A page of verses: ayahs (offset, offset+size]. The reader groups these by ruku itself. */
-    suspend fun page(offset: Int, size: Int = PAGE_SIZE): List<Ayah> = lock.withLock {
-        readAyahs(db(), "SELECT $COLS FROM ayah WHERE id > ? AND id <= ? ORDER BY id", offset.toLong(), (offset + size).toLong())
+    /** The whole Quran in order — one read off the main thread; the reader scrolls freely and jumps anywhere. */
+    suspend fun all(): List<Ayah> = withContext(Dispatchers.Default) {
+        lock.withLock { readAyahs(db(), "SELECT $COLS FROM ayah ORDER BY id") }
     }
 
     /** One full surah's verses. */
