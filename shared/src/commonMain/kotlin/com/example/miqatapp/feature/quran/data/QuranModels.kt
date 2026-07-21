@@ -25,6 +25,9 @@ data class Ayah(
     val ref get() = AyahRef(surah, ayah)
 }
 
+// a juz = its number, the ayah it starts at, and the surahs it spans (so the UI never re-derives them)
+data class Juz(val number: Int, val startsAt: Ayah, val surahs: List<Surah>)
+
 // one `surah` row
 data class Surah(
     val number: Int,

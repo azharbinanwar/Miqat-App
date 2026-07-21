@@ -8,14 +8,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.text.font.FontFamily
 import com.example.miqatapp.config.theme.AppTheme
+import com.example.miqatapp.feature.quran.data.QuranStore
+import com.example.miqatapp.feature.quran.toSurahKey
+import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.quran_surah_name
+import org.jetbrains.compose.resources.Font
 
 // ornate surah name at a surah start
 @Composable
 fun SurahHeader(surah: Int) {
+    val fontSize by QuranStore.fontSize.collectAsState()
     Text(
-        surahLigature(surah), Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 6.dp),
-        fontFamily = LocalQuranFonts.current.surah, fontSize = (LocalFontSize.current * 1.9f).sp,
-        color = AppTheme.colors.primary, textAlign = TextAlign.Center, style = LIGATURES,
+        surah.toSurahKey(), Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 6.dp),
+        fontFamily = FontFamily(Font(Res.font.quran_surah_name)), fontSize = (fontSize * 1.9f).sp,
+        color = AppTheme.colors.primary, textAlign = TextAlign.Center,
     )
 }

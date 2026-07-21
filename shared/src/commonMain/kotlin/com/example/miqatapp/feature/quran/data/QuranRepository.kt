@@ -20,6 +20,7 @@ object QuranRepository {
     private val lock = Mutex()
     private var conn: SQLiteConnection? = null
     private var surahCache: List<Surah>? = null
+    private var juzCache: List<Juz>? = null
 
     private suspend fun db(): SQLiteConnection = conn ?: run {
         val path = materializeDb(DB_NAME, Res.readBytes(DB_ASSET))
@@ -44,6 +45,15 @@ object QuranRepository {
     /** The 114-row surah table (names, counts, revelation) — read once, for the header and picker. */
     suspend fun surahs(): List<Surah> = surahCache ?: lock.withLock {
         surahCache ?: readSurahs(db()).also { surahCache = it }
+    }
+
+    /** The 30 juz, each with the ayah it starts at and the surahs it spans — for the juz list. */
+    suspend fun juzs(): List<Juz> = juzCache ?: lock.withLock {
+        juzCache ?: run {
+            val c = db()
+            val surahList = surahCache ?: readSurahs(c).also { surahCache = it }
+            readJuzs(c, surahList).also { juzCache = it }
+        }
     }
 
     // ── internals ──────────────────────────────────────────────────────────
@@ -87,6 +97,30 @@ object QuranRepository {
             }
             return out
         } finally { st.close() }
+    }
+
+    private fun readJuzs(c: SQLiteConnection, surahs: List<Surah>): List<Juz> {
+        val st = c.prepare("SELECT j.number, a.id, a.surah, a.ayah, a.text, a.juz, a.endsRuku, a.sajda FROM juz j JOIN ayah a ON a.id = j.startId ORDER BY j.number")
+        val starts = ArrayList<Pair<Int, Ayah>>(30)
+        try {
+            while (st.step()) {
+                starts += st.getLong(0).toInt() to Ayah(
+                    id = st.getLong(1).toInt(),
+                    surah = st.getLong(2).toInt(),
+                    ayah = st.getLong(3).toInt(),
+                    text = st.getText(4),
+                    juz = st.getLong(5).toInt(),
+                    endsRuku = st.getLong(6) != 0L,
+                    sajda = if (st.isNull(7)) null else sajdaOf(st.getText(7)),
+                )
+            }
+        } finally { st.close() }
+        // each juz spans up to the ayah before the next juz; the last runs to the end (surah ranges overlap-tested)
+        return starts.mapIndexed { i, (number, startsAt) ->
+            val end = starts.getOrNull(i + 1)?.second?.id?.minus(1) ?: TOTAL_AYAHS
+            val spanned = surahs.filter { it.startId <= end && it.startId + it.ayahCount - 1 >= startsAt.id }
+            Juz(number, startsAt, spanned)
+        }
     }
 
     private fun sajdaOf(t: String): Sajda = if (t == "obligatory") Sajda.Obligatory else Sajda.Recommended

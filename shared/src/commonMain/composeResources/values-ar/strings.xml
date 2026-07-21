@@ -383,4 +383,9 @@
     <string name="revelation_medinan">مدنية</string>
     <string name="sajda_recommended">سجدة مستحبة</string>
     <string name="sajda_obligatory">سجدة واجبة</string>
+    <string name="quran_tab_surah">السور</string>
+    <string name="quran_tab_juz">الأجزاء</string>
+    <string name="quran_tab_bookmarks">المرجعيات</string>
+    <string name="quran_tab_notes">الملاحظات</string>
+    <string name="quran_tab_highlights">التظليل</string>
 </resources>

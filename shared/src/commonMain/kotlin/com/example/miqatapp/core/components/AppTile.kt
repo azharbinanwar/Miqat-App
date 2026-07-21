@@ -53,12 +53,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.miqatapp.config.theme.AppTheme
 import kotlinx.coroutines.launch
 
 /** Where a tile sits in a group — drives corner rounding (first/last differ). */
-enum class TilePosition { Single, First, Middle, Last }
+enum class TilePosition {
+    Single, First, Middle, Last;
+
+    companion object {
+        // position of item `index` within a group of `count` — first/last round the outer corners, rest stay square
+        fun at(index: Int, count: Int) = when {
+            count == 1 -> Single
+            index == 0 -> First
+            index == count - 1 -> Last
+            else -> Middle
+        }
+    }
+}
 
 /** A small icon action; tiles and group headers render these with one consistent size/tint/spacing. */
 class AppAction(val icon: ImageVector, val onClick: () -> Unit)
@@ -140,9 +153,9 @@ fun AppTileGroupReorderable(
 
 /** Shared chrome (outer padding + optional section title) for both group variants. */
 @Composable
-private fun GroupShell(modifier: Modifier, title: String?, actions: List<AppAction> = emptyList(), content: @Composable () -> Unit) {
+private fun GroupShell(modifier: Modifier, title: String?, actions: List<AppAction> = emptyList(), bottomSpace: Dp = 16.dp, content: @Composable () -> Unit) {
     val c = AppTheme.colors
-    Column(modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+    Column(modifier.fillMaxWidth().padding(bottom = bottomSpace)) {
         if (title != null) {
             Row(
                 Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, bottom = 8.dp),

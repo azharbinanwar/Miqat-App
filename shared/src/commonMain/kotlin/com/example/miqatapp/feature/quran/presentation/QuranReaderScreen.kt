@@ -48,29 +48,23 @@ import com.example.miqatapp.feature.quran.data.AyahRef
 import com.example.miqatapp.feature.quran.data.QuranRepository
 import com.example.miqatapp.feature.quran.data.QuranStore
 import com.example.miqatapp.feature.quran.presentation.components.AyahActionSheet
-import com.example.miqatapp.feature.quran.presentation.components.LIGATURES
-import com.example.miqatapp.feature.quran.presentation.components.LocalFontSize
-import com.example.miqatapp.feature.quran.presentation.components.LocalQuranFonts
 import com.example.miqatapp.feature.quran.presentation.components.QuranCalligraphy
-import com.example.miqatapp.feature.quran.presentation.components.QuranFonts
 import com.example.miqatapp.feature.quran.presentation.components.RukuBlock
-import com.example.miqatapp.feature.quran.presentation.components.arabicIndic
-import com.example.miqatapp.feature.quran.presentation.components.groupByRuku
-import com.example.miqatapp.feature.quran.presentation.components.surahLigature
+import com.example.miqatapp.feature.quran.toArabicIndic
+import com.example.miqatapp.feature.quran.toSurahKey
 import com.example.miqatapp.resources.Res
-import com.example.miqatapp.resources.quran_juz
 import com.example.miqatapp.resources.quran_surah_name
-import com.example.miqatapp.resources.tanzil_hafs
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.Font
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuranReaderScreen(onBack: () -> Unit) {
+fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val ayahs = remember { mutableStateListOf<Ayah>() }
-    var offset by remember { mutableIntStateOf(0) }
+    // start paging from the target ayah (surah/juz jump); forward-only for now
+    var offset by remember { mutableIntStateOf((startId - 1).coerceAtLeast(0)) }
     var loading by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
@@ -96,12 +90,7 @@ fun QuranReaderScreen(onBack: () -> Unit) {
     val colors = AppTheme.colors
     val fontSize by QuranStore.fontSize.collectAsState()
     val script by QuranStore.font.collectAsState()
-    val fonts = QuranFonts(
-        body = FontFamily(Font(script.res)),
-        surah = FontFamily(Font(Res.font.quran_surah_name)),
-        marker = FontFamily(Font(Res.font.tanzil_hafs)),
-        juz = FontFamily(Font(Res.font.quran_juz)),
-    )
+    val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
 
     var selected by remember { mutableStateOf<AyahRef?>(null) }
@@ -109,15 +98,14 @@ fun QuranReaderScreen(onBack: () -> Unit) {
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
     val blurRadius by animateDpAsState(if (expanded) 14.dp else 0.dp, label = "pageBlur")
 
-    CompositionLocalProvider(LocalQuranFonts provides fonts, LocalFontSize provides fontSize) {
-        Box(Modifier.fillMaxSize().background(colors.background)) {
+    Box(Modifier.fillMaxSize().background(colors.background)) {
             Column(Modifier.fillMaxSize().blur(blurRadius)) {
                 TopAppBar(
                     title = {
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Text(header?.let { "الجزء ${arabicIndic(it.juz)}" } ?: "", color = colors.onSurfaceVariant, fontSize = 14.sp)
+                            Text(header?.let { "الجزء ${it.juz.toArabicIndic()}" } ?: "", color = colors.onSurfaceVariant, fontSize = 14.sp)
                             Spacer(Modifier.weight(1f))
-                            header?.let { Text(surahLigature(it.surah), fontFamily = fonts.surah, fontSize = 22.sp, color = colors.primary, style = LIGATURES) }
+                            header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 22.sp, color = colors.primary) }
                         }
                     },
                     navigationIcon = { IconButton(onBack) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
@@ -150,4 +138,12 @@ fun QuranReaderScreen(onBack: () -> Unit) {
             }
         }
     }
+
+// split verses into rukus (a run ends where endsRuku is true)
+private fun groupByRuku(ayahs: List<Ayah>): List<List<Ayah>> {
+    val out = ArrayList<List<Ayah>>()
+    var run = ArrayList<Ayah>()
+    for (a in ayahs) { run.add(a); if (a.endsRuku) { out.add(run); run = ArrayList() } }
+    if (run.isNotEmpty()) out.add(run)
+    return out
 }

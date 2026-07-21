@@ -28,4 +28,16 @@ object QuranStore {
         PrefsService.putString(PrefConst.QURAN_FONT, value.name)
         _font.value = value
     }
+
+    private val _favorites = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.QURAN_FAVORITES)
+            ?.split(",")?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet(),
+    )
+    val favorites: StateFlow<Set<Int>> = _favorites.asStateFlow()
+
+    fun toggleFavorite(surah: Int) {
+        val next = _favorites.value.toMutableSet().apply { if (!add(surah)) remove(surah) }
+        PrefsService.putString(PrefConst.QURAN_FAVORITES, next.joinToString(","))
+        _favorites.value = next
+    }
 }

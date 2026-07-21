@@ -384,4 +384,9 @@
     <string name="revelation_medinan">Medinan</string>
     <string name="sajda_recommended">Recommended prostration</string>
     <string name="sajda_obligatory">Obligatory prostration</string>
+    <string name="quran_tab_surah">Surah</string>
+    <string name="quran_tab_juz">Juz</string>
+    <string name="quran_tab_bookmarks">Bookmarks</string>
+    <string name="quran_tab_notes">Notes</string>
+    <string name="quran_tab_highlights">Highlights</string>
 </resources>

@@ -68,6 +68,9 @@ sealed interface AppRoute {
     data object Quran : AppRoute
 
     @Serializable
+    data class QuranReader(val startId: Int = 1) : AppRoute
+
+    @Serializable
     data object HomeAlt : AppRoute
 
     @Serializable
