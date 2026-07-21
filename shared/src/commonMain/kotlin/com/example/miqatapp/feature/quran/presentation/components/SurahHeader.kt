@@ -18,13 +18,15 @@ import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_surah_name
 import org.jetbrains.compose.resources.Font
 
+private const val SURAH_HEADER_MAX_SP = 60f // cap so the ornate name never overflows at large reading sizes
+
 // ornate surah name at a surah start
 @Composable
 fun SurahHeader(surah: Int) {
     val fontSize by QuranStore.fontSize.collectAsState()
     Text(
-        surah.toSurahKey(), Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 6.dp),
-        fontFamily = FontFamily(Font(Res.font.quran_surah_name)), fontSize = (fontSize * 1.9f).sp,
-        color = AppTheme.colors.primary, textAlign = TextAlign.Center,
+        surah.toSurahKey(), Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 18.dp, bottom = 6.dp),
+        fontFamily = FontFamily(Font(Res.font.quran_surah_name)), fontSize = (fontSize * 2.5f).coerceAtMost(SURAH_HEADER_MAX_SP).sp,
+        color = AppTheme.colors.primary, textAlign = TextAlign.Center, maxLines = 1,
     )
 }

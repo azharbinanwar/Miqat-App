@@ -54,7 +54,6 @@ fun AyahPassage(ayahs: List<Ayah>, selected: AyahRef?, onSelect: (AyahRef) -> Un
             withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary, background = hit)) {
                 append(QuranSymbols.ayahNumber(ayah.ayah.toArabicIndic()))
             }
-            if (ayah.endsRuku) withStyle(SpanStyle(fontFamily = markerFont, color = colors.onSurfaceVariant)) { append(" " + QuranSymbols.RUKU) }
             if (ayah.sajda != null) withStyle(SpanStyle(fontFamily = markerFont, color = colors.primary)) { append(" " + QuranSymbols.SAJDA) }
             ranges.add(ayah.ref to (start until length))
             append("  ")

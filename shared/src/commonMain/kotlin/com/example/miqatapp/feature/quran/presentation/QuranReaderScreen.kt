@@ -1,23 +1,23 @@
 package com.example.miqatapp.feature.quran.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
@@ -49,12 +48,12 @@ import com.example.miqatapp.feature.quran.presentation.components.AyahActionShee
 import com.example.miqatapp.feature.quran.presentation.components.QuranCalligraphy
 import com.example.miqatapp.feature.quran.presentation.components.RukuBlock
 import com.example.miqatapp.feature.quran.toArabicIndic
+import com.example.miqatapp.feature.quran.toJuzKey
 import com.example.miqatapp.feature.quran.toSurahKey
 import com.example.miqatapp.resources.Res
+import com.example.miqatapp.resources.quran_juz
 import com.example.miqatapp.resources.quran_surah_name
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.Font
-import kotlin.time.Duration.Companion.milliseconds
 
 // whole Quran as one continuous scroll, verses paged 100 at a time, grouped into rukus by the UI
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,25 +65,41 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
     // load the whole Quran once; LazyColumn only renders what's on screen, so this stays cheap
     LaunchedEffect(Unit) { if (ayahs.isEmpty()) ayahs.addAll(QuranRepository.all()) }
 
-    // ponytail: temporary — keep the calligraphy on screen at least 2s just to preview it; drop this later
-    var minSplash by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { delay(500.milliseconds); minSplash = true }
-
-    if (ayahs.isEmpty() || !minSplash) {
-        QuranCalligraphy()
-        return
-    }
+    // stays true only after the list has loaded AND jumped to the target — the splash overlay covers until then
+    var scrolled by remember { mutableStateOf(false) }
 
     val colors = AppTheme.colors
     val fontSize by QuranStore.fontSize.collectAsState()
     val script by QuranStore.font.collectAsState()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
+    val juzFont = FontFamily(Font(Res.font.quran_juz))
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
+    // for each ruku: its number within its surah, and whether it's the surah's last ruku (then no "next")
+    val rukuMeta = remember(rukus) {
+        val meta = ArrayList<Pair<Int, Boolean>>(rukus.size)
+        var surah = -1
+        var n = 0
+        rukus.forEach { r ->
+            val s = r.first().surah
+            n = if (s != surah) {
+                surah = s; 1
+            } else n + 1
+            meta.add(n to false)
+        }
+        for (i in rukus.indices) {
+            val lastInSurah = i == rukus.lastIndex || rukus[i + 1].first().surah != rukus[i].first().surah
+            meta[i] = meta[i].first to lastInSurah
+        }
+        meta
+    }
 
     // jump to the ruku holding the opened ayah, once; then the user scrolls freely both ways
     LaunchedEffect(rukus) {
-        val target = rukus.indexOfFirst { it.last().id >= startId }.coerceAtLeast(0)
-        if (target > 0) listState.scrollToItem(target)
+        if (rukus.isNotEmpty()) {
+            val target = rukus.indexOfFirst { it.last().id >= startId }.coerceAtLeast(0)
+            if (target > 0) listState.scrollToItem(target)
+            scrolled = true
+        }
     }
 
     var selected by remember { mutableStateOf<AyahRef?>(null) }
@@ -94,16 +109,18 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
 
     Box(Modifier.fillMaxSize().background(colors.background)) {
             Column(Modifier.fillMaxSize().blur(blurRadius)) {
-                TopAppBar(
+                CenterAlignedTopAppBar(
                     title = {
-                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Text(header?.let { "الجزء ${it.juz.toArabicIndic()}" } ?: "", color = colors.onSurfaceVariant, fontSize = 14.sp)
-                            Spacer(Modifier.weight(1f))
-                            header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 22.sp, color = colors.primary) }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(header?.let { "${it.juz.toArabicIndic()} - " } ?: "", color = colors.primary, fontSize = 14.sp)
+                                Text(header?.juz?.toJuzKey() ?: "", fontFamily = juzFont, color = colors.primary, fontSize = 14.sp)
+                            }
+                            Text("  .  ", color = colors.primary, fontSize = 14.sp)
+                            header?.let { Text(it.surah.toSurahKey(), fontFamily = surahFont, fontSize = 28.sp, color = colors.primary) }
                         }
                     },
                     navigationIcon = { IconButton(onBack) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 )
                 HorizontalDivider(color = colors.outlineVariant)
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -111,9 +128,12 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
                     LazyColumn(state = listState, modifier = Modifier.fillMaxSize().then(tapAway)) {
                         items(rukus.size) { i ->
                             val ruku = rukus[i]
-                            // no divider when the next ruku starts a new surah (the header already separates)
-                            val divider = rukus.getOrNull(i + 1)?.firstOrNull()?.surah == ruku.first().surah
-                            RukuBlock(ruku, divider, selected) { selected = if (selected == it) null else it }
+                            // juz of the ayah before this ruku, so RukuBlock can mark a juz that begins inside it
+                            val prevJuz = if (i == 0) ruku.first().juz else rukus[i - 1].last().juz
+                            val (numInSurah, lastInSurah) = rukuMeta[i]
+                            RukuBlock(ruku, numInSurah, if (lastInSurah) null else numInSurah + 1, prevJuz, selected) {
+                                selected = if (selected == it) null else it
+                            }
                         }
                     }
                 }
@@ -130,6 +150,11 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
                     onDismiss = { selected = null },
                 )
             }
+
+        // calligraphy overlay on top while loading + jumping, so the scroll jump is hidden; fades out when ready
+        AnimatedVisibility(visible = !scrolled, enter = EnterTransition.None, exit = fadeOut()) {
+            QuranCalligraphy()
+        }
         }
     }
 

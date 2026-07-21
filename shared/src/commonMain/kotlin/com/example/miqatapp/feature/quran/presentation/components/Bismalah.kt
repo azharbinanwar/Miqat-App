@@ -18,7 +18,7 @@ import com.example.miqatapp.resources.Res
 import com.example.miqatapp.resources.quran_juz
 import org.jetbrains.compose.resources.Font
 
-private const val BISMALAH_MAX_SP = 40f // above this the glyph would overflow, so it's capped
+private const val BISMALAH_MAX_SP = 24f // above this the glyph would overflow, so it's capped
 
 // stylish basmalah (juz font's decorative ﷽), shown at a surah start except Al-Fatiha and At-Tawbah
 @Composable

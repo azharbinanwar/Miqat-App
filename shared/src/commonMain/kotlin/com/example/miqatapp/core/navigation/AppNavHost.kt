@@ -53,7 +53,7 @@ fun AppNavHost() {
     ) {
         // One drawer around the whole NavHost — navigation only swaps content, never rebuilds it.
         AppDrawer(drawerState) {
-            NavHost(navController = navController, startDestination = AppRoute.Home) {
+            NavHost(navController = navController, startDestination = AppRoute.Quran) {
                 composable<AppRoute.Onboarding> { OnboardingScreen() }
                 composable<AppRoute.Home> { HomeScreen() }
                 composable<AppRoute.Sandbox> { SandboxScreen() }
