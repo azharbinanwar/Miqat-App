@@ -18,6 +18,7 @@
     <string name="prayer_tracker">Prayer Tracker</string>
     <string name="hijri_calendar">Hijri Calendar</string>
     <string name="duas_and_adhkar">Duas &amp; Adhkar</string>
+    <string name="quran">Quran</string>
     <string name="tasbih_counter">Tasbih Counter</string>
     <string name="settings">Settings</string>
     <string name="about_miqat">About</string>
@@ -377,4 +378,10 @@
     <string name="widget_icon">Prayer Icon</string>
     <string name="widget_add">Add to home</string>
     <string name="widget_customize">Customize</string>
+
+    <!-- Quran -->
+    <string name="revelation_meccan">Meccan</string>
+    <string name="revelation_medinan">Medinan</string>
+    <string name="sajda_recommended">Recommended prostration</string>
+    <string name="sajda_obligatory">Obligatory prostration</string>
 </resources>

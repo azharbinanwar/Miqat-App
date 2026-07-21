@@ -68,6 +68,10 @@ object PrefConst {
     // ── Widget ───────────────────────────────────────────────
     const val WIDGET_STYLE = "widget_style_" // per-instance style JSON, suffixed with appWidgetId
 
+    // ── Quran ────────────────────────────────────────────────
+    const val QURAN_FONT_SP = "quran_font_sp" // reading font size (sp); last-read page & bookmarks come later
+    const val QURAN_FONT = "quran_font"       // mushaf body font (QuranFont enum name)
+
     // ── Tasbih ───────────────────────────────────────────────
     const val TASBIH_MODE = "tasbih_mode"       // beads | tap | focus
     const val TASBIH_SIZE = "tasbih_size"

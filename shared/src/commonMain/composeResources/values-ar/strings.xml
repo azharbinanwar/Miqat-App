@@ -377,4 +377,10 @@
     <string name="widget_icon">أيقونة الوقت</string>
     <string name="widget_add">إضافة للرئيسية</string>
     <string name="widget_customize">تخصيص</string>
+
+    <!-- Quran -->
+    <string name="revelation_meccan">مكية</string>
+    <string name="revelation_medinan">مدنية</string>
+    <string name="sajda_recommended">سجدة مستحبة</string>
+    <string name="sajda_obligatory">سجدة واجبة</string>
 </resources>

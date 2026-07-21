@@ -27,6 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.miqatapp.config.theme.AppTheme
 
+// shared dim behind app sheets (also drives AppDrawer's blur); pass scrimAlpha = 0f for a non-dimming overlay
+const val SHEET_SCRIM_ALPHA = 0.32f
+
 /**
  * One bottom sheet for the whole app — pass your content in the trailing slot.
  * Floating (side margins, all-corners rounded) to match [AppDrawer]; themed background,
@@ -43,24 +46,28 @@ fun AppBottomSheet(
     subtitle: String? = null,
     footer: (@Composable ColumnScope.() -> Unit)? = null, // pinned below the scrollable body (e.g. action buttons)
     fillHeight: Boolean = false,                          // true = body fills to the max height, so it stays put while a list filters
+    skipPartiallyExpanded: Boolean = true,               // false = open at a half detent; drag the handle up to expand
+    scrimAlpha: Float = SHEET_SCRIM_ALPHA,               // 0f = float as a non-dimming overlay (no scrim, no drawer blur)
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     // let the body grow up to 85% of the screen before it scrolls
     val winH = LocalWindowInfo.current.containerSize.height
     val maxSheetHeight = if (winH > 0) with(LocalDensity.current) { (winH * 0.85f).toDp() } else 520.dp
-    // register as an open overlay so AppDrawer blurs the app behind this sheet
-    val overlay = LocalOverlay.current
-    DisposableEffect(Unit) {
-        overlay.sheetCount++
-        onDispose { overlay.sheetCount-- }
+    // register as an open overlay so AppDrawer blurs the app behind this sheet — skip for non-dimming overlays
+    if (scrimAlpha > 0f) {
+        val overlay = LocalOverlay.current
+        DisposableEffect(Unit) {
+            overlay.sheetCount++
+            onDispose { overlay.sheetCount-- }
+        }
     }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = AppTheme.colors.surfaceContainerHigh, // distinct from scaffold + cardColor so the edge and inner tiles read in both themes
         shape = RoundedCornerShape(28.dp),
-        scrimColor = Color.Black.copy(alpha = 0.32f), // real dim so the sheet reads as a floating panel (matches AppDrawer)
+        scrimColor = Color.Black.copy(alpha = scrimAlpha), // real dim so the sheet reads as a floating panel (matches AppDrawer)
         // float on every side: keep clear of status bar (top) AND nav bar (bottom) so it never touches the top
         modifier = modifier
             .windowInsetsPadding(WindowInsets.systemBars)

@@ -22,6 +22,7 @@ import com.example.miqatapp.feature.hijri.presentation.HijriCalendarScreen
 import com.example.miqatapp.feature.home.presentation.PrayerAnimationScreen
 import com.example.miqatapp.feature.miqat.presentation.MiqatTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
+import com.example.miqatapp.feature.quran.presentation.QuranReaderScreen
 import com.example.miqatapp.feature.settings.presentation.LocationScreen
 import com.example.miqatapp.feature.notifications.presentation.NotificationsScreen
 import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
@@ -75,6 +76,7 @@ fun AppNavHost() {
                 composable<AppRoute.HijriCalendar> { HijriCalendarScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Duas> { DuasScreen() }
                 composable<AppRoute.Azkar> { AzkarScreen() }
+                composable<AppRoute.Quran> { QuranReaderScreen(onBack = { navController.popBackStack() }) }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
                     TasbihScreen(
