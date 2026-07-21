@@ -3,9 +3,7 @@ package com.example.miqatapp.feature.quran.presentation.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +40,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.ArrowLeftRight
@@ -64,16 +61,11 @@ import com.composables.icons.lucide.Repeat
 import com.composables.icons.lucide.RotateCcw
 import com.composables.icons.lucide.Share2
 import com.composables.icons.lucide.StickyNote
-import com.composables.icons.lucide.Type
 import com.example.miqatapp.config.theme.AppTheme
-import com.example.miqatapp.core.constants.defaults.QuranDefaults
 import com.example.miqatapp.core.components.AppTileGroup
 import com.example.miqatapp.core.components.AppTileItem
-import com.example.miqatapp.core.components.MiniStepper
 import com.example.miqatapp.core.components.SHEET_SCRIM_ALPHA
-import com.example.miqatapp.feature.quran.data.QuranFont
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.Font
 
 private class QAction(val icon: ImageVector, val label: String)
 private class QGroup(val title: String, val items: List<QAction>)
@@ -104,10 +96,6 @@ private val MORE_GROUPS = listOf(
 @Composable
 fun AyahActionSheet(
     label: String,
-    fontSize: Int,
-    onFontChange: (Int) -> Unit,
-    font: QuranFont,
-    onFontSelect: (QuranFont) -> Unit,
     onExpandedChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -190,48 +178,12 @@ fun AyahActionSheet(
                 Spacer(Modifier.size(8.dp))
                 // grouped actions fill the remaining sheet height and scroll; revealed as the sheet grows
                 Column(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())) {
-                    // Style & Script: text size + script picker
-                    AppTileGroup(
-                        title = "Style & Script",
-                        items = listOf(
-                            AppTileItem(
-                                title = "Text size",
-                                leadingIcon = Lucide.Type,
-                                trailing = {
-                                    MiniStepper(value = fontSize, suffix = "sp", onChange = onFontChange, min = QuranDefaults.MIN_FONT_SP, max = QuranDefaults.MAX_FONT_SP)
-                                },
-                            ),
-                        ),
-                    )
-                    Text("Script", color = colors.onSurfaceVariant, fontSize = 12.sp, modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 6.dp))
-                    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        QuranFont.entries.forEach { f -> FontChip(f, selected = f == font, onClick = { onFontSelect(f) }) }
-                    }
-                    Spacer(Modifier.size(4.dp))
                     MORE_GROUPS.forEach { g ->
                         AppTileGroup(title = g.title, items = g.items.map { a -> AppTileItem(title = a.label, leadingIcon = a.icon, onClick = onDismiss) })
                     }
                 }
             }
         }
-    }
-}
-
-// live preview chip: the same Arabic sample rendered in each font so the user picks by look, not name
-@Composable
-private fun FontChip(font: QuranFont, selected: Boolean, onClick: () -> Unit) {
-    val colors = AppTheme.colors
-    val fam = FontFamily(Font(font.res))
-    Column(
-        Modifier.clip(RoundedCornerShape(12.dp))
-            .background(if (selected) colors.primary.copy(alpha = 0.12f) else Color.Transparent)
-            .border(1.dp, if (selected) colors.primary else colors.outlineVariant, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick).padding(horizontal = 14.dp, vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(font.sample, fontFamily = fam, fontSize = 20.sp, color = colors.onBackground, maxLines = 1)
-        Spacer(Modifier.size(3.dp))
-        Text(font.label, color = if (selected) colors.primary else colors.onSurfaceVariant, fontSize = 11.sp, maxLines = 1)
     }
 }
 

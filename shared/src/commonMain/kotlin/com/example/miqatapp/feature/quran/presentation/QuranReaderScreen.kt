@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.ChevronLeft
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Palette
 import com.example.miqatapp.config.theme.AppTheme
 import com.example.miqatapp.feature.quran.data.Ayah
 import com.example.miqatapp.feature.quran.data.AyahRef
@@ -46,6 +47,7 @@ import com.example.miqatapp.feature.quran.data.QuranRepository
 import com.example.miqatapp.feature.quran.data.QuranStore
 import com.example.miqatapp.feature.quran.presentation.components.AyahActionSheet
 import com.example.miqatapp.feature.quran.presentation.components.QuranCalligraphy
+import com.example.miqatapp.feature.quran.presentation.components.ReaderSettingsSheet
 import com.example.miqatapp.feature.quran.presentation.components.RukuBlock
 import com.example.miqatapp.feature.quran.toArabicIndic
 import com.example.miqatapp.feature.quran.toJuzKey
@@ -103,6 +105,7 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
     }
 
     var selected by remember { mutableStateOf<AyahRef?>(null) }
+    var showSettings by remember { mutableStateOf(false) }
     var expanded by remember(selected) { mutableStateOf(false) }
     val header by remember(rukus) { derivedStateOf { rukus.getOrNull(listState.firstVisibleItemIndex)?.firstOrNull() } }
     val blurRadius by animateDpAsState(if (expanded) 14.dp else 0.dp, label = "pageBlur")
@@ -121,6 +124,7 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
                         }
                     },
                     navigationIcon = { IconButton(onBack) { Icon(Lucide.ChevronLeft, "Back", tint = colors.onSurface) } },
+                    actions = { IconButton({ showSettings = true }) { Icon(Lucide.Palette, "Reading settings", tint = colors.onSurface) } },
                 )
                 HorizontalDivider(color = colors.outlineVariant)
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -142,12 +146,18 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
             selected?.let { ref ->
                 AyahActionSheet(
                     label = "Surah ${ref.surah} · Ayah ${ref.ayah}",
+                    onExpandedChange = { expanded = it },
+                    onDismiss = { selected = null },
+                )
+            }
+
+            if (showSettings) {
+                ReaderSettingsSheet(
                     fontSize = fontSize,
                     onFontChange = { QuranStore.setFontSize(it) },
                     font = script,
                     onFontSelect = { QuranStore.setFont(it) },
-                    onExpandedChange = { expanded = it },
-                    onDismiss = { selected = null },
+                    onDismiss = { showSettings = false },
                 )
             }
 
