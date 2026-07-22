@@ -73,6 +73,7 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
     val colors = AppTheme.colors
     val fontSize by QuranStore.fontSize.collectAsState()
     val script by QuranStore.font.collectAsState()
+    val readingTheme by QuranStore.theme.collectAsState()
     val surahFont = FontFamily(Font(Res.font.quran_surah_name)) // top-bar surah name
     val juzFont = FontFamily(Font(Res.font.quran_juz))
     val rukus = remember(ayahs.size) { groupByRuku(ayahs) }
@@ -157,6 +158,8 @@ fun QuranReaderScreen(startId: Int = 1, onBack: () -> Unit) {
                     onFontChange = { QuranStore.setFontSize(it) },
                     font = script,
                     onFontSelect = { QuranStore.setFont(it) },
+                    theme = readingTheme,
+                    onThemeSelect = { QuranStore.setTheme(it) },
                     onDismiss = { showSettings = false },
                 )
             }

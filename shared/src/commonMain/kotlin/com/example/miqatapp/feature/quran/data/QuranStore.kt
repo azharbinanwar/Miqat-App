@@ -29,6 +29,17 @@ object QuranStore {
         _font.value = value
     }
 
+    private val _theme = MutableStateFlow(
+        PrefsService.getStringOrNull(PrefConst.QURAN_THEME)
+            ?.let { runCatching { QuranTheme.valueOf(it) }.getOrNull() } ?: QuranTheme.DEFAULT,
+    )
+    val theme: StateFlow<QuranTheme> = _theme.asStateFlow()
+
+    fun setTheme(value: QuranTheme) {
+        PrefsService.putString(PrefConst.QURAN_THEME, value.name)
+        _theme.value = value
+    }
+
     private val _favorites = MutableStateFlow(
         PrefsService.getStringOrNull(PrefConst.QURAN_FAVORITES)
             ?.split(",")?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet(),

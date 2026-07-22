@@ -388,4 +388,18 @@
     <string name="quran_tab_bookmarks">المرجعيات</string>
     <string name="quran_tab_notes">الملاحظات</string>
     <string name="quran_tab_highlights">التظليل</string>
+    <string name="quran_theme_system">النظام</string>
+    <string name="quran_theme_light">فاتح</string>
+    <string name="quran_theme_paper">ورقي</string>
+    <string name="quran_theme_sepia">بني داكن</string>
+    <string name="quran_theme_green">أخضر</string>
+    <string name="quran_theme_mint">نعناعي</string>
+    <string name="quran_theme_dark">داكن</string>
+    <string name="quran_theme_charcoal">فحمي</string>
+    <string name="quran_theme_slate">إردوازي</string>
+    <string name="quran_theme_night">ليلي</string>
+    <string name="quran_theme_warm_gray">رمادي دافئ</string>
+    <string name="quran_theme_amber">كهرماني</string>
+    <string name="quran_theme_dusty_blue">أزرق باهت</string>
+    <string name="quran_theme_dim_gray">رمادي خافت</string>
 </resources>

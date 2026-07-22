@@ -389,4 +389,18 @@
     <string name="quran_tab_bookmarks">Bookmarks</string>
     <string name="quran_tab_notes">Notes</string>
     <string name="quran_tab_highlights">Highlights</string>
+    <string name="quran_theme_system">System</string>
+    <string name="quran_theme_light">Light</string>
+    <string name="quran_theme_paper">Paper</string>
+    <string name="quran_theme_sepia">Sepia</string>
+    <string name="quran_theme_green">Green</string>
+    <string name="quran_theme_mint">Mint</string>
+    <string name="quran_theme_dark">Dark</string>
+    <string name="quran_theme_charcoal">Charcoal</string>
+    <string name="quran_theme_slate">Slate</string>
+    <string name="quran_theme_night">Night</string>
+    <string name="quran_theme_warm_gray">Warm Gray</string>
+    <string name="quran_theme_amber">Amber</string>
+    <string name="quran_theme_dusty_blue">Dusty Blue</string>
+    <string name="quran_theme_dim_gray">Dim Gray</string>
 </resources>

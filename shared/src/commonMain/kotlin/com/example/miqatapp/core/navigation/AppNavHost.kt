@@ -24,6 +24,7 @@ import com.example.miqatapp.feature.miqat.presentation.MiqatTimesScreen
 import com.example.miqatapp.feature.qibla.presentation.QiblaScreen
 import com.example.miqatapp.feature.quran.presentation.QuranIndexScreen
 import com.example.miqatapp.feature.quran.presentation.QuranReaderScreen
+import com.example.miqatapp.feature.quran.presentation.QuranThemeHost
 import com.example.miqatapp.feature.settings.presentation.LocationScreen
 import com.example.miqatapp.feature.notifications.presentation.NotificationsScreen
 import com.example.miqatapp.feature.settings.presentation.MiqatCalculationScreen
@@ -78,10 +79,10 @@ fun AppNavHost() {
                 composable<AppRoute.Duas> { DuasScreen() }
                 composable<AppRoute.Azkar> { AzkarScreen() }
                 composable<AppRoute.Quran> {
-                    QuranIndexScreen(onOpen = { startId -> navController.navigate(AppRoute.QuranReader(startId)) })
+                    QuranThemeHost { QuranIndexScreen(onOpen = { startId -> navController.navigate(AppRoute.QuranReader(startId)) }) }
                 }
                 composable<AppRoute.QuranReader> { entry ->
-                    QuranReaderScreen(startId = entry.toRoute<AppRoute.QuranReader>().startId, onBack = { navController.popBackStack() })
+                    QuranThemeHost { QuranReaderScreen(startId = entry.toRoute<AppRoute.QuranReader>().startId, onBack = { navController.popBackStack() }) }
                 }
                 composable<AppRoute.Tasbih> { TasbihHubScreen(onHistory = { navController.navigate(AppRoute.TasbihHistory()) }) }
                 composable<AppRoute.TasbihCounter> {
